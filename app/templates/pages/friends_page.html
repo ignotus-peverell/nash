@@ -1,0 +1,28 @@
+{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+<h1>Friends</h1>
+
+{% for f in friendships %}
+<p><a href="{{ url_for('user_page', id=f.friendee.id) }}">{{ f.friendee.first_name }}
+    {{ f.friendee.last_name }}</a>
+</p>
+{% endfor %}
+
+<h3>Add a friend</h3>
+
+{% from "common/form_macros.html" import render_field, render_submit_field %}
+<form action="" method="POST" class="form" role="form">
+  <div class="row">
+    <div class="col-sm-6 col-md-5 col-lg-4">
+    {{ form.hidden_tag() }}
+
+    {{ render_field(form.email, tabindex=240) }}
+
+    {{ render_submit_field(form.submit, tabindex=280) }}
+    </div>
+  </div>
+</form>
+
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+<h1>Welcome</h1>
+
+<p>
+    Test users:<br/>
+    - user@example.com / Password1<br/>
+    - admin@example.com / Password1
+</p>
+
+<p>Nash is a tool
+for <a href="https://en.wikipedia.org/wiki/Reality_testing">Reality
+Testing</a>.  Users can play with diagrams that represent events they
+have experienced in order to make sense of their reality. Users can
+also invite their family, friends, and therapists to help them.</p>
+
+<p>In the example below, white nodes represent things that are true,
+while grey nodes represent things that are not true. Arrows represent
+one thing causing or preventing another thing. Things that don't make
+sense are higlighted in colors that depend on how weird they seem;
+here, "Wet grass" is highlighted in red because it seems very weird
+that the grass would be wet if it did not rain.</p>
+
+<img src="/static/images/example.png" />
+
+<p>If we switch "Rain" to true, then we get a highlighted arrow,
+because if it rained, the user believes they would remember it
+raining. "Rain" is highlighted in green because it would not be weird
+if it rained for no reason. We cannot switch "Memory" to false because
+it is locked - only the owner of the graph can change locked nodes.</p>
+
+<img src="/static/images/example2.png" />
+
+<p>By adding a new node called "Sprinkler", we can explain the node
+"Wet Grass" without needing to set the node "Rain" to true. Now
+everything makes sense!
+  </p>
+
+<img src="/static/images/example3.png" />
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+<h1>Graphs</h1>
+
+{% for g in graphs %}
+<p><a href="{{ url_for('graph_page', id=g.id) }}">{{ g.name }}</a>
+  {% if current_user not in g.owners %}
+  (<a href="{{ url_for('user_page', id=g.owners[0].id) }}">{{ g.owners[0].first_name }} {{ g.owners[0].last_name }}</a>)
+  {% else %}
+  <select class="share-graph" id="{{g.id}}">
+    <option value="">Share with</option>
+    {% for f in current_user.friendships %}
+    <option value="{{f.friendee.id}}">{{f.friendee.first_name}} {{f.friendee.last_name}}</option>
+    {% endfor %}
+  </select>
+  {% endif %}
+</p>
+{% endfor %}
+
+<script>
+  d3.selectAll(".share-graph").on("input", function () {
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: '/_share_graph',
+        dataType: 'json',
+        async: true,
+        data: JSON.stringify({graph_id: this.id,
+                              user_id: this.value,
+                             }),
+        success: function (data) {
+            d3.select("#messages")
+                .attr("class",
+                      "alert alert-success alert-dismissible")
+                .html('<strong>Shared!</strong> <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
+        },
+        error: function (data) {
+            d3.select("#messages")
+                .attr("class", "alert alert-danger alert-dismissible")
+                .html('<strong>Error!</strong> Your graph was not shared. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
+        }
+    });
+    
+  })
+</script>
+
+{% endblock %}

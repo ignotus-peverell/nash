@@ -1,0 +1,105 @@
+/**** default styles ****/
+body {
+    font-size: 13px;
+    font-family: Helvetica, Arial, sans-serif;
+    position: relative;
+}
+
+/**** element styles ****/
+hr { border-color: #cccccc; margin: 0px; }
+
+/**** header, main and footer divs ****/
+.header-title { font-size: 30px; }
+#header-div {
+    background-color:#cc0000;
+    color: #ffffff;
+    padding: 15px;
+}
+#header-div a {
+    color: #ffffff;
+}
+#menu-div {
+    background-color:#cc0000;
+    color: #ffffff;
+    padding-left: 15px;
+}
+#menu-div a {
+    color: #ffffff;
+}
+
+/**** class-based style modifiers ****/
+
+.no-margins { margin: 0px; }
+
+.with-margins { margin: 10px; }
+
+.col-centered { float: none; margin: 0 auto; }
+
+
+/**** graph interface styles ****/
+.node {
+    cursor: crosshair;
+}
+
+.node_selected {
+    fill: #ff7f0e;
+}
+
+.drag_line {
+    stroke: #999;
+    stroke-width: 5;
+    pointer-events: none;
+}
+
+.drag_line_hidden {
+    stroke: #999;
+    stroke-width: 0;
+    pointer-events: none;
+}
+
+.edge {
+    stroke: #999;
+    stroke-width: 5;
+    cursor: crosshair;
+}
+
+.edge_selected {
+    stroke: #ff7f0e;
+}
+
+#infobox-left, #infobox-right {
+    border: 3px solid #999999;
+    background-color: #cccccc;
+    width: 200px;
+}
+
+#infobox-left {
+    float: left;
+}
+
+#infobox-right {
+    float: right;
+}
+
+#infobox hr {
+    height: 3px;
+    display: block;
+    background-color: #999999;
+}
+
+#nash {
+    float: right;
+}
+
+#nash img {
+    width: 200px;
+}
+
+#chart {
+    float: left;
+}
+
+#chart-spacer {
+    width: 100%;
+    height: 700px;
+}
