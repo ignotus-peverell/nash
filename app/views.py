@@ -95,6 +95,13 @@ def share_graph():
 def admin_page():
     return render_template('pages/admin_page.html')
 
+# The Admin page is accessible to users with the 'admin' role
+@app.route('/user/<id>')
+@login_required
+def user_page(id):
+    user = User.query.get(id)
+    return render_template('pages/user_page.html', user=user)
+
 
 @app.route('/friends', methods=['GET', 'POST'])
 @login_required
