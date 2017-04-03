@@ -6,6 +6,7 @@
 from flask import redirect, render_template, render_template_string, Blueprint
 from flask import request, url_for, jsonify
 from flask_user import current_user, login_required, roles_accepted
+from flask_login.mixins import AnonymousUserMixin
 import json, random
 import cPickle as pickle
 
@@ -13,9 +14,21 @@ from app.init_app import app, db
 from app.models import UserProfileForm, FriendForm, Graph, User, Friendship
 
 # The Home page is accessible to anyone
-@app.route('/')
+@app.route('/home')
+@login_required
 def home_page():
     return render_template('pages/home_page.html')
+
+@app.route('/landing')
+def landing_page():
+    return render_template('pages/landing_page.html')
+
+@app.route('/')
+def index():
+    if current_user.is_anonymous:
+        return render_template('pages/landing_page.html')
+    else:
+        return redirect(url_for('home_page'))
 
 @app.route('/graphs')
 @login_required  # Limits access to authenticated users
