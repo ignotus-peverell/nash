@@ -5,7 +5,7 @@ The server code is currently only tested on Ubuntu 16.04 (Xenial).
 To setup and start running:
 * make env
 * source activate
-* python manage.pu initdb
+* python manage.py init_db
 * python manage.py runserver
 
 To run the website so that it will be externally visible, do this:
