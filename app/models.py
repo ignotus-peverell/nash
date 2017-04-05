@@ -2,11 +2,13 @@
 #
 # Authors: Ling Thio <ling.thio@gmail.com>
 
+from flask_uploads import UploadSet, IMAGES, configure_uploads
 from flask_user import UserMixin
 from flask_user.forms import RegisterForm
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, validators
-from app.init_app import db
+from app.init_app import db, app
 
 class Friendship(db.Model):
     __tablename__ = 'friendships'
@@ -36,6 +38,7 @@ class User(db.Model, UserMixin):
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
+    photo_file_name = db.Column('photo_file_name',db.Unicode(260), nullable=True, server_default=u'')
 
     # Relationships
     roles = db.relationship('Role', secondary='users_roles',
@@ -44,9 +47,7 @@ class User(db.Model, UserMixin):
     friendships = db.relationship('Friendship', foreign_keys=[Friendship.friender_id])
     cofriendships = db.relationship('Friendship', foreign_keys=[Friendship.friendee_id])
 
-    
-    
-
+ 
 # Define the Role data model
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -67,7 +68,7 @@ class Graph(db.Model):
     owners = db.relationship('User', secondary='users_graphs_owner', backref=db.backref('graphs_owned', lazy='dynamic'))
     helpers = db.relationship('User', secondary='users_graphs_helpers', backref=db.backref('graphs_helping', lazy='dynamic'))
 
-    
+
 # Define the UserRoles association model
 class UsersRoles(db.Model):
     __tablename__ = 'users_roles'
@@ -75,29 +76,28 @@ class UsersRoles(db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
 
-    
+
 class UsersGraphsOwner(db.Model):
     __tablename__ = 'users_graphs_owner'
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     graph_id = db.Column(db.Integer(), db.ForeignKey('graphs.id', ondelete='CASCADE'))
 
-    
+
 class UsersGraphsHelpers(db.Model):
     __tablename__ = 'users_graphs_helpers'
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     graph_id = db.Column(db.Integer(), db.ForeignKey('graphs.id', ondelete='CASCADE'))
 
-    
+
 class UsersFriendships(db.Model):
     __tablename__ = 'users_friendships'
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     friendship_id = db.Column(db.Integer(), db.ForeignKey('friendships.id', ondelete='CASCADE'))
 
-    
-    
+
 # Define the User registration form
 # It augments the Flask-User RegisterForm with additional fields
 class MyRegisterForm(RegisterForm):
@@ -113,6 +113,10 @@ class UserProfileForm(FlaskForm):
         validators.DataRequired('First name is required')])
     last_name = StringField('Last name', validators=[
         validators.DataRequired('Last name is required')])
+    images = UploadSet('images', IMAGES)
+    app.config['UPLOADED_IMAGES_DEST'] = '/var/uploads'
+    configure_uploads(app, (images,))
+    photo = FileField('Profile Picture', validators=[FileAllowed(images, 'Images only!')])
     submit = SubmitField('Save')
 
 

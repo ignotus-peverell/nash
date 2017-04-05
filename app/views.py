@@ -3,12 +3,15 @@
 # Authors: Ling Thio <ling.thio@gmail.com>
 
 
-from flask import redirect, render_template, render_template_string, Blueprint
+from flask import redirect, render_template, render_template_string, Blueprint, flash
 from flask import request, url_for, jsonify
 from flask_user import current_user, login_required, roles_accepted
 from flask_login.mixins import AnonymousUserMixin
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import CombinedMultiDict
 import json, random
 import cPickle as pickle
+import os
 
 from app.init_app import app, db
 from app.models import UserProfileForm, FriendForm, Graph, User, Friendship
@@ -145,18 +148,26 @@ def friends_page():
 @login_required
 def user_profile_page():
     # Initialize form
-    form = UserProfileForm(request.form, current_user)
+    form = UserProfileForm(CombinedMultiDict((request.files, request.form)), current_user)
 
     # Process valid POST
     if request.method == 'POST' and form.validate():
+        # Save photo
+        if form.photo.data.filename != "" :
+            f = form.photo.data
+            filename = secure_filename(f.filename)
+            f.save(os.path.join(
+                app.instance_path, 'photos', filename
+            ))
+            current_user.photo_file_name = filename
+
         # Copy form fields to user_profile fields
         form.populate_obj(current_user)
 
         # Save user_profile
         db.session.commit()
 
-        # Redirect to home page
-        return redirect(url_for('home_page'))
+        flash('Profile updated successfully.', 'success')
 
     # Process GET or invalid POST
     return render_template('pages/user_profile_page.html',
