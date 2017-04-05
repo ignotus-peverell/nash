@@ -11,6 +11,7 @@ Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
 Flask-User==0.6.11
 Flask-WTF==0.13.1
+Flask-Uploads
 
 # Development tools
 pytest==3.0.5
