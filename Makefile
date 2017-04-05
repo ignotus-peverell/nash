@@ -6,3 +6,4 @@ env:
 
 clean:
 	rm -rf nashenv
+	rm -rf activate
