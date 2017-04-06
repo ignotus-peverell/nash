@@ -38,7 +38,7 @@ class User(db.Model, UserMixin):
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
-    photo_file_name = db.Column('photo_file_name',db.Unicode(260), nullable=True, server_default=u'')
+    photo_file_name = db.Column('photo_file_name',db.String(260), nullable=True, server_default=u'')
 
     # Relationships
     roles = db.relationship('Role', secondary='users_roles',
