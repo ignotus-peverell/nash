@@ -3,8 +3,6 @@
 {% block content %}
 <h1>{{user.first_name}} {{user.last_name}}</h1>
 {% if user.photo_file_name != "" : %}
-    <div class="form-group ">
-      <img src="{{ url_for('static', filename='images/users/'+user.photo_file_name) }}" style="height:100px"/>
-    </div>
+	<img src="{{ url_for('static', filename='images/users/'+user.photo_file_name) }}" style="height:100px"/>
 {% endif %}
 {% endblock %}
