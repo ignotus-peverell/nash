@@ -15,6 +15,7 @@ import uuid
 
 from app.init_app import app, db
 from app.models import UserProfileForm, FriendForm, Graph, User, Friendship
+from app.images import process_profile_picture
 
 # The Home page is accessible to anyone
 @app.route('/home')
@@ -155,9 +156,10 @@ def user_profile_page():
         # Save photo
         if form.photo.data.filename != "" :
             f = form.photo.data
+            img = process_profile_picture(f.stream)
             orig_filename, file_extension = os.path.splitext(f.filename)
             filename = str(uuid.uuid4()) + file_extension
-            f.save(os.path.join(
+            img.save(os.path.join(
                 app.instance_path, 'photos', filename
             ))
             current_user.photo_file_name = filename

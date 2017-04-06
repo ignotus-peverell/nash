@@ -18,3 +18,5 @@ pytest==3.0.5
 pytest-flask==0.10.0
 pytest-cov==2.4.0
 
+# Other things
+Pillow==4.1.0
