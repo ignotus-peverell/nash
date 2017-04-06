@@ -114,6 +114,7 @@ class UserProfileForm(FlaskForm):
     last_name = StringField('Last name', validators=[
         validators.DataRequired('Last name is required')])
     images = UploadSet('images', IMAGES)
+    app.config['UPLOADED_IMAGES_DEST'] = '/var/uploads'
     configure_uploads(app, (images,))
     photo = FileField('Profile Picture', validators=[FileAllowed(images, 'Images only!')])
     submit = SubmitField('Save')
