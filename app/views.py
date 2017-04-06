@@ -7,11 +7,11 @@ from flask import redirect, render_template, render_template_string, Blueprint, 
 from flask import request, url_for, jsonify
 from flask_user import current_user, login_required, roles_accepted
 from flask_login.mixins import AnonymousUserMixin
-from werkzeug.utils import secure_filename
 from werkzeug.datastructures import CombinedMultiDict
 import json, random
 import cPickle as pickle
 import os
+import uuid
 
 from app.init_app import app, db
 from app.models import UserProfileForm, FriendForm, Graph, User, Friendship
@@ -155,7 +155,8 @@ def user_profile_page():
         # Save photo
         if form.photo.data.filename != "" :
             f = form.photo.data
-            filename = secure_filename(f.filename)
+            orig_filename, file_extension = os.path.splitext(f.filename)
+            filename = str(uuid.uuid4()) + file_extension
             f.save(os.path.join(
                 app.instance_path, 'photos', filename
             ))
