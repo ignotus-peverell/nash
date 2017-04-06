@@ -39,7 +39,7 @@ def upgrade():
     sa.Column('is_active', sa.Boolean(), server_default='0', nullable=False),
     sa.Column('first_name', sa.Unicode(length=50), server_default=u'', nullable=False),
     sa.Column('last_name', sa.Unicode(length=50), server_default=u'', nullable=False),
-    sa.Column('photo_file_name', sa.Unicode(length=260), server_default=u'', nullable=True),
+    sa.Column('photo_file_name', sa.String(length=260), server_default=u'', nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
