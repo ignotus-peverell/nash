@@ -123,4 +123,42 @@ hr { border-color: #cccccc; margin: 0px; }
 
 #helpers img {
     margin-top: 30px;
+
+    
+#helper {
+    position: fixed;
+    left: 30px;
+    bottom: 30px;
+    z-index: 10;
+    width: 250px;
+}
+
+#helper-talk {
+    border: 1px solid black;
+    padding: 15px;
+    background-color: #dddddd;
+    overflow-y: scroll;
+    max-height: 400px;
+}
+
+#user-talk-input {
+    border: 1px solid black;
+    padding: 15px;
+    background-color: #ffffff;
+}
+
+p.helper-speech {
+    background-color: #ffffff;
+    padding: 5px;
+}
+
+p.user-speech {
+    background-color: #bbbbbb;
+    text-align: right;
+    padding: 5px;
+}
+
+p.user-speech-input {
+    text-align: right;
+    padding: 5px;
 }

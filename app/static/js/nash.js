@@ -16,7 +16,8 @@ var ui_state = {
     mousedown_node: null,
     mouseup_node: null,
     backspace_deletes: true,
-    context_open: false
+    context_open: false,
+    helper_state: "start"
 }
 
 var bkgd_menu = [
@@ -344,6 +345,64 @@ function mark_locked() {
 function mark_false() {
     ui_state.selected_node.truth = false;
     redraw();
+}
+
+function helper_talk(data_in) {
+    $("#helper-talk").show();
+
+    console.log(data_in);
+    data_in.helper_state = ui_state.helper_state;
+
+    if (data_in.user_speech) {
+        d3.select("#helper-talk").html(
+            d3.select("#helper-talk").html() + data_in.user_speech);
+    }
+    
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: '/_helper_interaction',
+        dataType: 'json',
+        async: true,
+        data: JSON.stringify(data_in),
+        success: function (data) {
+            d3.select("#helper-talk")
+                .html(d3.select("#helper-talk").html() + data.helper_speech);
+            d3.select("#user-talk-input")
+                .html(data.response);
+            ui_state.helper_state = data.helper_state;
+            var div = document.getElementById("helper-talk");
+            div.scrollTop = div.scrollHeight;
+            if (data.create_node) {
+                create_node(data.create_node);
+            }
+            if (data.minimize) {
+                $("#helper-talk").hide();
+            }
+        },
+        error: function (data) {
+            d3.select("#helper-talk")
+                .html("I am a sad bear.");
+        }
+    });
+}
+
+function create_node(label) {
+    var node = {x: 0, y: 0, id: next_id,
+                label: label, detailed: label};
+    next_id += 1;
+    nodes.push(node);
+    redraw();
+}
+
+function user_speech(elt, evt) {
+    var s = elt.value + String.fromCharCode(evt.keyCode);
+    if (evt.keyCode == 13) {
+        helper_talk({
+            user_speech: '<p class="user-speech">' + s + '</p>',
+            user_input: s
+        });
+    }
 }
 
 function save() {

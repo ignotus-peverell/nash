@@ -19,6 +19,7 @@ from app.models import (UserProfileForm, FriendForm, Graph, GraphRevision, User,
 from app.images import process_profile_picture
 from app.utils import (subjective_graph_nodes, subjective_graph_edges,
                        objective_graph_nodes, objective_graph_edges)
+from app.helper import Helper
 
 # set up Flask Mail
 mail = Mail(app)
@@ -248,6 +249,18 @@ def save_graph():
             mail.send(msg_to_helper)
 
     return jsonify(result="success")
+
+
+@app.route('/_helper_interaction', methods=['POST'])
+@login_required
+def helper_interaction():
+    data = json.loads(request.data)
+    if hasattr(Helper, data['helper_state']):
+        new_data = getattr(Helper, data['helper_state'])(data)
+    else:
+        new_data = Helper.default(data)
+    return json.dumps(new_data)
+
 
 @app.route('/_share_graph', methods=['POST'])
 @login_required  # Limits access to authenticated users
