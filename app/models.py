@@ -88,7 +88,8 @@ class Graph(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50), nullable=False, server_default=u'')
     description = db.Column(db.String(1000), nullable=False, server_default=u'')
-
+    public = db.Column(db.Boolean(), nullable=False)
+    
     # Relationships
     owners = db.relationship('User', secondary='users_graphs_owner', backref=db.backref('graphs_owned', lazy='dynamic'))
     helpers = db.relationship('User', secondary='users_graphs_helpers', backref=db.backref('graphs_helping', lazy='dynamic'))

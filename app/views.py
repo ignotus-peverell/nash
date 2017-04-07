@@ -19,6 +19,7 @@ from app.models import (UserProfileForm, FriendForm, Graph, GraphRevision, User,
 from app.images import process_profile_picture
 from app.utils import (subjective_graph_nodes, subjective_graph_edges,
                        objective_graph_nodes, objective_graph_edges)
+from app.helper import Helper
 
 # set up Flask Mail
 mail = Mail(app)
@@ -120,6 +121,22 @@ def graph_page(id):
 
     return render_template('pages/graph_page.html')
 
+@app.route('/tutorial/<id>')
+def tutorial_page(id):
+    graph = Graph.query.get(id)
+    if not graph.public:
+        return redirect(url_for('graph_list_page'))
+
+    nodes, edges, helpers, default_helper = get_graph_data(graph)
+
+    return render_template('pages/graph_page.html', save_id=id,
+                           graph_name=graph.name,
+                           nodes=json.dumps(nodes), edges=json.dumps(edges),
+                           helpers=json.dumps(helpers),
+                           default_helper=json.dumps(default_helper),
+                           helper_state=json.dumps(graph.name))
+>>>>>>> Initial draft of the helper bear
+
 @app.route('/_graph/<id>')
 @login_required  # Limits access to authenticated users
 def graph_json(id):
@@ -185,6 +202,7 @@ def save_graph():
         graph.owners = [current_user]
         db.session.add(graph)
     graph.name = save_name
+    graph.public = False
 
     view = GraphViewRevision()
     view.nodes = pickle.dumps(subjective_graph_nodes(nodes))
@@ -241,6 +259,17 @@ def save_graph():
             mail.send(msg_to_helper)
 
     return jsonify(result="success")
+
+
+@app.route('/_helper_interaction', methods=['POST'])
+def helper_interaction():
+    data = json.loads(request.data)
+    if hasattr(Helper, data['helper_state']):
+        new_data = getattr(Helper, data['helper_state'])(data)
+    else:
+        new_data = Helper.default(data)
+    return json.dumps(new_data)
+
 
 @app.route('/_share_graph', methods=['POST'])
 @login_required  # Limits access to authenticated users

@@ -37,7 +37,9 @@ nash.controller('GraphCtrl', [
             mouseup_node: null,
             backspace_deletes: true,
             context_open: false,
-            is_saving: false
+            is_saving: false,
+            helper_state: "start",
+            helper_wants_node: false
         };
 
         // The actions for mutating the graph state.
@@ -50,9 +52,15 @@ nash.controller('GraphCtrl', [
                 graphState.selected_node = null;
             },
             toggleSelectedNode: function(node) {
-                graphState.selected_node = node === graphState.selected_edge ? null : node;
+                graphState.selected_node = node === graphState.selected_node ? null : node;
                 graphState.selected_edge = null;
                 graphState.backspace_deletes = graphState.selected_node !== null ? true : false;
+
+                if (graphState.helper_wants_node) {
+                    helper_talk({node: node,
+                                 user_speech: '<p class="user-speech">Clicked ' +
+                                 node.label + '</p>'});
+                }
             },
             openContextMenu: function() {
                 graphState.context_open = true;
