@@ -17,7 +17,8 @@ var ui_state = {
     mouseup_node: null,
     backspace_deletes: true,
     context_open: false,
-    helper_state: "start"
+    helper_state: "start",
+    helper_wants_node: false
 }
 
 var bkgd_menu = [
@@ -254,6 +255,12 @@ function select_node(node) {
         document.getElementById("detailed-description-node").blur();
         ui_state.backspace_deletes = true;
 
+
+        if (ui_state.helper_wants_node) {
+            helper_talk({node: node,
+                         user_speech: '<p class="user-speech">Clicked ' +
+                         node.label + '</p>'});
+        }
     }
 
     redraw();
@@ -376,13 +383,20 @@ function helper_talk(data_in) {
             if (data.create_node) {
                 create_node(data.create_node);
             }
+            if (data.create_edge) {
+                create_edge(data.create_edge[0], data.create_edge[1]);
+            }
+            if (data.select_node) {
+                ui_state.helper_wants_node = true;
+            }
             if (data.minimize) {
                 $("#helper-talk").hide();
             }
         },
         error: function (data) {
             d3.select("#helper-talk")
-                .html("I am a sad bear.");
+                .html(d3.select("#helper-talk").html() +
+                      '<p class="helper-speech">I am a sad bear.</p>');
         }
     });
 }
@@ -392,6 +406,25 @@ function create_node(label) {
                 label: label, detailed: label};
     next_id += 1;
     nodes.push(node);
+    redraw();
+}
+
+function create_edge(label1, label2) {
+    var node1 = null;
+    var node2 = null;
+    nodes.forEach(function (n) {
+        if (n.label === label1) {
+            node1 = n;
+        }
+        if (n.label === label2) {
+            node2 = n;
+        }
+    });
+    if (node1 && node2) {
+        edges.push({source: node1,
+                    target: node2, detailed: ""});
+    }
+
     redraw();
 }
 

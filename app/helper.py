@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, session
 import json
 
 def helper_speech(*ps):
@@ -50,10 +50,12 @@ class Helper(object):
                 helper_state='start3',
                 helper_speech=helper_speech(
                     'Great!',
-                    "What's the thing that's most troubling you?"),
+                    "What would you like help with?"),
                 response=response_options(
                     talk=[('Something weird happened', 'weird'),
-                          ('Nobody believes me', 'belief')]
+                          ('Nobody believes me', 'belief'),
+                          ('I want to add stuff to the graph I already made',
+                           'help')]
                 ))
         else:
             return dict(
@@ -82,11 +84,52 @@ class Helper(object):
                     "What's a short description of the thing that people won't believe you about?"),
                 response=response_field()
             )
+        elif data['talk'] == 'help':
+            return dict(
+                helper_state='help',
+                helper_speech=helper_speech(
+                    "Why don't you click on the node you want help with?"
+                ),
+                select_node=True,
+                response=''
+            )
         else:
             assert False
 
     @staticmethod
+    def help(data):
+        session['focus_node'] = data['node']['label']
+        return dict(helper_state='help2',
+                    helper_speech=helper_speech(
+                        "Is this something you witnessed directly?"
+                    ),
+                    response=yes_no('talk')
+        )
+
+    @staticmethod
+    def help2(data):
+        if data['talk']:
+            return dict(helper_state='help_weird',
+                        helper_speech=helper_speech(
+                            "OK. Let's think about what could have caused this.",
+                            "Do you have any ideas?",
+                            "You can click on a node or tell me a new thing."
+                        ),
+                        select_node=True,
+                        response=response_field()
+            )
+        else:
+            pass
+
+    @staticmethod
+    def help_weird(data):
+        if 'node' in data:
+            session['focus_node'] = data['node']['label']
+        return Helper.default(data)
+    
+    @staticmethod
     def node_weird(data):
+        session['weird_node'] = data['user_input']
         return dict(
             helper_state="node_weird2",
             helper_speech=helper_speech(
@@ -105,6 +148,7 @@ class Helper(object):
                 'OK, I created a node for that',
                 'Can you think of anything else that could have caused this?'),
             create_node=data['user_input'],
+            create_edge=(data['user_input'], session['weird_node']),
             response=yes_no('talk')
         )
 
