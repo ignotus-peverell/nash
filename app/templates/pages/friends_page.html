@@ -4,7 +4,11 @@
 <h1>Friends</h1>
 
 {% for f in friendships %}
-<p><a href="{{ url_for('user_page', id=f.friendee.id) }}">{{ f.friendee.first_name }}
+<p><a href="{{ url_for('user_page', id=f.friendee.id) }}">
+    {% if f.friendee.photo_file_name != '': %}
+    <img src="{{ url_for('static', filename='images/users/' + f.friendee.photo_file_name) }}" /><br />
+    {% endif %}
+    {{ f.friendee.first_name }}
     {{ f.friendee.last_name }}</a>
 </p>
 {% endfor %}
