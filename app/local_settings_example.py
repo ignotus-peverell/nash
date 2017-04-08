@@ -13,7 +13,7 @@ DEBUG = True
 SECRET_KEY = 'This is an UNSECURE Secret. CHANGE THIS for production environments.'
 
 # SQLAlchemy settings
-SQLALCHEMY_DATABASE_URI = 'sqlite:///../app.sqlite'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///app.sqlite'
 
 # Flask-Mail settings
 # For smtp.gmail.com to work, you MUST set "Allow less secure apps" to ON in Google Accounts.
