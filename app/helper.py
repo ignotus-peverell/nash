@@ -33,6 +33,10 @@ def yes_no(var):
     kwargs[var] = [('Yes', True), ('No', False)]
     return response_options(**kwargs)
 
+"""
+
+"""
+
 class Helper(object):
     @staticmethod
     def start(data):
@@ -119,17 +123,25 @@ class Helper(object):
                         response=response_field()
             )
         else:
-            pass
-
+            return Helper.default(data)
+            
     @staticmethod
     def help_weird(data):
         if 'node' in data:
             session['focus_node'] = data['node']['label']
+        else:
+            assert 'user_input' in data
+            return Helper.node_weird2(data)
+
+    @staticmethod
+    def help_belief(data):
+        if 'node' in data:
+            session['focus_node'] = data['node']['label']
         return Helper.default(data)
-    
+
     @staticmethod
     def node_weird(data):
-        session['weird_node'] = data['user_input']
+        session['focus_node'] = data['user_input']
         return dict(
             helper_state="node_weird2",
             helper_speech=helper_speech(
@@ -148,7 +160,7 @@ class Helper(object):
                 'OK, I created a node for that',
                 'Can you think of anything else that could have caused this?'),
             create_node=data['user_input'],
-            create_edge=(data['user_input'], session['weird_node']),
+            create_edge=(data['user_input'], session['focus_node']),
             response=yes_no('talk')
         )
 
