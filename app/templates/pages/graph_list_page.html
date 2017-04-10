@@ -5,6 +5,7 @@
 
 {% for g in graphs %}
 <p><a href="{{ url_for('graph_page', id=g.id) }}">{{ g.name }}</a>
+  (<a href="{{ url_for('graph_history', id=g.id) }}">History</a>)
   {% if current_user not in g.owners %}
   (<a href="{{ url_for('user_page', id=g.owners[0].id) }}">{{ g.owners[0].first_name }} {{ g.owners[0].last_name }}</a>)
   {% else %}
