@@ -2,7 +2,8 @@
 #
 # Authors: Ling Thio <ling.thio@gmail.com>
 
-
+import datetime
+import difflib
 from flask import redirect, render_template, render_template_string, Blueprint, flash
 from flask import request, url_for, jsonify
 from flask_user import current_user, login_required, roles_accepted
@@ -14,7 +15,7 @@ import os
 import uuid
 
 from app.init_app import app, db
-from app.models import UserProfileForm, FriendForm, Graph, User, Friendship
+from app.models import UserProfileForm, FriendForm, Graph, GraphRevision, User, Friendship
 from app.images import process_profile_picture
 
 # The Home page is accessible to anyone
@@ -49,15 +50,38 @@ def graph_list_page():
 @login_required  # Limits access to authenticated users
 def graph_page(id):
     graph = Graph.query.get(id)
-
+    revision = graph.current_revision
+    
     if current_user not in graph.owners and current_user not in graph.helpers:
         return redirect(url_for('graph_list_page'))
     
-    nodes = pickle.loads(str(graph.nodes))
-    edges = pickle.loads(str(graph.edges))
+    nodes = pickle.loads(str(revision.nodes))
+    edges = pickle.loads(str(revision.edges))
     return render_template('pages/graph_page.html', save_id=id,
                            nodes=json.dumps(nodes), edges=json.dumps(edges))
-        
+
+@app.route('/graph_diff/<id>')
+@login_required
+def graph_diff(id):
+    new_revision = GraphRevision.query.get(id)
+
+    if new_revision.previous_revision_id is None:
+        diff = difflib.HtmlDiff().make_table([''],
+                                             new_revision.string().split('\n'))
+    else:
+        old_revision = GraphRevision.query.get(new_revision.previous_revision_id)
+        diff = difflib.HtmlDiff().make_table(old_revision.string().split('\n'),
+                                             new_revision.string().split('\n'))
+
+    return render_template('pages/graph_diff_page.html', diff=diff)
+
+@app.route('/graph_history/<id>')
+@login_required
+def graph_history(id):
+    graph = Graph.query.get(id)
+
+    return render_template('pages/graph_history_page.html', graph=graph)
+
 @app.route('/newgraph')
 @login_required  # Limits access to authenticated users
 def graph_create_page():
@@ -76,18 +100,29 @@ def save_graph():
         save_name = "NO NAME"
     nodes = data['nodes']
     edges = data['edges']
+    print nodes
+    print edges
     graph = Graph.query.get(save_id)
+    revision = GraphRevision()
     if graph is None:
         graph = Graph()
+    graph.revisions.append(revision)
     graph.name = save_name
-    graph.nodes = pickle.dumps(nodes)
-    graph.edges = pickle.dumps(edges)
+    revision.previous_revision_id = graph.current_revision_id
+    revision.timestamp = datetime.datetime.now()
+    revision.nodes = pickle.dumps(nodes)
+    revision.edges = pickle.dumps(edges)
     graph.owners = [current_user]
-    
+
     # Save graph
     db.session.commit()
 
-    print pickle.loads(str(graph.nodes))
+    graph.current_revision_id = revision.id
+
+    db.session.commit()
+        
+
+    print pickle.loads(str(revision.nodes))
 
     return jsonify(result="success")
 
