@@ -1,32 +1,37 @@
 {% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
 
 {% block content %}
-<h1>Friends</h1>
 
-{% for f in friendships %}
-<p><a href="{{ url_for('user_page', id=f.friendee.id) }}">
-    {% if f.friendee.photo_file_name != '': %}
-    <img src="{{ url_for('static', filename='images/users/' + f.friendee.photo_file_name) }}" /><br />
-    {% endif %}
-    {{ f.friendee.first_name }}
-    {{ f.friendee.last_name }}</a>
-</p>
-{% endfor %}
 
-<h3>Add a friend</h3>
+<h1>Invite a Friend</h1>
 
-{% from "common/form_macros.html" import render_field, render_submit_field %}
-<form action="" method="POST" class="form" role="form">
+  {% from "common/form_macros.html" import render_field, render_submit_field %}
   <div class="row">
     <div class="col-sm-6 col-md-5 col-lg-4">
-    {{ form.hidden_tag() }}
 
-    {{ render_field(form.email, tabindex=240) }}
+      {{ form.hidden_tag() }}
+      {{ render_field(form.email, tabindex=240) }}
+      <input type="submit" value="Send Invite" onClick="invite_friend()"><br/>
 
-    {{ render_submit_field(form.submit, tabindex=280) }}
     </div>
   </div>
-</form>
 
+
+<h1>Incoming Friend Requests</h1>
+
+<h1>Friends</h1>
+
+  {% for f in friendships %}
+  <p><a href="{{ url_for('user_page', id=f.friendee.id) }}">
+      {% if f.friendee.photo_file_name != '': %}
+      <img src="{{ url_for('static', filename='images/users/' + f.friendee.photo_file_name) }}" /><br />
+      {% endif %}
+      {{ f.friendee.first_name }}
+      {{ f.friendee.last_name }}</a>
+  </p>
+  {% endfor %}
+
+
+<script src="/static/js/nash.js?version=invite_friend_0.2"></script>
 
 {% endblock %}

@@ -1,7 +1,3 @@
-# Copyright 2014 SolidBuilds.com. All rights reserved
-#
-# Authors: Ling Thio <ling.thio@gmail.com>
-
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from flask_user import UserMixin
 from flask_user.forms import RegisterForm
@@ -21,6 +17,14 @@ class Friendship(db.Model):
     friendee = db.relationship("User", foreign_keys=[friendee_id],
                                back_populates="cofriendships")
     
+class FriendshipInvites(db.Model):
+    __tablename__ = 'friendship_invites'
+    id = db.Column(db.Integer(), primary_key=True)
+    friender_id = db.Column(db.Integer(), nullable=True)
+    friendee_id = db.Column(db.Integer(), nullable=True) # this is null or 0 if friendee doesn't yet have account
+    friendee_email = db.Column(db.String(50), nullable=True, server_default=u'', unique=True) # can be null if an existing account
+    confirmed_at = db.Column(db.DateTime(), nullable=True) # if friendship is confirmed
+
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!
 class User(db.Model, UserMixin):

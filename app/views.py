@@ -1,12 +1,9 @@
-# Copyright 2014 SolidBuilds.com. All rights reserved
-#
-# Authors: Ling Thio <ling.thio@gmail.com>
-
-
 from flask import redirect, render_template, render_template_string, Blueprint, flash
 from flask import request, url_for, jsonify
 from flask_user import current_user, login_required, roles_accepted
 from flask_login.mixins import AnonymousUserMixin
+from flask_mail import Mail, Message
+
 from werkzeug.datastructures import CombinedMultiDict
 import json, random
 import cPickle as pickle
@@ -14,8 +11,11 @@ import os
 import uuid
 
 from app.init_app import app, db
-from app.models import UserProfileForm, FriendForm, Graph, User, Friendship
+from app.models import UserProfileForm, FriendForm, Graph, User, Friendship, FriendshipInvites
 from app.images import process_profile_picture
+
+# set up Flask Mail
+mail = Mail(app)
 
 # The Home page is accessible to anyone
 @app.route('/home')
@@ -144,6 +144,58 @@ def friends_page():
             
     return render_template('pages/friends_page.html',
                            friendships=current_user.friendships, form=form)
+
+@app.route('/_invite_friend', methods=['POST'])
+@login_required
+def invite_friend(): 
+
+    data = json.loads(request.data)
+    to_email = data['email']
+ 
+    inviter_name = current_user.first_name + " " + current_user.last_name
+    confirm_friend_url = request.host + "/friends"
+    register_url = request.host + "/user/register"
+
+
+    to_users = list(User.query.filter(User.email==to_email).all())
+
+    new_invite = FriendshipInvites()
+    new_invite.friender_id = current_user
+
+ 
+    if len(to_users) == 1:
+        # invite recipient already has an account 
+
+        new_invite.friendee_id = to_users.user_id 
+        db.session.commit()
+        # DEBUG / TODO: Why is this not stored in the DB?
+
+        msg = Message("Friend Request from " + inviter_name, recipients=[to_email])
+        msg.body = inviter_name + " has invited you to be friends on Nash! \n\nPlease visit " + confirm_friend_url + " to confirm the friend request. \n\nThanks,\n- Nash"
+        mail.send(msg)
+
+    else: 
+        # invite recipient does NOT already have an account, will need to join Nash
+
+        new_invite.friendee_email = to_email
+        db.session.commit()
+        # DEBUG / TODO: Why is this not stored in the DB?
+
+        msg = Message("Invite from " + inviter_name + " to Nash", recipients=[to_email])
+
+        msg.body = inviter_name + " has invited you to be friends on Nash, a tool for reality testing. \n\nPlease visit " + register_url + " to sign up for Nash! \n\nYou can then visit " + confirm_friend_url + " confirm the friend request. \n\nThanks,\n- Nash"
+        mail.send(msg)
+
+
+
+
+
+    # Add friend
+    # db.session.commit()
+
+
+    return jsonify(result="success")
+
 
 @app.route('/pages/profile', methods=['GET', 'POST'])
 @login_required
