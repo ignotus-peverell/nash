@@ -39,7 +39,8 @@ class User(db.Model, UserMixin):
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
-    photo_file_name = db.Column('photo_file_name',db.String(260), nullable=True, server_default=u'')
+    photo_file_name = db.Column('photo_file_name',db.String(260), nullable=True,
+                                server_default='default.png')
 
     # Relationships
     roles = db.relationship('Role', secondary='users_roles',
@@ -70,6 +71,9 @@ class Graph(db.Model):
     revisions = db.relationship('GraphRevision',
                                 foreign_keys="GraphRevision.graph_id")
 
+    views = db.relationship('GraphViewRevision',
+                            foreign_keys="GraphViewRevision.graph_id")
+
     current_revision_id = db.Column(db.Integer(),
                                     db.ForeignKey('graph_revisions.id'))
     current_revision = db.relationship('GraphRevision',
@@ -80,20 +84,21 @@ class GraphViewRevision(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
 
     graph_id = db.Column(db.Integer(), db.ForeignKey('graphs.id'))
+    graph = db.relationship('Graph', foreign_keys=graph_id)
     
     author_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
-    author = db.relationship('User', foreign_keys=[author_id])
+    author = db.relationship('User', foreign_keys=author_id)
 
-    nodes = db.Column(db.String(10 * 1000), nullable=False, server_default=u'')
-    edges = db.Column(db.String(10 * 1000), nullable=False, server_default=u'')
+    nodes = db.Column(db.String(10 * 1000), nullable=False, server_default='')
+    edges = db.Column(db.String(10 * 1000), nullable=False, server_default='')
 
     timestamp = db.Column(db.DateTime())
         
 class GraphRevision(db.Model):
     __tablename__ = 'graph_revisions'
     id = db.Column(db.Integer(), primary_key=True)
-    nodes = db.Column(db.String(10 * 1000), nullable=False, server_default=u'')
-    edges = db.Column(db.String(10 * 1000), nullable=False, server_default=u'')
+    nodes = db.Column(db.String(10 * 1000), nullable=False, server_default='')
+    edges = db.Column(db.String(10 * 1000), nullable=False, server_default='')
 
     graph_id = db.Column(db.Integer(), db.ForeignKey('graphs.id'))
     graph = db.relationship('Graph', foreign_keys="GraphRevision.graph_id")
