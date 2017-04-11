@@ -1,32 +1,47 @@
 {% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
 
 {% block content %}
-<h1>Friends</h1>
 
-{% for f in friendships %}
-<p><a href="{{ url_for('user_page', id=f.friendee.id) }}">
-    {% if f.friendee.photo_file_name != '': %}
-    <img src="{{ url_for('static', filename='images/users/' + f.friendee.photo_file_name) }}" /><br />
-    {% endif %}
-    {{ f.friendee.first_name }}
-    {{ f.friendee.last_name }}</a>
-</p>
-{% endfor %}
 
-<h3>Add a friend</h3>
+<h1>Invite a Friend</h1>
 
-{% from "common/form_macros.html" import render_field, render_submit_field %}
-<form action="" method="POST" class="form" role="form">
+  {% from "common/form_macros.html" import render_field, render_submit_field %}
   <div class="row">
     <div class="col-sm-6 col-md-5 col-lg-4">
-    {{ form.hidden_tag() }}
 
-    {{ render_field(form.email, tabindex=240) }}
+      {{ form.hidden_tag() }}
+      {{ render_field(form.email, tabindex=240) }}
+      <!-- TODO: With AJAX method, the front-end UI might need loader or other visual indicator. --> 
+      <input type="submit" value="Send Invite" onClick="invite_friend()"><br/>
 
-    {{ render_submit_field(form.submit, tabindex=280) }}
     </div>
   </div>
-</form>
 
+
+<h1>Incoming Friend Requests</h1> <br>
+
+  {% for i in incoming_invites %}
+    <p><a href="{{ url_for('user_page', id=i.friender_id) }}">
+      {% if i.friender_photo != '': %}
+        <img src="{{ url_for('static', filename='images/users/' + i.friender_photo) }}" /><br />
+      {% endif %}
+      {{ i.friender_name }}</a> &nbsp;&nbsp; <input type="submit" value="Confirm Request" onClick="confirm_friend({{ i.friender_id }})"><br/>
+    </p>
+  {% endfor %}
+
+<h1>Friends</h1>
+
+  {% for f in friendships %}
+  <p><a href="{{ url_for('user_page', id=f.friendee.id) }}">
+      {% if f.friendee.photo_file_name != '': %}
+        <img src="{{ url_for('static', filename='images/users/' + f.friendee.photo_file_name) }}" /><br />
+      {% endif %}
+      {{ f.friendee.first_name }}
+      {{ f.friendee.last_name }}</a>
+  </p>
+  {% endfor %}
+
+
+<script src="/static/js/nash.js?version=invite_friend_0.5"></script>
 
 {% endblock %}

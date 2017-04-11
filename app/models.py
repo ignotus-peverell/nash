@@ -1,7 +1,3 @@
-# Copyright 2014 SolidBuilds.com. All rights reserved
-#
-# Authors: Ling Thio <ling.thio@gmail.com>
-
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from flask_user import UserMixin
 from flask_user.forms import RegisterForm
@@ -17,10 +13,25 @@ class Friendship(db.Model):
     friendee_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     friender = db.relationship("User", foreign_keys=[friender_id],
                                back_populates="friendships")
-
     friendee = db.relationship("User", foreign_keys=[friendee_id],
                                back_populates="cofriendships")
     
+class FriendshipInvites(db.Model):
+    __tablename__ = 'friendship_invites'
+    id = db.Column(db.Integer(), primary_key=True)
+
+    friender_id = db.Column(db.Integer(), nullable=False)
+    friender_name = db.Column(db.Unicode(100), nullable=False, server_default=u'') # for easy access
+    friender_photo = db.Column('photo_file_name',db.String(260), nullable=True, server_default=u'') # for easy access
+
+    # info about the invite recipient, who may or may already already have an account (e.g. 0)
+    friendee_id = db.Column(db.Integer(), nullable=True) # this is null or 0 if friendee doesn't yet have account
+    friendee_email = db.Column(db.String(50), nullable=True, server_default=u'') # can be null if an existing account
+
+    # if friendship is confirmed
+    confirmed_at = db.Column(db.DateTime(), nullable=True) 
+
+    invited_at = db.Column(db.DateTime(), nullable=True) 
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!
 class User(db.Model, UserMixin):
@@ -89,13 +100,6 @@ class UsersGraphsHelpers(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     graph_id = db.Column(db.Integer(), db.ForeignKey('graphs.id', ondelete='CASCADE'))
-
-
-class UsersFriendships(db.Model):
-    __tablename__ = 'users_friendships'
-    id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
-    friendship_id = db.Column(db.Integer(), db.ForeignKey('friendships.id', ondelete='CASCADE'))
 
 
 # Define the User registration form
