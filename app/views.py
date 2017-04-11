@@ -14,8 +14,11 @@ import uuid
 import datetime
 
 from app.init_app import app, db
-from app.models import UserProfileForm, FriendForm, Graph, GraphRevision, User, FriendshipInvite
+from app.models import (UserProfileForm, FriendForm, Graph, GraphRevision, User,
+                        Friendship, GraphViewRevision, FriendshipInvite)
 from app.images import process_profile_picture
+from app.utils import (subjective_graph_nodes, subjective_graph_edges,
+                       objective_graph_nodes, objective_graph_edges)
 
 # set up Flask Mail
 mail = Mail(app)
@@ -59,8 +62,36 @@ def graph_page(id):
     
     nodes = pickle.loads(str(revision.nodes))
     edges = pickle.loads(str(revision.edges))
+    helpers = []
+    default_helper = None
+    owner_helper = None
+    for u in graph.owners + graph.helpers:
+        views = GraphViewRevision.query.filter(
+            (GraphViewRevision.graph_id == graph.id)
+            & (GraphViewRevision.author_id == u.id)).order_by(
+                'timestamp').all()
+        view = views[-1]
+        h = dict(id=u.id,
+                 name=" ".join([u.first_name, u.last_name]),
+                 photo=os.path.join('/static/images/users/',
+                                    u.photo_file_name),
+                 view_nodes=pickle.loads(str(view.nodes)),
+                 view_edges=pickle.loads(str(view.edges)))
+        helpers.append(h)
+        if u == current_user:
+            default_helper = h
+        if u in graph.owners:
+            owner_helper = h
+    if default_helper is None:
+        default_helper = owner_helper
+
+    assert default_helper is not None
+
     return render_template('pages/graph_page.html', save_id=id,
-                           nodes=json.dumps(nodes), edges=json.dumps(edges))
+                           graph_name=graph.name,
+                           nodes=json.dumps(nodes), edges=json.dumps(edges),
+                           helpers=json.dumps(helpers),
+                           default_helper=json.dumps(default_helper))
 
 @app.route('/graph_diff/<id>')
 @login_required
@@ -104,27 +135,35 @@ def save_graph():
     edges = data['edges']
     print nodes
     print edges
+
     graph = Graph.query.get(save_id)
-    revision = GraphRevision()
     if graph is None:
         graph = Graph()
-    graph.revisions.append(revision)
+        graph.owners = [current_user]
+        db.session.add(graph)
     graph.name = save_name
+    
+    view = GraphViewRevision()
+    view.nodes = pickle.dumps(subjective_graph_nodes(nodes))
+    view.edges = pickle.dumps(subjective_graph_edges(edges))
+    view.author = current_user
+    view.timestamp = datetime.datetime.now()
+
+    revision = GraphRevision()
     revision.previous_revision_id = graph.current_revision_id
+    revision.author = current_user
     revision.timestamp = datetime.datetime.now()
-    revision.nodes = pickle.dumps(nodes)
-    revision.edges = pickle.dumps(edges)
-    graph.owners = [current_user]
+    revision.nodes = pickle.dumps(objective_graph_nodes(nodes))
+    revision.edges = pickle.dumps(objective_graph_edges(edges))
+
+    graph.views.append(view)
+    graph.revisions.append(revision)
 
     # Save graph
     db.session.commit()
 
     graph.current_revision_id = revision.id
-
     db.session.commit()
-        
-
-    print pickle.loads(str(revision.nodes))
 
     return jsonify(result="success")
 
