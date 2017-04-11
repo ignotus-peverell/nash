@@ -18,6 +18,16 @@ var ui_state = {
     backspace_deletes: true
 }
 
+function adopt_view(helper) {
+    console.log(helper);
+    helper.view_nodes.forEach(function (n) {
+        console.log(n);
+        nodes[n.index].truth = n.truth;
+    });
+
+    redraw();
+}
+
 function show_node_infobox() {
     d3.select("#infobox-node").style("display", "block");
     d3.select("#infobox-edge").style("display", "none");

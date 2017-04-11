@@ -1,3 +1,4 @@
+import cPickle as pickle
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from flask_user import UserMixin
 from flask_user.forms import RegisterForm
@@ -16,17 +17,27 @@ class Friendship(db.Model):
     friendee = db.relationship("User", foreign_keys=[friendee_id],
                                back_populates="cofriendships")
     
-class FriendshipInvites(db.Model):
+class FriendshipInvite(db.Model):
     __tablename__ = 'friendship_invites'
     id = db.Column(db.Integer(), primary_key=True)
 
-    friender_id = db.Column(db.Integer(), nullable=False)
-    friender_name = db.Column(db.Unicode(100), nullable=False, server_default=u'') # for easy access
-    friender_photo = db.Column('photo_file_name',db.String(260), nullable=True, server_default=u'') # for easy access
+    friender_id = db.Column(db.Integer(),
+                            db.ForeignKey('users.id', ondelete='CASCADE'),
+                            nullable=False)
+    friender = db.relationship("User", foreign_keys=[friender_id],
+                               back_populates="friendship_invites")
 
-    # info about the invite recipient, who may or may already already have an account (e.g. 0)
-    friendee_id = db.Column(db.Integer(), nullable=True) # this is null or 0 if friendee doesn't yet have account
-    friendee_email = db.Column(db.String(50), nullable=True, server_default=u'') # can be null if an existing account
+    # info about the invite recipient, who may or may already already
+    # have an account (e.g. 0)
+    friendee_id = db.Column(db.Integer(),
+                            db.ForeignKey('users.id', ondelete='CASCADE'),
+                            nullable=True) # this is null or 0 if
+                                           # friendee doesn't yet have
+                                           # account
+    # can be null if an existing account
+    friendee_email = db.Column(db.String(50), nullable=True, server_default='')
+    friendee = db.relationship("User", foreign_keys=[friendee_id],
+                               back_populates="cofriendship_invites")
 
     # if friendship is confirmed
     confirmed_at = db.Column(db.DateTime(), nullable=True) 
@@ -49,7 +60,8 @@ class User(db.Model, UserMixin):
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
-    photo_file_name = db.Column('photo_file_name',db.String(260), nullable=True, server_default=u'')
+    photo_file_name = db.Column('photo_file_name',db.String(260), nullable=True,
+                                server_default='default.png')
 
     # Relationships
     roles = db.relationship('Role', secondary='users_roles',
@@ -57,6 +69,10 @@ class User(db.Model, UserMixin):
 
     friendships = db.relationship('Friendship', foreign_keys=[Friendship.friender_id])
     cofriendships = db.relationship('Friendship', foreign_keys=[Friendship.friendee_id])
+    friendship_invites = db.relationship('FriendshipInvite',
+                                         foreign_keys=[FriendshipInvite.friender_id])
+    cofriendship_invites = db.relationship('FriendshipInvite',
+                                           foreign_keys=[FriendshipInvite.friendee_id])
 
  
 # Define the Role data model
@@ -66,20 +82,70 @@ class Role(db.Model):
     name = db.Column(db.String(50), nullable=False, server_default=u'', unique=True)  # for @roles_accepted()
     label = db.Column(db.Unicode(255), server_default=u'')  # for display purposes
     
-
+    
 class Graph(db.Model):
     __tablename__ = 'graphs'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50), nullable=False, server_default=u'')
     description = db.Column(db.String(1000), nullable=False, server_default=u'')
-    nodes = db.Column(db.String(10 * 1000), nullable=False, server_default=u'')
-    edges = db.Column(db.String(10 * 1000), nullable=False, server_default=u'')
 
     # Relationships
     owners = db.relationship('User', secondary='users_graphs_owner', backref=db.backref('graphs_owned', lazy='dynamic'))
     helpers = db.relationship('User', secondary='users_graphs_helpers', backref=db.backref('graphs_helping', lazy='dynamic'))
 
+    revisions = db.relationship('GraphRevision',
+                                foreign_keys="GraphRevision.graph_id")
 
+    views = db.relationship('GraphViewRevision',
+                            foreign_keys="GraphViewRevision.graph_id")
+
+    current_revision_id = db.Column(db.Integer(),
+                                    db.ForeignKey('graph_revisions.id'))
+    current_revision = db.relationship('GraphRevision',
+                                       foreign_keys=[current_revision_id])
+
+class GraphViewRevision(db.Model):
+    __tablename__ = 'graph_view_revisions'
+    id = db.Column(db.Integer(), primary_key=True)
+
+    graph_id = db.Column(db.Integer(), db.ForeignKey('graphs.id'))
+    graph = db.relationship('Graph', foreign_keys=graph_id)
+    
+    author_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    author = db.relationship('User', foreign_keys=author_id)
+
+    nodes = db.Column(db.String(10 * 1000), nullable=False, server_default='')
+    edges = db.Column(db.String(10 * 1000), nullable=False, server_default='')
+
+    timestamp = db.Column(db.DateTime())
+        
+class GraphRevision(db.Model):
+    __tablename__ = 'graph_revisions'
+    id = db.Column(db.Integer(), primary_key=True)
+    nodes = db.Column(db.String(10 * 1000), nullable=False, server_default='')
+    edges = db.Column(db.String(10 * 1000), nullable=False, server_default='')
+
+    graph_id = db.Column(db.Integer(), db.ForeignKey('graphs.id'))
+    graph = db.relationship('Graph', foreign_keys="GraphRevision.graph_id")
+
+    previous_revision_id = db.Column(db.Integer(),
+                                     db.ForeignKey('graph_revisions.id'))
+
+    timestamp = db.Column(db.DateTime())
+
+    author_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    author = db.relationship('User', foreign_keys=[author_id])
+    
+    def string(self):
+        nodes = pickle.loads(str(self.nodes))
+        edges = pickle.loads(str(self.edges))
+        rv = ""
+        rv += "\n".join('Node label: ' + str(node['label']) + "\nNode details: " +
+                        str(node['detailed']) + "\n"
+                        for node in nodes)
+        rv += "\n".join('Edge detail: ' + str(edge['detailed']) for edge in edges)
+        return rv
+    
 # Define the UserRoles association model
 class UsersRoles(db.Model):
     __tablename__ = 'users_roles'

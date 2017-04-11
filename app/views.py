@@ -1,3 +1,5 @@
+import datetime
+import difflib
 from flask import redirect, render_template, render_template_string, Blueprint, flash
 from flask import request, url_for, jsonify
 from flask_user import current_user, login_required, roles_accepted
@@ -12,8 +14,11 @@ import uuid
 import datetime
 
 from app.init_app import app, db
-from app.models import UserProfileForm, FriendForm, Graph, User, Friendship, FriendshipInvites
+from app.models import (UserProfileForm, FriendForm, Graph, GraphRevision, User,
+                        Friendship, GraphViewRevision, FriendshipInvite)
 from app.images import process_profile_picture
+from app.utils import (subjective_graph_nodes, subjective_graph_edges,
+                       objective_graph_nodes, objective_graph_edges)
 
 # set up Flask Mail
 mail = Mail(app)
@@ -50,15 +55,66 @@ def graph_list_page():
 @login_required  # Limits access to authenticated users
 def graph_page(id):
     graph = Graph.query.get(id)
-
+    revision = graph.current_revision
+    
     if current_user not in graph.owners and current_user not in graph.helpers:
         return redirect(url_for('graph_list_page'))
     
-    nodes = pickle.loads(str(graph.nodes))
-    edges = pickle.loads(str(graph.edges))
+    nodes = pickle.loads(str(revision.nodes))
+    edges = pickle.loads(str(revision.edges))
+    helpers = []
+    default_helper = None
+    owner_helper = None
+    for u in graph.owners + graph.helpers:
+        views = GraphViewRevision.query.filter(
+            (GraphViewRevision.graph_id == graph.id)
+            & (GraphViewRevision.author_id == u.id)).order_by(
+                'timestamp').all()
+        view = views[-1]
+        h = dict(id=u.id,
+                 name=" ".join([u.first_name, u.last_name]),
+                 photo=os.path.join('/static/images/users/',
+                                    u.photo_file_name),
+                 view_nodes=pickle.loads(str(view.nodes)),
+                 view_edges=pickle.loads(str(view.edges)))
+        helpers.append(h)
+        if u == current_user:
+            default_helper = h
+        if u in graph.owners:
+            owner_helper = h
+    if default_helper is None:
+        default_helper = owner_helper
+
+    assert default_helper is not None
+
     return render_template('pages/graph_page.html', save_id=id,
-                           nodes=json.dumps(nodes), edges=json.dumps(edges))
-        
+                           graph_name=graph.name,
+                           nodes=json.dumps(nodes), edges=json.dumps(edges),
+                           helpers=json.dumps(helpers),
+                           default_helper=json.dumps(default_helper))
+
+@app.route('/graph_diff/<id>')
+@login_required
+def graph_diff(id):
+    new_revision = GraphRevision.query.get(id)
+
+    if new_revision.previous_revision_id is None:
+        diff = difflib.HtmlDiff().make_table([''],
+                                             new_revision.string().split('\n'))
+    else:
+        old_revision = GraphRevision.query.get(new_revision.previous_revision_id)
+        diff = difflib.HtmlDiff().make_table(old_revision.string().split('\n'),
+                                             new_revision.string().split('\n'))
+
+    return render_template('pages/graph_diff_page.html', diff=diff)
+
+@app.route('/graph_history/<id>')
+@login_required
+def graph_history(id):
+    graph = Graph.query.get(id)
+
+    return render_template('pages/graph_history_page.html', graph=graph)
+
 @app.route('/newgraph')
 @login_required  # Limits access to authenticated users
 def graph_create_page():
@@ -77,18 +133,37 @@ def save_graph():
         save_name = "NO NAME"
     nodes = data['nodes']
     edges = data['edges']
+    print nodes
+    print edges
+
     graph = Graph.query.get(save_id)
     if graph is None:
         graph = Graph()
+        graph.owners = [current_user]
+        db.session.add(graph)
     graph.name = save_name
-    graph.nodes = pickle.dumps(nodes)
-    graph.edges = pickle.dumps(edges)
-    graph.owners = [current_user]
     
+    view = GraphViewRevision()
+    view.nodes = pickle.dumps(subjective_graph_nodes(nodes))
+    view.edges = pickle.dumps(subjective_graph_edges(edges))
+    view.author = current_user
+    view.timestamp = datetime.datetime.now()
+
+    revision = GraphRevision()
+    revision.previous_revision_id = graph.current_revision_id
+    revision.author = current_user
+    revision.timestamp = datetime.datetime.now()
+    revision.nodes = pickle.dumps(objective_graph_nodes(nodes))
+    revision.edges = pickle.dumps(objective_graph_edges(edges))
+
+    graph.views.append(view)
+    graph.revisions.append(revision)
+
     # Save graph
     db.session.commit()
 
-    print pickle.loads(str(graph.nodes))
+    graph.current_revision_id = revision.id
+    db.session.commit()
 
     return jsonify(result="success")
 
@@ -127,10 +202,10 @@ def friends_page():
 
     # get incoming *non-confirmed* friendship invites based on either ID _or_ email address
 
-    invites = list(FriendshipInvites.query.filter( \
-                     (FriendshipInvites.confirmed_at==None) & \
-                     ((FriendshipInvites.friendee_id==current_user.id) | \
-                      (FriendshipInvites.friendee_email==current_user.email))).all())
+    invites = list(FriendshipInvite.query.filter( \
+                     (FriendshipInvite.confirmed_at==None) & \
+                     ((FriendshipInvite.friendee_id==current_user.id) | \
+                      (FriendshipInvite.friendee_email==current_user.email))).all())
 
     # make invites unique in case there are duplicate invites
     unique_invites = []
@@ -175,10 +250,8 @@ def invite_friend():
     confirm_friend_url = request.host + "/friends"
     register_url = request.host + "/user/register"
 
-    new_invite = FriendshipInvites()
+    new_invite = FriendshipInvite()
     new_invite.friender_id = current_user.id
-    new_invite.friender_name = inviter_name
-    new_invite.friender_photo = current_user.photo_file_name
     new_invite.invited_at = datetime.datetime.utcnow()
 
     to_users = list(User.query.filter(User.email==to_email).all())
@@ -219,30 +292,25 @@ def confirm_friend():
 
     friend = User.query.get(friend_id)
 
-    # update confirmed_at for all invites with friender_id=friend_id and target friend as current user
+    # update confirmed_at for all invites with friender_id=friend_id
+    # and target friend as current user
 
-    FriendshipInvites.query.filter( \
-                     (FriendshipInvites.friender_id==friend_id) & \
-                     (FriendshipInvites.confirmed_at==None) & \
-                     ((FriendshipInvites.friendee_id==current_user.id) | \
-                      (FriendshipInvites.friendee_email==current_user.email))).\
-               update({FriendshipInvites.confirmed_at: datetime.datetime.utcnow()})
+    FriendshipInvite.query.filter( \
+                     (FriendshipInvite.friender_id==friend_id) & \
+                     (FriendshipInvite.confirmed_at==None) & \
+                     ((FriendshipInvite.friendee_id==current_user.id) | \
+                      (FriendshipInvite.friendee_email==current_user.email))).\
+               update({FriendshipInvite.confirmed_at: datetime.datetime.utcnow()})
 
     # add to actual friends list for both current_user & friend
 
     friendship = Friendship()
-    friendship.friender_id = current_user.id
-    friendship.friendee_id = friend_id
     friendship.friender = current_user
     friendship.friendee = friend
-    current_user.friendships.append(friendship)
 
     friendship_mutual = Friendship()
-    friendship_mutual.friender_id = friend_id
-    friendship_mutual.friendee_id = current_user.id
     friendship_mutual.friender = friend
     friendship_mutual.friendee = current_user
-    friend.friendships.append(friendship_mutual)
 
     # save all changes
     db.session.commit()

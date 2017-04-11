@@ -1,0 +1,23 @@
+span.diff_sub {
+    background-color: #ff9999;
+}
+
+span.diff_add {
+    background-color: #99ff99;
+}
+
+.diff_next {
+    display: none;
+}
+
+span.diff_chg {
+    background-color: #ffff00;
+}
+
+table.diff td {
+    padding: 5px 20px;
+}
+
+table.diff {
+    
+}

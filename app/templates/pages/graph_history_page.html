@@ -1,0 +1,10 @@
+{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+<h1>History</h1>
+
+{% for revision in graph.revisions: %}
+<a href="{{ url_for('graph_diff', id=revision.id) }}">{{ revision.timestamp }}</a><br />
+{% endfor %}
+
+{% endblock %}
