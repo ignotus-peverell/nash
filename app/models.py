@@ -17,17 +17,27 @@ class Friendship(db.Model):
     friendee = db.relationship("User", foreign_keys=[friendee_id],
                                back_populates="cofriendships")
     
-class FriendshipInvites(db.Model):
+class FriendshipInvite(db.Model):
     __tablename__ = 'friendship_invites'
     id = db.Column(db.Integer(), primary_key=True)
 
-    friender_id = db.Column(db.Integer(), nullable=False)
-    friender_name = db.Column(db.Unicode(100), nullable=False, server_default=u'') # for easy access
-    friender_photo = db.Column('photo_file_name',db.String(260), nullable=True, server_default=u'') # for easy access
+    friender_id = db.Column(db.Integer(),
+                            db.ForeignKey('users.id', ondelete='CASCADE'),
+                            nullable=False)
+    friender = db.relationship("User", foreign_keys=[friender_id],
+                               back_populates="friendship_invites")
 
-    # info about the invite recipient, who may or may already already have an account (e.g. 0)
-    friendee_id = db.Column(db.Integer(), nullable=True) # this is null or 0 if friendee doesn't yet have account
-    friendee_email = db.Column(db.String(50), nullable=True, server_default=u'') # can be null if an existing account
+    # info about the invite recipient, who may or may already already
+    # have an account (e.g. 0)
+    friendee_id = db.Column(db.Integer(),
+                            db.ForeignKey('users.id', ondelete='CASCADE'),
+                            nullable=True) # this is null or 0 if
+                                           # friendee doesn't yet have
+                                           # account
+    # can be null if an existing account
+    friendee_email = db.Column(db.String(50), nullable=True, server_default='')
+    friendee = db.relationship("User", foreign_keys=[friendee_id],
+                               back_populates="cofriendship_invites")
 
     # if friendship is confirmed
     confirmed_at = db.Column(db.DateTime(), nullable=True) 
@@ -59,6 +69,10 @@ class User(db.Model, UserMixin):
 
     friendships = db.relationship('Friendship', foreign_keys=[Friendship.friender_id])
     cofriendships = db.relationship('Friendship', foreign_keys=[Friendship.friendee_id])
+    friendship_invites = db.relationship('FriendshipInvite',
+                                         foreign_keys=[FriendshipInvite.friender_id])
+    cofriendship_invites = db.relationship('FriendshipInvite',
+                                           foreign_keys=[FriendshipInvite.friendee_id])
 
  
 # Define the Role data model

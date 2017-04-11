@@ -202,10 +202,10 @@ def friends_page():
 
     # get incoming *non-confirmed* friendship invites based on either ID _or_ email address
 
-    invites = list(FriendshipInvites.query.filter( \
-                     (FriendshipInvites.confirmed_at==None) & \
-                     ((FriendshipInvites.friendee_id==current_user.id) | \
-                      (FriendshipInvites.friendee_email==current_user.email))).all())
+    invites = list(FriendshipInvite.query.filter( \
+                     (FriendshipInvite.confirmed_at==None) & \
+                     ((FriendshipInvite.friendee_id==current_user.id) | \
+                      (FriendshipInvite.friendee_email==current_user.email))).all())
 
     # make invites unique in case there are duplicate invites
     unique_invites = []
@@ -250,10 +250,8 @@ def invite_friend():
     confirm_friend_url = request.host + "/friends"
     register_url = request.host + "/user/register"
 
-    new_invite = FriendshipInvites()
+    new_invite = FriendshipInvite()
     new_invite.friender_id = current_user.id
-    new_invite.friender_name = inviter_name
-    new_invite.friender_photo = current_user.photo_file_name
     new_invite.invited_at = datetime.datetime.utcnow()
 
     to_users = list(User.query.filter(User.email==to_email).all())
@@ -294,30 +292,25 @@ def confirm_friend():
 
     friend = User.query.get(friend_id)
 
-    # update confirmed_at for all invites with friender_id=friend_id and target friend as current user
+    # update confirmed_at for all invites with friender_id=friend_id
+    # and target friend as current user
 
-    FriendshipInvites.query.filter( \
-                     (FriendshipInvites.friender_id==friend_id) & \
-                     (FriendshipInvites.confirmed_at==None) & \
-                     ((FriendshipInvites.friendee_id==current_user.id) | \
-                      (FriendshipInvites.friendee_email==current_user.email))).\
-               update({FriendshipInvites.confirmed_at: datetime.datetime.utcnow()})
+    FriendshipInvite.query.filter( \
+                     (FriendshipInvite.friender_id==friend_id) & \
+                     (FriendshipInvite.confirmed_at==None) & \
+                     ((FriendshipInvite.friendee_id==current_user.id) | \
+                      (FriendshipInvite.friendee_email==current_user.email))).\
+               update({FriendshipInvite.confirmed_at: datetime.datetime.utcnow()})
 
     # add to actual friends list for both current_user & friend
 
     friendship = Friendship()
-    friendship.friender_id = current_user.id
-    friendship.friendee_id = friend_id
     friendship.friender = current_user
     friendship.friendee = friend
-    current_user.friendships.append(friendship)
 
     friendship_mutual = Friendship()
-    friendship_mutual.friender_id = friend_id
-    friendship_mutual.friendee_id = current_user.id
     friendship_mutual.friender = friend
     friendship_mutual.friendee = current_user
-    friend.friendships.append(friendship_mutual)
 
     # save all changes
     db.session.commit()
