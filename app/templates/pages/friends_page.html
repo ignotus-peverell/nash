@@ -11,20 +11,30 @@
 
       {{ form.hidden_tag() }}
       {{ render_field(form.email, tabindex=240) }}
+      <!-- TODO: With AJAX method, the front-end UI might need loader or other visual indicator. --> 
       <input type="submit" value="Send Invite" onClick="invite_friend()"><br/>
 
     </div>
   </div>
 
 
-<h1>Incoming Friend Requests</h1>
+<h1>Incoming Friend Requests</h1> <br>
+
+  {% for i in incoming_invites %}
+    <p><a href="{{ url_for('user_page', id=i.friender_id) }}">
+      {% if i.friender_photo != '': %}
+        <img src="{{ url_for('static', filename='images/users/' + i.friender_photo) }}" /><br />
+      {% endif %}
+      {{ i.friender_name }}</a> &nbsp;&nbsp; <input type="submit" value="Confirm Request" onClick="confirm_friend({{ i.friender_id }})"><br/>
+    </p>
+  {% endfor %}
 
 <h1>Friends</h1>
 
   {% for f in friendships %}
   <p><a href="{{ url_for('user_page', id=f.friendee.id) }}">
       {% if f.friendee.photo_file_name != '': %}
-      <img src="{{ url_for('static', filename='images/users/' + f.friendee.photo_file_name) }}" /><br />
+        <img src="{{ url_for('static', filename='images/users/' + f.friendee.photo_file_name) }}" /><br />
       {% endif %}
       {{ f.friendee.first_name }}
       {{ f.friendee.last_name }}</a>
@@ -32,6 +42,6 @@
   {% endfor %}
 
 
-<script src="/static/js/nash.js?version=invite_friend_0.2"></script>
+<script src="/static/js/nash.js?version=invite_friend_0.5"></script>
 
 {% endblock %}

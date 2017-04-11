@@ -225,6 +225,28 @@ function invite_friend() {
 }
 
 
+function confirm_friend(friend_id) {
+
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: '/_confirm_friend',
+        dataType: 'json',
+        async: true,
+        data: JSON.stringify({friend_id: friend_id}),
+        success: function (data) {
+            window.location.reload(true); // refreshing window will show friend moved to Friends list
+            // any additional messages would've been cleared by the refresh
+        },
+        error: function (data) {
+            d3.select("#messages")
+                .attr("class", "alert alert-danger alert-dismissible")
+                .html('<strong>Error!</strong> Your friend was not added. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
+        }
+    });
+
+}
+
 function init_ui_hooks() {
     d3.select("#node-label").on("input", function () {
         change_label(this.value);
