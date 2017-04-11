@@ -75,14 +75,13 @@ def find_or_create_user(first_name, last_name, email, password, role=None):
 
 def add_tutorial_graphs():
     nodes = [{u'detailed': u'The grass is wet.', u'index': 0, u'locked': True,
-              u'weight': 1, u'self_causing': True,
-              u'label': u'Wet Grass', u'self_cause_weird': u'3', u'truth': True,
+              u'label': u'Wet Grass', u'self_cause_weird': u'3',
               u'y': 356, u'x': 508, u'id': 1},
-             {u'detailed': u'It rained yesterday.', u'index': 1, u'weight': 2,
-              u'self_causing': False, u'label': u'Rain',
+             {u'detailed': u'It rained yesterday.', u'index': 1,
+              u'label': u'Rain',
               u'self_cause_weird': u'0', u'y': 431, u'x': 327, u'id': 2},
              {u'detailed': u'I remember it raining yesterday.', u'index': 2,
-              u'locked': True, u'weight': 1, u'self_causing': False,
+              u'locked': True,
               u'label': u'Memory', u'self_cause_weird': u'3',
               u'y': 242, u'x': 380, u'id': 3}]
     subj_nodes_user = [{u'index': 0, u'self_cause_weird': u'3',
