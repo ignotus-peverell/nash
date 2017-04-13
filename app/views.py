@@ -79,7 +79,7 @@ def graph_page(id):
 
         if len(views) > 0:
             view = views[-1]
-            h['view_nodes'] = pickle.loads(str(view.nodes)),
+            h['view_nodes'] = pickle.loads(str(view.nodes))
             h['view_edges'] = pickle.loads(str(view.edges))
         else:
             # if no views from this helper, use empty lists
