@@ -70,18 +70,29 @@ def graph_page(id):
             (GraphViewRevision.graph_id == graph.id)
             & (GraphViewRevision.author_id == u.id)).order_by(
                 'timestamp').all()
-        view = views[-1]
+
+        # construct helper dict to pass into JS
         h = dict(id=u.id,
                  name=" ".join([u.first_name, u.last_name]),
                  photo=os.path.join('/static/images/users/',
-                                    u.photo_file_name),
-                 view_nodes=pickle.loads(str(view.nodes)),
-                 view_edges=pickle.loads(str(view.edges)))
+                                    u.photo_file_name))
+
+        if len(views) > 0:
+            view = views[-1]
+            h['view_nodes'] = pickle.loads(str(view.nodes)),
+            h['view_edges'] = pickle.loads(str(view.edges)))
+        else:
+            # if no views from this helper, use empty lists
+            h['view_nodes'] = []
+            h['view_edges'] = []
+
         helpers.append(h)
+
         if u == current_user:
             default_helper = h
         if u in graph.owners:
             owner_helper = h
+
     if default_helper is None:
         default_helper = owner_helper
 
