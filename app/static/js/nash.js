@@ -15,14 +15,185 @@ var ui_state = {
     mousedown_edge: null,
     mousedown_node: null,
     mouseup_node: null,
-    backspace_deletes: true
+    backspace_deletes: true,
+    context_open: false
 }
+
+var bkgd_menu = [
+    {title: 'Save',
+     action: function(elm, d, i) {
+         save();
+     }
+    },
+    {title: 'New node',
+     action: function(elm, d, i) {
+         new_node();
+     }
+    },
+    {title: 'Arrow mode',
+     action: function(elm, d, i) {
+         mode_arrows();
+     }
+    },
+    {title: 'Move mode',
+     action: function(elm, d, i) {
+         mode_move();
+     }
+    },
+]
+
+var node_menu = [
+    {title: function(x) {
+        return x.label + " (edit)";        
+    },
+     action: function(elm, d, i) {
+         $("#node-label").focus();
+     }
+    },
+    {title: function(x) {
+        return x.detailed + " (edit)";        
+    },
+     action: function(elm, d, i) {
+         $("#detailed-description-node").focus();
+     }
+    },
+    {title: 'Delete',
+     action: function(elm, d, i) {
+         delete_node(elm);
+         redraw();
+     }
+    },
+    {title: function(x) {
+        if (x.truth) {
+            return 'Make false';
+        } else {
+            return 'Make true';
+        }
+    },
+     action: function(elm, d, i) {
+         d.truth = !d.truth;
+         redraw();
+     }
+    },
+    {title: 'Very likely to happen for no reason',
+     action: function(elm, d, i) {
+         d.self_cause_weird = '0';
+         redraw();
+     }
+    },
+    {title: 'Fairly likely to happen for no reason',
+     action: function(elm, d, i) {
+         d.self_cause_weird = '1';
+         redraw();
+     }
+    },
+    {title: 'Somewhat likely to happen for no reason',
+     action: function(elm, d, i) {
+         d.self_cause_weird = '2';
+         redraw();
+     }
+    },
+    {title: 'Not at all likely to happen for no reason',
+     action: function(elm, d, i) {
+         d.self_cause_weird = '3';
+         redraw();
+     }
+    },
+]
+
+var edge_menu = [
+    {title: function(x) {
+        return x.label + " (edit)";        
+    },
+     action: function(elm, d, i) {
+         $("#edge-label").focus();
+     }
+    },
+    {title: function(x) {
+        return x.detailed + " (edit)";        
+    },
+     action: function(elm, d, i) {
+         $("#detailed-description-edge").focus();
+     }
+    },
+    {title: 'Delete',
+     action: function(elm, d, i) {
+         delete_edge(elm);
+         redraw();
+     }
+    },
+    {title: 'Reverse arrow',
+     action: function(elm, d, i) {
+         var tmp = d.source;
+         d.source = d.target;
+         d.target = tmp;
+         redraw();
+     }
+    },
+    {title: 'Very likely to cause',
+     action: function(elm, d, i) {
+         d.meaning = 'cause'
+         d.cause_weird = '3';
+         redraw();
+     }
+    },
+    {title: 'Fairly likely to cause',
+     action: function(elm, d, i) {
+         d.meaning = 'cause'
+         d.cause_weird = '2';
+         redraw();
+     }
+    },
+    {title: 'Somewhat likely to cause',
+     action: function(elm, d, i) {
+         d.meaning = 'cause'
+         d.cause_weird = '1';
+         redraw();
+     }
+    },
+    {title: 'Not at all likely to cause',
+     action: function(elm, d, i) {
+         d.meaning = 'cause'
+         d.cause_weird = '0';
+         redraw();
+     }
+    },
+    {title: 'Very likely to prevent',
+     action: function(elm, d, i) {
+         d.meaning = 'prevent'
+         d.prevent_weird = '3';
+         redraw();
+     }
+    },
+    {title: 'Fairly likely to prevent',
+     action: function(elm, d, i) {
+         d.meaning = 'prevent'
+         d.prevent_weird = '2';
+         redraw();
+     }
+    },
+    {title: 'Somewhat likely to prevent',
+     action: function(elm, d, i) {
+         d.meaning = 'prevent'
+         d.prevent_weird = '1';
+         redraw();
+     }
+    },
+    {title: 'Not at all likely to prevent',
+     action: function(elm, d, i) {
+         d.meaning = 'prevent'
+         d.prevent_weird = '0';
+         redraw();
+     }
+    },
+]
 
 function adopt_view(helper) {
     console.log(helper);
     helper.view_nodes.forEach(function (n) {
         console.log(n);
         nodes[n.index].truth = n.truth;
+        nodes[n.index].self_cause_weird = n.self_cause_weird;
     });
 
     redraw();
@@ -113,7 +284,7 @@ function reverse_arrow() {
 }
 
 function new_node() {
-    nodes.push({x: 0, y: 0, id: next_id, label: next_id, detailed: next_id});
+    nodes.push({x: 0, y: 0, id: next_id, label: "label", detailed: next_id});
     next_id += 1;
     redraw();
 }
@@ -305,19 +476,24 @@ function init_ui_hooks() {
 
 // rescale g
 function rescale() {
-    var trans = d3.event.translate,
-        scale = d3.event.scale;
+    console.log('rescale');
+    if (!ui_state.mousedown_node) {
+        var trans = d3.event.translate,
+            scale = d3.event.scale;
 
-    vis.attr("transform",
-             "translate(" + trans + ")"
-             + " scale(" + scale + ")");
+        console.log(trans, scale)
+        
+        vis.attr("transform",
+                 "translate(" + trans + ")"
+                 + " scale(" + scale + ")");
+    }
 }
 
 function mousedown() {
     if (ui_state.mode === "arrow") {
         if (!ui_state.mousedown_node && !ui_state.mousedown_edge) {
             // allow panning if nothing is selected
-            vis.call(d3.behavior.zoom().on("zoom"), rescale);
+            vis.call(d3.behavior.zoom().on("zoom", rescale));
             return;
         }
     } else if (ui_state.mode === "move") {
@@ -327,30 +503,32 @@ function mousedown() {
 
 function mousemove() {
     if (ui_state.mode === "arrow") {
-        if (!ui_state.mousedown_node) {
+        if (!ui_state.mousedown_node || ui_state.context_open) {
             return;
         }
 
+        console.log('mousemove', ui_state.context_open);
+        
         // update drag line
         drag_line
             .attr("x1", ui_state.mousedown_node.x)
             .attr("y1", ui_state.mousedown_node.y)
-            .attr("x2", d3.svg.mouse(this)[0])
-            .attr("y2", d3.svg.mouse(this)[1]);
+            .attr("x2", d3.mouse(this)[0])
+            .attr("y2", d3.mouse(this)[1]);
 
     } else if (ui_state.mode === "move") {
-        if (!ui_state.mousedown_node) {
+        if (!ui_state.mousedown_node || ui_state.context_open) {
             return;
         }
-        ui_state.mousedown_node.x = d3.svg.mouse(this)[0];
-        ui_state.mousedown_node.y = d3.svg.mouse(this)[1];
+        ui_state.mousedown_node.x = d3.mouse(this)[0];
+        ui_state.mousedown_node.y = d3.mouse(this)[1];
 
         // update drag line
         drag_line
             .attr("x1", ui_state.mousedown_node.x)
             .attr("y1", ui_state.mousedown_node.y)
-            .attr("x2", d3.svg.mouse(this)[0])
-            .attr("y2", d3.svg.mouse(this)[1]);
+            .attr("x2", d3.mouse(this)[0])
+            .attr("y2", d3.mouse(this)[1]);
     }
 }
 
@@ -362,7 +540,7 @@ function reset_mouse_vars() {
 
 function mouseup() {
     if (ui_state.mode === "arrow") {
-        if (ui_state.mousedown_node) {
+        if (ui_state.mousedown_node && !ui_state.context_open) {
             // hide drag line
             drag_line
                 .attr("class", "drag_line_hidden");
@@ -371,7 +549,7 @@ function mouseup() {
                 // add node
                 var point = d3.mouse(this),
                     node = {x: point[0], y: point[1], id: next_id,
-                            label: next_id, detailed: next_id};
+                            label: "label", detailed: next_id};
                 next_id += 1;
                 nodes.push(node);
 
@@ -465,7 +643,7 @@ function tick() {
         });
 
     labels.attr("x", function (d) {
-        if (d.label !== undefined) {
+        if (d.label) {
             return d.x - 3 * d.label.length;
         }
         return d.x;
@@ -478,6 +656,10 @@ function tick() {
             return "#ffffff";
         })
         .text(function (d) { return d.label; });
+}
+
+function nothing() {
+    console.log('nothing');
 }
 
 
@@ -501,7 +683,19 @@ function redraw() {
                 }
                 select_node(null);
                 redraw();
-            });
+            })
+        .on("contextmenu", d3.contextMenu(edge_menu, {
+            onOpen: function() {
+                ui_state.context_open = true;
+            },
+            onClose: function() {
+                setTimeout(function() {
+                    ui_state.context_open = false;
+                }, 500);
+                reset_mouse_vars();
+            }
+        }));
+
 
     edge.exit().remove();
 
@@ -564,10 +758,15 @@ function redraw() {
         })
         .on("mousedown",
             function (d) {
-                // disable zoom
-                vis.call(d3.behavior.zoom().on("zoom"), null);
-
+                if (ui_state.context_open) {
+                    return;
+                }
+                
                 ui_state.mousedown_node = d;
+                
+                // disable zoom
+                vis.call(d3.behavior.zoom().on("zoom", null));
+
                 console.log("mousedown node", ui_state.mousedown_node);
                 if (ui_state.mousedown_node === ui_state.selected_node) {
                     console.log("mdnode === snode");
@@ -610,7 +809,7 @@ function redraw() {
                     select_edge(edge);
 
                     // enable zoom
-                    vis.call(d3.behavior.zoom().on("zoom"), rescale);
+                    vis.call(d3.behavior.zoom().on("zoom", rescale));
                     redraw();
                 }
             })
@@ -618,6 +817,18 @@ function redraw() {
         .duration(750)
         .ease("elastic")
         .attr("r", 40);
+    node.on("contextmenu", d3.contextMenu(node_menu, {
+            onOpen: function() {
+                ui_state.context_open = true;
+            },
+            onClose: function() {
+                setTimeout(function() {
+                    ui_state.context_open = false;
+                }, 500);
+                reset_mouse_vars();
+            }
+    }));
+
 
     node.exit().transition()
         .attr("r", 0)
@@ -668,6 +879,15 @@ function splice_edges_for_node(node) {
     );
 }
 
+function delete_node(node) {
+    nodes.splice(nodes.indexOf(ui_state.selected_node), 1);
+    splice_edges_for_node(ui_state.selected_node);
+}
+
+function delete_edge(edge) {
+    edges.splice(edges.indexOf(ui_state.selected_edge), 1);
+}
+
 function keydown() {
     if (!ui_state.selected_node && !ui_state.selected_edge) {
         return;
@@ -677,10 +897,9 @@ function keydown() {
     case 46:
         if (ui_state.backspace_deletes) {
             if (ui_state.selected_node) {
-                nodes.splice(nodes.indexOf(ui_state.selected_node), 1);
-                splice_edges_for_node(ui_state.selected_node);
+                delete_node(node);
             } else if (ui_state.selected_edge) {
-                edges.splice(edges.indexOf(ui_state.selected_edge), 1);
+                delete_edge(edge);
             }
             select_node(null);
             select_edge(null);
@@ -706,6 +925,18 @@ var vis = outer
     .on("mousemove", mousemove)
     .on("mousedown", mousedown)
     .on("mouseup", mouseup);
+
+vis.on("contextmenu", d3.contextMenu(bkgd_menu, {
+    onOpen: function() {
+        ui_state.context_open = true;
+    },
+    onClose: function() {
+        setTimeout(function() {
+            ui_state.context_open = false;
+        }, 500);
+        reset_mouse_vars();
+    }
+}));
 
 vis.append('svg:rect')
     .attr('width', width)
