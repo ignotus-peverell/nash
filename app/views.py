@@ -56,10 +56,10 @@ def graph_list_page():
 def graph_page(id):
     graph = Graph.query.get(id)
     revision = graph.current_revision
-    
+
     if current_user not in graph.owners and current_user not in graph.helpers:
         return redirect(url_for('graph_list_page'))
-    
+
     nodes = pickle.loads(str(revision.nodes))
     edges = pickle.loads(str(revision.edges))
     helpers = []
@@ -70,18 +70,29 @@ def graph_page(id):
             (GraphViewRevision.graph_id == graph.id)
             & (GraphViewRevision.author_id == u.id)).order_by(
                 'timestamp').all()
-        view = views[-1]
+
+        # construct helper dict to pass into JS
         h = dict(id=u.id,
                  name=" ".join([u.first_name, u.last_name]),
                  photo=os.path.join('/static/images/users/',
-                                    u.photo_file_name),
-                 view_nodes=pickle.loads(str(view.nodes)),
-                 view_edges=pickle.loads(str(view.edges)))
+                                    u.photo_file_name))
+
+        if len(views) > 0:
+            view = views[-1]
+            h['view_nodes'] = pickle.loads(str(view.nodes))
+            h['view_edges'] = pickle.loads(str(view.edges))
+        else:
+            # if no views from this helper, use empty lists
+            h['view_nodes'] = []
+            h['view_edges'] = []
+
         helpers.append(h)
+
         if u == current_user:
             default_helper = h
         if u in graph.owners:
             owner_helper = h
+
     if default_helper is None:
         default_helper = owner_helper
 
@@ -142,7 +153,7 @@ def save_graph():
         graph.owners = [current_user]
         db.session.add(graph)
     graph.name = save_name
-    
+
     view = GraphViewRevision()
     view.nodes = pickle.dumps(subjective_graph_nodes(nodes))
     view.edges = pickle.dumps(subjective_graph_edges(edges))
@@ -234,23 +245,22 @@ def friends_page():
     for i in invites:
         if i.friender_id not in inviter_tracker:
             unique_invites.append(i)
-        inviter_tracker[i.friender_id] = 1 
+        inviter_tracker[i.friender_id] = 1
 
     # print [invite.friender_id for invite in unique_invites]
 
     # TODO: if not using Form method, can remove below and FriendForm in models.py
     form = FriendForm(request.form)
-            
     return render_template('pages/friends_page.html',
                            friendships=current_user.friendships, form=form, incoming_invites=unique_invites)
 
 @app.route('/_invite_friend', methods=['POST'])
 @login_required
-def invite_friend(): 
+def invite_friend():
 
     data = json.loads(request.data)
     to_email = data['email']
- 
+
     inviter_name = current_user.first_name + " " + current_user.last_name
     confirm_friend_url = request.host + "/friends"
     register_url = request.host + "/user/register"
@@ -260,11 +270,11 @@ def invite_friend():
     new_invite.invited_at = datetime.datetime.utcnow()
 
     to_users = list(User.query.filter(User.email==to_email).all())
-   
-    if len(to_users) == 1:
-        # invite recipient already has an account 
 
-        new_invite.friendee_id = to_users[0].id 
+    if len(to_users) == 1:
+        # invite recipient already has an account
+
+        new_invite.friendee_id = to_users[0].id
         db.session.add(new_invite)
         db.session.commit()
 
@@ -272,7 +282,7 @@ def invite_friend():
         msg.body = inviter_name + " has invited you to be friends on Nash! \n\nPlease visit " + confirm_friend_url + " to confirm the friend request. \n\nThanks,\n- Nash"
         mail.send(msg)
 
-    else: 
+    else:
         # invite recipient does NOT already have an account, will need to join Nash
 
         new_invite.friendee_email = to_email
@@ -291,7 +301,7 @@ def invite_friend():
 
 @app.route('/_confirm_friend', methods=['POST'])
 @login_required
-def confirm_friend(): 
+def confirm_friend():
     data = json.loads(request.data)
     friend_id = data['friend_id']
 
@@ -354,5 +364,3 @@ def user_profile_page():
     # Process GET or invalid POST
     return render_template('pages/user_profile_page.html',
                            form=form)
-
-
