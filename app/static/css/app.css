@@ -64,7 +64,12 @@ hr { border-color: #cccccc; margin: 0px; }
 }
 
 .edge_selected {
-    stroke: #ff7f0e;
+    stroke: #ff7f0e !important;
+}
+
+.reference-edge {
+    stroke-width: 3;
+    stroke: #ff3232;
 }
 
 #infoboxes {
