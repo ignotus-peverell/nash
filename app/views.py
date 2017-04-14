@@ -180,7 +180,8 @@ def save_graph():
     # (except for current user)
 
     updater_name = current_user.first_name + " " + current_user.last_name
-    graph_diff_url = url_for('graph_diff', id=graph.current_revision_id)
+    graph_diff_url = request.host + url_for('graph_diff',
+                                            id=graph.current_revision_id)
 
     #print "graph.owners: "
     for u in graph.owners:
