@@ -130,6 +130,12 @@ var edge_menu = [
          redraw();
      }
     },
+    {title: 'Feels like a reference to',
+     action: function(elm, d, i) {
+         d.meaning = 'references'
+         redraw();
+     }
+    },
     {title: 'Very likely to cause',
      action: function(elm, d, i) {
          d.meaning = 'cause'
