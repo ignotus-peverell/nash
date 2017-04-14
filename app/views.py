@@ -272,8 +272,8 @@ def invite_friend():
     to_email = data['email']
 
     inviter_name = current_user.first_name + " " + current_user.last_name
-    confirm_friend_url = request.host + "/friends"
-    register_url = request.host + "/user/register"
+    confirm_friend_url = request.host + url_for("friends_page")
+    register_url = request.host + url_for("user.register")
 
     new_invite = FriendshipInvite()
     new_invite.friender_id = current_user.id
