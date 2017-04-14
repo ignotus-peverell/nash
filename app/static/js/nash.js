@@ -580,7 +580,13 @@ function tick() {
         }
         return "";
     })
+        .classed("reference-edge", function(d) {
+            return d.meaning === "references";
+        })
         .attr("marker-mid", function (d) {
+            if (d.meaning === "references") {
+                return ""
+            }
             if (d.failed_cause) {
                 if (d.cause_weird === "0") {
                     return "url(#arrowhead-green)";
