@@ -21,9 +21,12 @@ def test_page_urls(client):
     # Edit User Profile page
     response = client.get(url_for('user_profile_page'))
     assert b'<h1>User Profile</h1>' in response.data
+    f = open('app/static/images/default.png')
+    lines = "".join(f.readlines())
+    f.close()
     response = client.post(url_for('user_profile_page'), follow_redirects=True,
                            data=dict(first_name='User', last_name='User',
-                                     photo=(StringIO('my file contents'),
+                                     photo=(StringIO(lines),
                                             'test.png')))
 
     response = client.get(url_for('user_page', id=2))

@@ -176,25 +176,35 @@ def save_graph():
     graph.current_revision_id = revision.id
     db.session.commit()
 
-    # Send notification of graph update to all owners & helpers (except for current user)
+    # Send notification of graph update to all owners & helpers
+    # (except for current user)
 
     updater_name = current_user.first_name + " " + current_user.last_name
-    graph_diff_url = request.host + "/graph_diff/" + str(graph.current_revision_id)
+    graph_diff_url = url_for('graph_diff', id=graph.current_revision_id)
 
     #print "graph.owners: "
     for u in graph.owners:
         if u.id != current_user.id:
-            #print u.first_name + " " + u.last_name
-            msg_to_owner = Message(updater_name + " updated graph \"" + graph.name + "\"", recipients=[u.email])
-            msg_to_owner.body = "Hi " + u.first_name + ",\n\n" + "Your friend " + updater_name + "  updated your graph \"" + graph.name + "\" just now. \n\nYou can visit the updated version at " + graph_diff_url + ".\n\nThanks,\n- Nash"
+            msg_to_owner = Message(
+                "%s updated graph \"%s\"" % (updater_name, graph.name),
+                recipients=[u.email])
+            msg_to_owner.body = render_template('emails/owner_update.html',
+                                                user=u, updater_name=updater_name,
+                                                graph=graph,
+                                                graph_diff_url=graph_diff_url)
             mail.send(msg_to_owner)
 
     #print "graph.helpers: "
     for u in graph.helpers:
         if u.id != current_user.id:
             #print u.first_name + " " + u.last_name
-            msg_to_helper = Message(updater_name + " updated graph \"" + graph.name + "\"", recipients=[u.email])
-            msg_to_helper.body = "Hi " + u.first_name + ",\n\n" + updater_name + " updated the graph \"" + graph.name + "\" just now. \n\nYou can visit the updated version at " + graph_diff_url + ".\n\nThanks,\n- Nash"
+            msg_to_helper = Message(
+                "%s updated graph \"%s\"" % (updater_name, graph.name),
+                recipients=[u.email])
+            msg_to_helper.body = render_template('emails/helper_update.html',
+                                                 user=u, updater_name=updater_name,
+                                                 graph=graph,
+                                                 graph_diff_url=graph_diff_url)
             mail.send(msg_to_helper)
 
     return jsonify(result="success")
