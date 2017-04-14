@@ -176,6 +176,27 @@ def save_graph():
     graph.current_revision_id = revision.id
     db.session.commit()
 
+    # Send notification of graph update to all owners & helpers (except for current user)
+
+    updater_name = current_user.first_name + " " + current_user.last_name
+    graph_diff_url = request.host + "/graph_diff/" + str(graph.current_revision_id)
+
+    #print "graph.owners: "
+    for u in graph.owners:
+        if u.id != current_user.id:
+            #print u.first_name + " " + u.last_name
+            msg_to_owner = Message(updater_name + " updated graph \"" + graph.name + "\"", recipients=[u.email])
+            msg_to_owner.body = "Hi " + u.first_name + ",\n\n" + "Your friend " + updater_name + "  updated your graph \"" + graph.name + "\" just now. \n\nYou can visit the updated version at " + graph_diff_url + ".\n\nThanks,\n- Nash"
+            mail.send(msg_to_owner)
+
+    #print "graph.helpers: "
+    for u in graph.helpers:
+        if u.id != current_user.id:
+            #print u.first_name + " " + u.last_name
+            msg_to_helper = Message(updater_name + " updated graph \"" + graph.name + "\"", recipients=[u.email])
+            msg_to_helper.body = "Hi " + u.first_name + ",\n\n" + updater_name + " updated the graph \"" + graph.name + "\" just now. \n\nYou can visit the updated version at " + graph_diff_url + ".\n\nThanks,\n- Nash"
+            mail.send(msg_to_helper)
+
     return jsonify(result="success")
 
 @app.route('/_share_graph', methods=['POST'])
@@ -230,23 +251,6 @@ def friends_page():
 
     # TODO: if not using Form method, can remove below and FriendForm in models.py
     form = FriendForm(request.form)
-    # if request.method == 'POST' and form.validate():
-    #     user = User()
-    #     form.populate_obj(user)
-    #     users = list(User.query.filter(User.email==user.email).all())
-    #     print users
-    #     print [user.email for user in users]
-    #     assert len(users) <= 1
-    #     if len(users) == 1:
-    #         friendship = Friendship()
-    #         friendship.friender = current_user
-    #         friendship.friendee = users[0]
-    #         current_user.friendships.append(friendship)
-
-    #     print current_user.friendships
-
-    #     db.session.commit()
-
     return render_template('pages/friends_page.html',
                            friendships=current_user.friendships, form=form, incoming_invites=unique_invites)
 
