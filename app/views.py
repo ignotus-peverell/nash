@@ -179,7 +179,7 @@ def save_graph():
     # Send notification of graph update to all owners & helpers (except for current user)
 
     updater_name = current_user.first_name + " " + current_user.last_name
-    graph_diff_url = request.host + "/graph_diff/" + str(graph.current_revision_id)
+    graph_diff_url = request.host + url_for("graph_diff", id=graph.current_revision_id)
 
     #print "graph.owners: "
     for u in graph.owners:
@@ -262,8 +262,8 @@ def invite_friend():
     to_email = data['email']
 
     inviter_name = current_user.first_name + " " + current_user.last_name
-    confirm_friend_url = request.host + "/friends"
-    register_url = request.host + "/user/register"
+    confirm_friend_url = request.host + url_for("friends_page")
+    register_url = request.host + url_for("user.register")
 
     new_invite = FriendshipInvite()
     new_invite.friender_id = current_user.id
