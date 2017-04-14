@@ -44,14 +44,14 @@ var bkgd_menu = [
 
 var node_menu = [
     {title: function(x) {
-        return x.label + " (edit)";        
+        return x.label + " (edit)";
     },
      action: function(elm, d, i) {
          $("#node-label").focus();
      }
     },
     {title: function(x) {
-        return x.detailed + " (edit)";        
+        return x.detailed + " (edit)";
     },
      action: function(elm, d, i) {
          $("#detailed-description-node").focus();
@@ -103,14 +103,14 @@ var node_menu = [
 
 var edge_menu = [
     {title: function(x) {
-        return x.label + " (edit)";        
+        return x.label + " (edit)";
     },
      action: function(elm, d, i) {
          $("#edge-label").focus();
      }
     },
     {title: function(x) {
-        return x.detailed + " (edit)";        
+        return x.detailed + " (edit)";
     },
      action: function(elm, d, i) {
          $("#detailed-description-edge").focus();
@@ -220,7 +220,7 @@ function select_node(node) {
 
     if (node !== null) {
         ui_state.selected_edge = null;
-        
+
         show_node_infobox();
 
         // fill in values
@@ -241,7 +241,7 @@ function select_node(node) {
 
         // fill in self-cause weirdness
         $("#self-cause-weird").val(node.self_cause_weird);
-        
+
         // blur inputs and turn on backspace_deletes
         document.getElementById("node-label").blur();
         document.getElementById("detailed-description-node").blur();
@@ -343,7 +343,7 @@ function mark_false() {
 function save() {
     var edges2 = [];
     edges.forEach(function (l) {
-        edges2.push({source: l.source.index, 
+        edges2.push({source: l.source.index,
                      target: l.target.index,
                      detailed: l.detailed,
                      meaning: l.meaning,
@@ -393,7 +393,7 @@ function invite_friend() {
                 .attr("class",
                       "alert alert-success alert-dismissible")
                 .html('<strong>Invite sent to '+ email +'!</strong> <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
-            // clear email field 
+            // clear email field
             document.getElementById('email').value = '';
         },
         error: function (data) {
@@ -482,7 +482,7 @@ function rescale() {
             scale = d3.event.scale;
 
         console.log(trans, scale)
-        
+
         vis.attr("transform",
                  "translate(" + trans + ")"
                  + " scale(" + scale + ")");
@@ -508,7 +508,7 @@ function mousemove() {
         }
 
         console.log('mousemove', ui_state.context_open);
-        
+
         // update drag line
         drag_line
             .attr("x1", ui_state.mousedown_node.x)
@@ -635,7 +635,7 @@ function tick() {
             if (d === ui_state.selected_node) {
                 return "#ffb400";
             }
-            
+
             if (d.truth) {
                 return "#ffffff";
             }
@@ -761,9 +761,9 @@ function redraw() {
                 if (ui_state.context_open) {
                     return;
                 }
-                
+
                 ui_state.mousedown_node = d;
-                
+
                 // disable zoom
                 vis.call(d3.behavior.zoom().on("zoom", null));
 
