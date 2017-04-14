@@ -132,7 +132,7 @@ var edge_menu = [
     },
     {title: 'Feels like a reference to',
      action: function(elm, d, i) {
-         d.meaning = 'references'
+         d.meaning = 'reference'
          redraw();
      }
     },
@@ -587,10 +587,10 @@ function tick() {
         return "";
     })
         .classed("reference-edge", function(d) {
-            return d.meaning === "references";
+            return d.meaning === "reference";
         })
         .attr("marker-mid", function (d) {
-            if (d.meaning === "references") {
+            if (d.meaning === "reference") {
                 return ""
             }
             if (d.failed_cause) {
