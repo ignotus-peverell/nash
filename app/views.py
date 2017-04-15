@@ -109,7 +109,7 @@ def get_graph_data(graph):
     assert default_helper is not None
 
     return nodes, edges, helpers, default_helper
-    
+
 @app.route('/graph/<id>')
 @login_required  # Limits access to authenticated users
 def graph_page(id):
@@ -135,11 +135,13 @@ def graph_json(id):
         return redirect(url_for('graph_list_page'))
 
     nodes, edges, helpers, default_helper = get_graph_data(graph)
-    graph_data = dict(nodes=nodes,
+    graph_data = dict(id=id,
+                      name=graph.name,
+                      nodes=nodes,
                       edges=edges,
                       helpers=helpers,
                       default_helper=default_helper)
-    
+
     return jsonify(graph=graph_data)
 
 
