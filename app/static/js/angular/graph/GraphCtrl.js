@@ -60,7 +60,6 @@ nash.controller('GraphCtrl', [
         var graphId = 2;
 
         $scope.loadingGraph = false;
-        $scope.sayHello = "Hello Nash!";
 
         if (Number.isInteger(graphId)) {
             $http({
