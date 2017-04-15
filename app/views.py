@@ -51,14 +51,8 @@ def graph_list_page():
 
     return render_template('pages/graph_list_page.html', graphs=graphs)
 
-@app.route('/graph/<id>')
-@login_required  # Limits access to authenticated users
-def graph_page(id):
-    graph = Graph.query.get(id)
+def get_graph_data(graph):
     revision = graph.current_revision
-
-    if current_user not in graph.owners and current_user not in graph.helpers:
-        return redirect(url_for('graph_list_page'))
 
     nodes = pickle.loads(str(revision.nodes))
     edges = pickle.loads(str(revision.edges))
@@ -98,11 +92,40 @@ def graph_page(id):
 
     assert default_helper is not None
 
+    return nodes, edges, helpers, default_helper
+    
+@app.route('/graph/<id>')
+@login_required  # Limits access to authenticated users
+def graph_page(id):
+    graph = Graph.query.get(id)
+
+    if current_user not in graph.owners and current_user not in graph.helpers:
+        return redirect(url_for('graph_list_page'))
+
+    nodes, edges, helpers, default_helper = get_graph_data(graph)
+
     return render_template('pages/graph_page.html', save_id=id,
                            graph_name=graph.name,
                            nodes=json.dumps(nodes), edges=json.dumps(edges),
                            helpers=json.dumps(helpers),
                            default_helper=json.dumps(default_helper))
+
+@app.route('/_graph/<id>')
+@login_required  # Limits access to authenticated users
+def graph_json(id):
+    graph = Graph.query.get(id)
+
+    if current_user not in graph.owners and current_user not in graph.helpers:
+        return redirect(url_for('graph_list_page'))
+
+    nodes, edges, helpers, default_helper = get_graph_data(graph)
+    graph_data = dict(nodes=nodes,
+                      edges=edges,
+                      helpers=helpers,
+                      default_helper=default_helper)
+    
+    return jsonify(graph=graph_data)
+
 
 @app.route('/graph_diff/<id>')
 @login_required
