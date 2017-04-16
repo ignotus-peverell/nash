@@ -1,6 +1,11 @@
 {% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
 
 {% block content %}
+{% for action_item in action_items %}
+	{% if action_item.type == 'photo' %}
+        <div><i class="fa fa-upload"></i><a href="{{action_item.url}}">&nbsp;{{action_item.message}}</a></div>
+    {% endif %}
+{% endfor %}
 <h1>Welcome</h1>
 
 <p>

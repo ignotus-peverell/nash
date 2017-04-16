@@ -27,7 +27,11 @@ mail = Mail(app)
 @app.route('/home')
 @login_required
 def home_page():
-    return render_template('pages/home_page.html')
+    action_items = []
+    if not current_user.photo_file_name or current_user.photo_file_name == 'default.png' :
+        action_item = {'type' : 'photo', 'url' : '/pages/profile', 'message':'Please upload your profile picture'}
+        action_items.append(action_item)
+    return render_template('pages/home_page.html',  action_items=action_items)
 
 @app.route('/landing')
 def landing_page():
