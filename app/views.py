@@ -135,8 +135,8 @@ def graph_json(id):
         return redirect(url_for('graph_list_page'))
 
     nodes, edges, helpers, default_helper = get_graph_data(graph)
-    graph_data = dict(id=id,
-                      name=graph.name,
+    graph_data = dict(save_id=id,
+                      save_name=graph.name,
                       nodes=nodes,
                       edges=edges,
                       helpers=helpers,

@@ -53,8 +53,8 @@ var renderGraph = function(graph) {
 nash.controller('GraphCtrl', [
     '$scope',
     '$routeParams',
-    '$http',
-    function($scope, $routeParams, $http) {
+    'api',
+    function($scope, $routeParams, api) {
         // TODO: parse route params
         //        var graphId = $routeParams.id;
         var graphId = 2;
@@ -62,24 +62,46 @@ nash.controller('GraphCtrl', [
         $scope.loadingGraph = false;
 
         if (Number.isInteger(graphId)) {
-            $http({
-                method: 'GET',
-                url: '/_graph/' + graphId
-            }).then(function successCallback(response) {
-                console.log("GET _graph success response: ", response)
-                $scope.graph = response.data.graph;
-                renderGraph($scope.graph);
-                $scope.graphDataLoaded = true;
-            }, function errorCallback(response) {
-                // TODO: add error handling
-                console.log("GET _graph error response: ", response)
-                $scope.graphDataLoaded = true;
-            });
+            api.getGraph(graphId)
+                .then(function successCallback(response) {
+                    console.log("GET _graph success response: ", response)
+                    $scope.graph = response.data.graph;
+                    renderGraph($scope.graph);
+                    $scope.graphDataLoaded = true;
+                }, function errorCallback(response) {
+                    // TODO: add error handling
+                    console.log("GET _graph error response: ", response)
+                    $scope.graphDataLoaded = true;
+                });
 
         } else {
             // TODO: initialize new graph
             $scope.graphDataLoaded = true;
         }
 
+        $scope.saveGraph = function() {
+            console.log($scope.graph)
+            api.saveGraph([], $scope.graph)
+                .then(function successCallback(response) {
+                    console.log("POST _graph success response: ", response)
+                    renderGraph($scope.graph);
+                }, function errorCallback(response) {
+                    // TODO: add error handling
+                    console.log("POST _graph error response: ", response)
+                });
+            // TODO: add back alert stuff
+            //     success: function (data) {
+            //         d3.select("#messages")
+            //             .attr("class",
+            //                   "alert alert-success alert-dismissible")
+            //             .html('<strong>Saved!</strong> <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
+            //     },
+            //     error: function (data) {
+            //         d3.select("#messages")
+            //             .attr("class", "alert alert-danger alert-dismissible")
+            //             .html('<strong>Error!</strong> Your work was not saved. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
+            //     }
+
+        }
     }
 ]);

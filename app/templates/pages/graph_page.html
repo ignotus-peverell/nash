@@ -4,7 +4,9 @@
 {% raw %}
 _<!-- Angular dependencies that can be moved to top-level index file once site has been fully converted. -->
 <script src="/static/js/angular/nash.js"></script>
+<script src="/static/js/angular/api.js"></script>
 <script src="/static/js/angular/graph/GraphCtrl.js"></script>
+
 
 <!-- This encapsulating container div should probably go in the top-level layout page once everything has been converted -->
 <div class="container-fluid" ng-controller="GraphCtrl">
@@ -13,11 +15,21 @@ _<!-- Angular dependencies that can be moved to top-level index file once site h
 
   <div id="infoboxes">
     <div id="infobox-right">
-      <input type="submit" value="Save" onClick="save()"><br/>
+      <input type="submit" value="Save" ng-click="saveGraph()"><br/>
       Save under name:<br />
-      <input type="hidden" id="save-id" value="{{ save_id }}"> </input>
-      <input type="text" id="save-name" value="{{ graph_name }}"> </input><br/>
+      <input type="text" id="save-name" ng-model="graph.save_name"> </input><br/>
       <hr class="no-margins" style="" />
+
+
+
+
+
+
+
+
+
+
+
       <input type="submit" value="New Node" onClick="new_node()"><br/>
       <input type="submit" value="Reverse Arrow" onClick="reverse_arrow()"><br/>
       <input type="radio" name="edit-mode" onClick="mode_arrows()" checked>Arrow mode

@@ -357,29 +357,18 @@ function save() {
                      prevent_weird: l.prevent_weird,
                     });
     });
-    $.ajax({
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        url: '/_save_graph',
-        dataType: 'json',
-        async: true,
-        data: JSON.stringify({nodes: nodes,
-                              edges: edges2,
-                              save_name: document.getElementById('save-name').value,
-                              save_id: document.getElementById('save-id').value,
-                             }),
-        success: function (data) {
-            d3.select("#messages")
-                .attr("class",
-                      "alert alert-success alert-dismissible")
-                .html('<strong>Saved!</strong> <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
-        },
-        error: function (data) {
-            d3.select("#messages")
-                .attr("class", "alert alert-danger alert-dismissible")
-                .html('<strong>Error!</strong> Your work was not saved. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
-        }
-    });
+    // $.ajax({
+    //     type: "POST",
+    //     contentType: "application/json; charset=utf-8",
+    //     url: '/_save_graph',
+    //     dataType: 'json',
+    //     async: true,
+    //     data: JSON.stringify({nodes: nodes,
+    //                           edges: edges2,
+    //                           save_name: document.getElementById('save-name').value,
+    //                           save_id: document.getElementById('save-id').value,
+    //                          }),
+    // });
 }
 
 
