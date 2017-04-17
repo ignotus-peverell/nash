@@ -1,136 +1,101 @@
 {% extends "common/page_base.html" %}
 
 {% block content %}
+{% raw %}
+_<!-- Angular dependencies that can be moved to top-level index file once site has been fully converted. -->
+<script src="/static/js/angular/nash.js"></script>
+<script src="/static/js/angular/graph/GraphCtrl.js"></script>
 
-<div id="helpers">
-</div>
+<!-- This encapsulating container div should probably go in the top-level layout page once everything has been converted -->
+<div class="container-fluid" ng-controller="GraphCtrl">
+  {{sayHello}}
+  <div id="helpers">
+  </div>
 
-<div id="infoboxes">
-<div id="infobox-right">
-  <input type="submit" value="Save" onClick="save()"><br/>
-  Save under name:<br />
-  <input type="hidden" id="save-id" value="{{ save_id }}"> </input>
-  <input type="text" id="save-name" value="{{ graph_name }}"> </input><br/>
-  <hr class="no-margins" style="" />
-  <input type="submit" value="New Node" onClick="new_node()"><br/>
-  <input type="submit" value="Reverse Arrow" onClick="reverse_arrow()"><br/>
-  <input type="radio" name="edit-mode" onClick="mode_arrows()" checked>Arrow mode
-  <br />
-  <input type="radio" name="edit-mode" onClick="mode_move()">Move mode<br />
-</div>
-
-<div id="infobox-left">
-  <div id="infobox-data-entry">
-    <div id="infobox-node" style="display: none">
-      Label<br/>
-      <input type="text" id="node-label"> </input><br/>
-      <input type="checkbox" id="truth" name="truth" onClick="mark_true()" checked>True<br />
-      <input type="checkbox" id="locked" name="locked" onClick="mark_locked()" checked>Locked<br />
-      Detailed description<br/>
-      <textarea id="detailed-description-node" rows="10">
-      </textarea>
-      How likely is it that this would happen for no reason?<br/>
-      <select id="self-cause-weird">
-        <option value="3">Not at all likely</option>
-        <option value="2">Somewhat likely</option>
-        <option value="1">Fairly likely</option>
-        <option value="0">Very likely</option>
-      </select>
+  <div id="infoboxes">
+    <div id="infobox-right">
+      <input type="submit" value="Save" onClick="save()"><br/>
+      Save under name:<br />
+      <input type="hidden" id="save-id" value="{{ save_id }}"> </input>
+      <input type="text" id="save-name" value="{{ graph_name }}"> </input><br/>
+      <hr class="no-margins" style="" />
+      <input type="submit" value="New Node" onClick="new_node()"><br/>
+      <input type="submit" value="Reverse Arrow" onClick="reverse_arrow()"><br/>
+      <input type="radio" name="edit-mode" onClick="mode_arrows()" checked>Arrow mode
+      <br />
+      <input type="radio" name="edit-mode" onClick="mode_move()">Move mode<br />
     </div>
 
-    <div id="infobox-edge" style="display: none">
-      Label<br/>
-      <input type="text" id="edge-label"> </input><br/>
-      Detailed description<br/>
-      <textarea id="detailed-description-edge" rows="10">
-      </textarea>
-      <br />
-      Arrow meaning<br />
-      <select id="edge-meaning">
-        <option value="cause">Causes</option>
-        <option value="prevent">Prevents</option>
-        <option value="reference">References</option>
-      </select>
-      <br />
+    <div id="infobox-left">
+      <div id="infobox-data-entry">
+        <div id="infobox-node" style="display: none">
+          Label<br/>
+          <input type="text" id="node-label"> </input><br/>
+          <input type="checkbox" id="truth" name="truth" onClick="mark_true()" checked>True<br />
+          <input type="checkbox" id="locked" name="locked" onClick="mark_locked()" checked>Locked<br />
+          Detailed description<br/>
+          <textarea id="detailed-description-node" rows="10">
+          </textarea>
+          How likely is it that this would happen for no reason?<br/>
+          <select id="self-cause-weird">
+            <option value="3">Not at all likely</option>
+            <option value="2">Somewhat likely</option>
+            <option value="1">Fairly likely</option>
+            <option value="0">Very likely</option>
+          </select>
+        </div>
 
-      How likely is it that A would cause B?<br/>
-      <select id="cause-weird">
-        <option value="0">Not at all likely</option>
-        <option value="1">Somewhat likely</option>
-        <option value="2">Fairly likely</option>
-        <option value="3">Very likely</option>
-      </select>
-      <br/>
-      How likely is it that A would prevent B?<br/>
-      <select id="prevent-weird">
-        <option value="0">Not at all likely</option>
-        <option value="1">Somewhat likely</option>
-        <option value="2">Fairly likely</option>
-        <option value="3">Very likely</option>
-      </select>
+        <div id="infobox-edge" style="display: none">
+          Label<br/>
+          <input type="text" id="edge-label"> </input><br/>
+          Detailed description<br/>
+          <textarea id="detailed-description-edge" rows="10">
+          </textarea>
+          <br />
+          Arrow meaning<br />
+          <select id="edge-meaning">
+            <option value="cause">Causes</option>
+            <option value="prevent">Prevents</option>
+            <option value="reference">References</option>
+          </select>
+          <br />
+
+          How likely is it that A would cause B?<br/>
+          <select id="cause-weird">
+            <option value="0">Not at all likely</option>
+            <option value="1">Somewhat likely</option>
+            <option value="2">Fairly likely</option>
+            <option value="3">Very likely</option>
+          </select>
+          <br/>
+          How likely is it that A would prevent B?<br/>
+          <select id="prevent-weird">
+            <option value="0">Not at all likely</option>
+            <option value="1">Somewhat likely</option>
+            <option value="2">Fairly likely</option>
+            <option value="3">Very likely</option>
+          </select>
+        </div>
+      </div>
     </div>
   </div>
+  <div id="chart"></div>
+  <div id="chart-spacer">&nbsp;</div>
+  <!-- <script src="/static/js/nash.js"></script> -->
+  <script>
+    <!-- var csrf_token = "{# csrf_token() #}"; -->
+
+    <!-- $.ajaxSetup({ -->
+    <!-- beforeSend: function(xhr, settings) { -->
+    <!-- if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) { -->
+    <!-- xhr.setRequestHeader("X-CSRFToken", csrf_token); -->
+    <!-- } -->
+    <!-- } -->
+    <!-- }); -->
+
+  </script>
+
 </div>
-</div>
-<div id="chart">
-</div>
-<div id="chart-spacer">&nbsp;
-</div>
-<script src="/static/js/nash.js"></script>
-<script>
-  <!-- var csrf_token = "{# csrf_token() #}"; -->
 
-  <!-- $.ajaxSetup({ -->
-  <!-- beforeSend: function(xhr, settings) { -->
-  <!-- if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) { -->
-  <!-- xhr.setRequestHeader("X-CSRFToken", csrf_token); -->
-  <!-- } -->
-  <!-- } -->
-  <!-- }); -->
-
-  var helpers = {{ helpers | safe }};
-  var default_helper = {{ default_helper | safe }};
-  var nodes2 = {{ nodes | safe }};
-  var edges2 = {{ edges | safe}};
-
-  helpers.forEach(function (h) {
-
-  d3.select("#helpers").append("img").attr("src", h.photo)
-    .on("click", function (x) {
-      adopt_view(h);
-  });
-
-  d3.select("#helpers").append("span").text(h.name)
-    .on("click", function (x) {
-      adopt_view(h);
-    });
-  });
-
-  while (nodes.length > 0) {
-    nodes.pop();
-  }
-
-  nodes2.forEach(function (n) {
-    nodes.push(n);
-  });
-
-  while (edges.length > 0) {
-    edges.pop();
-  }
-
-  edges2.forEach(function (l) {
-    edges.push({source: nodes[l.source],
-    target: nodes[l.target],
-    detailed: l.detailed,
-    meaning: l.meaning,
-    cause_weird: l.cause_weird,
-    prevent_weird: l.prevent_weird,
-    });
-  });
-
-  adopt_view(default_helper);
-
-  redraw();
-</script>
-
+{% endraw %}
 {% endblock %}
