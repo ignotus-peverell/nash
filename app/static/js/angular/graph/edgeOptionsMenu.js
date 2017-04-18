@@ -4,11 +4,11 @@
 
 var nash = angular.module('nash');
 
-nash.directive('arrowOptionsMenu', function() {
+nash.directive('edgeOptionsMenu', function() {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: '/static/partials/graph/arrow-options-menu.html',
+        templateUrl: '/static/partials/graph/edge-options-menu.html',
         scope:{
             graph: '=graph'
         },
