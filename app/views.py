@@ -125,7 +125,23 @@ def graph_page(id):
                            graph_name=graph.name,
                            nodes=json.dumps(nodes), edges=json.dumps(edges),
                            helpers=json.dumps(helpers),
-                           default_helper=json.dumps(default_helper))
+                           default_helper=json.dumps(default_helper),
+                           helper_state=json.dumps("start"))
+
+@app.route('/tutorial/<id>')
+def tutorial_page(id):
+    graph = Graph.query.get(id)
+    if not graph.public:
+        return redirect(url_for('graph_list_page'))
+
+    nodes, edges, helpers, default_helper = get_graph_data(graph)
+
+    return render_template('pages/graph_page.html', save_id=id,
+                           graph_name=graph.name,
+                           nodes=json.dumps(nodes), edges=json.dumps(edges),
+                           helpers=json.dumps(helpers),
+                           default_helper=json.dumps(default_helper),
+                           helper_state=json.dumps(graph.name))
 
 @app.route('/_graph/<id>')
 @login_required  # Limits access to authenticated users
@@ -193,6 +209,7 @@ def save_graph():
         graph.owners = [current_user]
         db.session.add(graph)
     graph.name = save_name
+    graph.public = False
 
     view = GraphViewRevision()
     view.nodes = pickle.dumps(subjective_graph_nodes(nodes))

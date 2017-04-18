@@ -33,11 +33,22 @@ def yes_no(var):
     kwargs[var] = [('Yes', True), ('No', False)]
     return response_options(**kwargs)
 
-"""
+def continue_response(var):
+    kwargs = dict()
+    kwargs[var] = [('Continue', None)]
+    return response_options(**kwargs)
 
-"""
 
 class Helper(object):
+    @staticmethod
+    def Cinderella(data):
+        return dict(
+            helper_state='cinderella2',
+            helper_speech=helper_speech(
+                "Hello, I'm Nash the bear. I'm here to help you learn to use the site.",
+                "Are you familiar with the story of Cinderella?"),
+            response=yes_no('talk'))
+
     @staticmethod
     def start(data):
         return dict(
