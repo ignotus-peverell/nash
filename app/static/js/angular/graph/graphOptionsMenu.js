@@ -28,9 +28,9 @@ nash.directive('graphOptionsMenu', [
                     .then(function successCallback(response) {
                         scope.isSaving = false;
                         console.log("POST _graph success response: ", response)
-                        // Normally you would do something here like,
+                        // Normally you would assign the graph to the response data, like,
                         //      scope.graph = response.data.graph
-                        // However, the save graph endpoint currently only returns
+                        // However, the `_save_graph` endpoint currently only returns
                         // a status. Might want to change this as a TODO.
                     }, function errorCallback(response) {
                         scope.isSaving = false;
