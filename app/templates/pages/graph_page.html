@@ -3,9 +3,14 @@
 {% block content %}
 {% raw %}
 _<!-- Angular dependencies that can be moved to top-level index file once site has been fully converted. -->
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+<script src="/static/js/angular/toRefactor.js"></script>
 <script src="/static/js/angular/nash.js"></script>
 <script src="/static/js/angular/api.js"></script>
 <script src="/static/js/angular/graph/GraphCtrl.js"></script>
+<script src="/static/js/angular/graph/realityGraph.js"></script>
 
 
 <!-- This encapsulating container div should probably go in the top-level layout page once everything has been converted -->
@@ -90,8 +95,13 @@ _<!-- Angular dependencies that can be moved to top-level index file once site h
       </div>
     </div>
   </div>
-  <div id="chart"></div>
-  <div id="chart-spacer">&nbsp;</div>
+
+  <!-- This is an angular directive. See `/static/partials/graph/reality-graph.html` -->
+  <!-- for the template and `/static/js/angular/graph/realityGraph.js` for the -->
+  <!-- directive code. -->
+  <reality-graph graph="graph"></reality-graph>
+
+<div id="chart-spacer">&nbsp;</div>
 
   <script>
     <!-- var csrf_token = "{# csrf_token() #}"; -->
@@ -105,7 +115,7 @@ _<!-- Angular dependencies that can be moved to top-level index file once site h
     <!-- }); -->
 
   </script>
-<script src="/static/js/nash.js"></script>
+
 </div>
 
 {% endraw %}
