@@ -33,6 +33,18 @@ def home_page():
         action_items.append(action_item)
     return render_template('pages/home_page.html',  action_items=action_items)
 
+@app.route('/ineedhelp')
+def ineedhelp_page():
+    return render_template('pages/ineedhelp_page.html')
+
+@app.route('/iwanttohelp')
+def iwanttohelp_page():
+    return render_template('pages/iwanttohelp_page.html')
+
+@app.route('/manifesto')
+def manifesto_page():
+    return render_template('pages/manifesto_page.html')
+
 @app.route('/landing')
 def landing_page():
     return render_template('pages/landing_page.html')

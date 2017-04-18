@@ -4,7 +4,7 @@ env:
 	nashenv/bin/pip install -r requirements.txt
 	ln -s nashenv/bin/activate .
 	mkdir -p instance/photos
-	cp app/static/images/default.png instance/photos/
+	cp app/static/images/default_users/* instance/photos/
 
 clean:
 	rm -rf nashenv
