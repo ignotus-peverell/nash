@@ -1,0 +1,16 @@
+<div id="infobox-node">
+  Label<br/>
+  <input type="text" id="node-label"> </input><br/>
+  <input type="checkbox" id="truth" name="truth" onClick="mark_true()" checked>True<br />
+  <input type="checkbox" id="locked" name="locked" onClick="mark_locked()" checked>Locked<br />
+  Detailed description<br/>
+  <textarea id="detailed-description-node" rows="10">
+  </textarea>
+  How likely is it that this would happen for no reason?<br/>
+  <select id="self-cause-weird">
+    <option value="3">Not at all likely</option>
+    <option value="2">Somewhat likely</option>
+    <option value="1">Fairly likely</option>
+    <option value="0">Very likely</option>
+  </select>
+</div>

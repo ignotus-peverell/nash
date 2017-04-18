@@ -15,85 +15,20 @@ _<!-- Angular dependencies that can be moved to top-level index file once site h
 
 <!-- This encapsulating container div should probably go in the top-level layout page once everything has been converted -->
 <div class="container-fluid" ng-controller="GraphCtrl">
-  <div id="helpers">
-  </div>
-
+  <helpers-menu graph="graph"></helpers-menu>
   <div id="infoboxes">
+
     <div id="infobox-right">
-      <input type="submit" value="Save" ng-click="saveGraph()"><br/>
-      Save under name:<br />
-      <input type="text" id="save-name" ng-model="graph.save_name"> </input><br/>
-      <hr class="no-margins" style="" />
-
-
-
-
-
-
-
-
-
-
-
-      <input type="submit" value="New Node" onClick="new_node()"><br/>
-      <input type="submit" value="Reverse Arrow" onClick="reverse_arrow()"><br/>
-      <input type="radio" name="edit-mode" onClick="mode_arrows()" checked>Arrow mode
-      <br />
-      <input type="radio" name="edit-mode" onClick="mode_move()">Move mode<br />
+      <graph-options-menu graph="graph"></graph-options-menu>
     </div>
 
     <div id="infobox-left">
       <div id="infobox-data-entry">
-        <div id="infobox-node" style="display: none">
-          Label<br/>
-          <input type="text" id="node-label"> </input><br/>
-          <input type="checkbox" id="truth" name="truth" onClick="mark_true()" checked>True<br />
-          <input type="checkbox" id="locked" name="locked" onClick="mark_locked()" checked>Locked<br />
-          Detailed description<br/>
-          <textarea id="detailed-description-node" rows="10">
-          </textarea>
-          How likely is it that this would happen for no reason?<br/>
-          <select id="self-cause-weird">
-            <option value="3">Not at all likely</option>
-            <option value="2">Somewhat likely</option>
-            <option value="1">Fairly likely</option>
-            <option value="0">Very likely</option>
-          </select>
-        </div>
-
-        <div id="infobox-edge" style="display: none">
-          Label<br/>
-          <input type="text" id="edge-label"> </input><br/>
-          Detailed description<br/>
-          <textarea id="detailed-description-edge" rows="10">
-          </textarea>
-          <br />
-          Arrow meaning<br />
-          <select id="edge-meaning">
-            <option value="cause">Causes</option>
-            <option value="prevent">Prevents</option>
-            <option value="reference">References</option>
-          </select>
-          <br />
-
-          How likely is it that A would cause B?<br/>
-          <select id="cause-weird">
-            <option value="0">Not at all likely</option>
-            <option value="1">Somewhat likely</option>
-            <option value="2">Fairly likely</option>
-            <option value="3">Very likely</option>
-          </select>
-          <br/>
-          How likely is it that A would prevent B?<br/>
-          <select id="prevent-weird">
-            <option value="0">Not at all likely</option>
-            <option value="1">Somewhat likely</option>
-            <option value="2">Fairly likely</option>
-            <option value="3">Very likely</option>
-          </select>
-        </div>
+        <node-options-menu graph="graph"></node-options-menu>
+        <edge-options-menu graph="graph"></edge-options-menu>
       </div>
     </div>
+
   </div>
 
   <!-- This is an angular directive. See `/static/partials/graph/reality-graph.html` -->
