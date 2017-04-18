@@ -48,6 +48,7 @@
       </div>
     </div>
 
+    <br />
 
     <div class="row">
       <label for="edge-meaning">Edge Meaning: </label>
@@ -64,32 +65,22 @@
 
     <div class="row" ng-show="edge.meaning==='cause'">
       <label for="cause-weird">How likely is it that A would cause B? </label>
-      <select id="cause-weird" class="form-control" ng-model="edge.meaning">
+      <select id="cause-weird" class="form-control" ng-model="REPLACEME">
         <option value="0">Not at all likely</option>
         <option value="1">Somewhat likely</option>
         <option value="2">Fairly likely</option>
         <option value="3">Very likely</option>
       </select>
-
-
-      <select class="form-control" id="edge-meaning" >
-        <option
-          ng-repeat="option in edgeMeanings"
-          value="{{option.value}}">
-          {{option.name}}
-        </option>
-      </select>
     </div>
 
-    <br />
-
-    <br/>
-    How likely is it that A would prevent B?<br/>
-    <select id="prevent-weird">
-      <option value="0">Not at all likely</option>
-      <option value="1">Somewhat likely</option>
-      <option value="2">Fairly likely</option>
-      <option value="3">Very likely</option>
-    </select>
+    <div class="row" ng-show="edge.meaning==='prevent'">
+      <label for="prevent-weird">How likely is it that A would prevent B?<br/></label>
+      <select id="prevent-weird" class="form-control" ng-model="REPLACEME">
+        <option value="0">Not at all likely</option>
+        <option value="1">Somewhat likely</option>
+        <option value="2">Fairly likely</option>
+        <option value="3">Very likely</option>
+      </select>
+    </div>
   </div>
 </div>
