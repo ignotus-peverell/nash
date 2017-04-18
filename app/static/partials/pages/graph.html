@@ -1,0 +1,25 @@
+<!-- This encapsulating container div should probably go in the top-level layout page once everything has been converted -->
+<div>
+  <helpers-menu graph="graph"></helpers-menu>
+  <div id="infoboxes">
+
+    <div id="infobox-right">
+      <graph-options-menu graph="graph" edit-mode="editMode"></graph-options-menu>
+    </div>
+
+    <div id="infobox-left">
+      <div id="infobox-data-entry">
+        <node-options-menu graph="graph"></node-options-menu>
+        <edge-options-menu graph="graph"></edge-options-menu>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- This is an angular directive. See `/static/partials/graph/reality-graph.html` -->
+  <!-- for the template and `/static/js/angular/graph/realityGraph.js` for the -->
+  <!-- directive code. -->
+  <reality-graph graph="graph"></reality-graph>
+
+  <div id="chart-spacer">&nbsp;</div>
+</div>

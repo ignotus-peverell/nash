@@ -9,14 +9,13 @@ nash.controller('GraphCtrl', [
     '$routeParams',
     'api',
     function($scope, $routeParams, api) {
-        // TODO: parse route params
-        //        var graphId = $routeParams.id;
-        var graphId = 2;
+        var graphId = parseInt($routeParams.graphId);
+
+        console.log('GraphCtrl: Loading graph ', graphId)
+
         var editModes = ['edit', 'move'];
         $scope.loadingGraph = false;
         $scope.editMode = 'edit';
-
-        $scope.selectedEditMode = 'edit';
 
         if (Number.isInteger(graphId)) {
             api.getGraph(graphId)
@@ -34,7 +33,6 @@ nash.controller('GraphCtrl', [
             // TODO: initialize new graph
             $scope.graphDataLoaded = true;
         }
-
 
     }
 ]);

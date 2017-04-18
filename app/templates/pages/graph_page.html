@@ -16,46 +16,20 @@ _<!-- Angular dependencies that can be moved to top-level index file once site h
 <script src="/static/js/angular/graph/nodeOptionsMenu.js"></script>
 <script src="/static/js/angular/graph/edgeOptionsMenu.js"></script>
 
+<div class="container-fluid" ng-view></div>
 
-<!-- This encapsulating container div should probably go in the top-level layout page once everything has been converted -->
-<div class="container-fluid" ng-controller="GraphCtrl">
-  <helpers-menu graph="graph"></helpers-menu>
-  <div id="infoboxes">
+<script>
+  <!-- var csrf_token = "{# csrf_token() #}"; -->
 
-    <div id="infobox-right">
-      <graph-options-menu graph="graph" edit-mode="editMode"></graph-options-menu>
-    </div>
+  <!-- $.ajaxSetup({ -->
+  <!-- beforeSend: function(xhr, settings) { -->
+  <!-- if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) { -->
+  <!-- xhr.setRequestHeader("X-CSRFToken", csrf_token); -->
+  <!-- } -->
+  <!-- } -->
+  <!-- }); -->
 
-    <div id="infobox-left">
-      <div id="infobox-data-entry">
-        <node-options-menu graph="graph"></node-options-menu>
-        <edge-options-menu graph="graph"></edge-options-menu>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- This is an angular directive. See `/static/partials/graph/reality-graph.html` -->
-  <!-- for the template and `/static/js/angular/graph/realityGraph.js` for the -->
-  <!-- directive code. -->
-  <reality-graph graph="graph"></reality-graph>
-
-<div id="chart-spacer">&nbsp;</div>
-
-  <script>
-    <!-- var csrf_token = "{# csrf_token() #}"; -->
-
-    <!-- $.ajaxSetup({ -->
-    <!-- beforeSend: function(xhr, settings) { -->
-    <!-- if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) { -->
-    <!-- xhr.setRequestHeader("X-CSRFToken", csrf_token); -->
-    <!-- } -->
-    <!-- } -->
-    <!-- }); -->
-
-  </script>
-
-</div>
-
+</script>
 {% endraw %}
+
 {% endblock %}
