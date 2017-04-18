@@ -269,7 +269,6 @@ def save_graph():
 
 
 @app.route('/_helper_interaction', methods=['POST'])
-@login_required
 def helper_interaction():
     data = json.loads(request.data)
     if hasattr(Helper, data['helper_state']):

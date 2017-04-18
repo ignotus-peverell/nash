@@ -50,6 +50,129 @@ class Helper(object):
             response=yes_no('talk'))
 
     @staticmethod
+    def cinderella2(data):
+        if not data['talk']:
+            return dict(
+                helper_state='cinderella_story1',
+                helper_speech=helper_speech(
+                    "Cinderella wanted to go to the ball, but her evil stepmother and evil stepsisters wouldn't let her."
+                ),
+                response=continue_response('talk'))
+        else:
+            return dict(
+                helper_state='cinderella3',
+                helper_speech=helper_speech(
+                    "OK! Here is a picture of some of the weird things that happened to Cinderella.",
+                    "Each circle represents something that happened to Cinderella.",
+                ),
+                response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella_story1(data):
+        return dict(
+            helper_state='cinderella_story2',
+            helper_speech=helper_speech(
+                "But then, the night of the ball, Cinderella's fairy godmother showed up.",
+                "She made Cinderella a magic dress that was fancy enough that Cinderella could go to the ball."
+            ),
+            response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella_story2(data):
+        return dict(
+            helper_state='cinderella_story3',
+            helper_speech=helper_speech(
+                "Cinderella went to the ball and danced all night with Prince Charming.",
+                "But then midnight struck and she had to leave, or her gown would turn back to tatters.",
+                "She dropped her glass slipper as she ran away."
+            ),
+            response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella_story3(data):
+        return dict(
+            helper_state='cinderella_story4',
+            helper_speech=helper_speech(
+                "Prince Charming searched high and low for the beautiful woman he had danced with.",
+                "He knew that the glass slipper she left behind would only fit on her foot.",
+                "So he went to every house in the kingdom, asking the women of the house to try on the glass slipper."
+            ),
+            response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella_story4(data):
+        return dict(
+            helper_state='cinderella3',
+            helper_speech=helper_speech(
+                "The slipper fit on Cinderella's foot, and so Prince Charming married her, and they lived happily ever after.",
+                "Here is a picture of some of the weird things that happened to Cinderella.",
+                "Each circle represents something that happened to Cinderella.",
+            ),
+            response=continue_response('talk'))
+    
+    @staticmethod
+    def cinderella3(data):
+        return dict(
+            helper_state='cinderella4',
+            helper_speech=helper_speech(
+                "The first circle is red because it seems very weird to Cinderella that she has a fairy godmother who could make her a magic dress.",
+                "Why don't you click on the picture of Prince Charming?",
+            ),
+            response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella4(data):
+        return dict(
+            helper_state='cinderella5',
+            helper_speech=helper_speech(
+                "Now the second circle is red.",
+                "Prince Charming doesn't believe that Cinderella has a fairy godmother who made her a magic dress, but he can't explain how she got her fancy dress, and that's weird.",
+                "Why don't you click on the picture of the Evil Stepsister?"
+            ),
+            response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella5(data):
+        return dict(
+            helper_state='cinderella6',
+            helper_speech=helper_speech(
+                "Now the last circle is red.",
+                "The evil stepsister doesn't believe that Cinderella was at the ball at all!",
+                "She can't explain why the glass slipper fits Cinderella's foot, and that's weird, which is why the circle is red."
+            ),
+            response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella6(data):
+        return dict(
+            helper_state='cinderella7',
+            helper_speech=helper_speech(
+                "Why don't you try right-clicking on 'Cinderella at ball', and selecting 'Make true'?" 
+            ),
+            response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella7(data):
+        return dict(
+            helper_state='cinderella8',
+            helper_speech=helper_speech(
+                "Now we have two red circles, because it seems weird that Cinderella would have a fancy dress for no reason, and it also seems weird that the slipper would fit Cinderella's foot if she wasn't the one who dropped it.",
+                "We also have a red arrow, because it seems weird to say that Cinderella was at the ball but was not the one who dropped the slipper.",
+                "An arrow means that we would expect the circle before the arrow to cause the circle after the arrow."
+            ),
+            response=continue_response('talk'))
+
+    @staticmethod
+    def cinderella8(data):
+        return dict(
+            helper_state='cinderella9',
+            helper_speech=helper_speech(
+                "Now that we have this picture, we can talk about the weird things that happened to Cinderella, and everyone can have their own point of view."
+            ),
+            response=continue_response('talk'))
+    
+        
+    @staticmethod
     def start(data):
         return dict(
             helper_state='start2',
