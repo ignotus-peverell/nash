@@ -8,7 +8,7 @@ nash.directive('realityGraph', function() {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: '/static/partials/graph/reality-graph.html',
+        templateUrl: '/static/partials/graph/graph.html',
         scope:{
             graph: '=graph'
         },
