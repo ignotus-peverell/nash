@@ -9,10 +9,15 @@ nash.directive('edgeOptionsMenu', function() {
         restrict: 'E',
         replace: true,
         templateUrl: '/static/partials/graph/edge-options-menu.html',
-        scope:{
-            graph: '=graph'
+        scope: {
+            edge: '='
         },
         link: function(scope, element, attrs) {
+            scope.edgeMeanings = [
+                {name: 'Causes', value: 'cause'},
+                {name: 'Prevents', value: 'prevent'},
+                {name: 'References', value: 'reference'}
+            ];
 
         }
     }

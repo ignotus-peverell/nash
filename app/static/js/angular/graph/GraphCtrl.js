@@ -22,6 +22,9 @@ nash.controller('GraphCtrl', [
                 .then(function successCallback(response) {
                     console.log("GET _graph success response: ", response)
                     $scope.graph = response.data.graph;
+
+                    $scope.edge = $scope.graph.edges[0];
+                    // ^^^ FOR TESTING
                     $scope.graphDataLoaded = true;
                 }, function errorCallback(response) {
                     // TODO: add error handling

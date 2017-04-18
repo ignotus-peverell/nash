@@ -7,7 +7,7 @@
     <div class="row">
       <div class="input-group">
         <label for="graph-name">Title:</label>
-        <input id="graph-name" type="text" class="form-control" placeholder="Name of this graph" ng-model="graph.save_name">
+        <input id="graph-name" type="text" class="form-control" placeholder="Name of this graph" ng-model="graph.save_name"></input>
       </div>
     </div>
 
@@ -20,7 +20,7 @@
             <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save
           </span>
           <span ng-show="isSaving">
-            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Saving ...
+            <span class="glyphicon glyphicon-refresh gly-spin-infinite" aria-hidden="true"></span> Saving ...
           </span>
         </button>
       </div>

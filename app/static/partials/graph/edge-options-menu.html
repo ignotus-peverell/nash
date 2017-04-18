@@ -1,33 +1,95 @@
-<div id="infobox-edge">
-  EDGE OPTIONS MENU
-  <input type="submit" value="Reverse Arrow" onClick="reverse_arrow()"><br/>
-  Label<br/>
-  <input type="text" id="edge-label"> </input><br/>
-  Detailed description<br/>
-  <textarea id="detailed-description-edge" rows="10">
-  </textarea>
-  <br />
-  Arrow meaning<br />
-  <select id="edge-meaning">
-    <option value="cause">Causes</option>
-    <option value="prevent">Prevents</option>
-    <option value="reference">References</option>
-  </select>
-  <br />
+<div id="infobox-edge" class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">EDGE OPTIONS</h3>
+  </div>
+  <div class="panel-body">
 
-  How likely is it that A would cause B?<br/>
-  <select id="cause-weird">
-    <option value="0">Not at all likely</option>
-    <option value="1">Somewhat likely</option>
-    <option value="2">Fairly likely</option>
-    <option value="3">Very likely</option>
-  </select>
-  <br/>
-  How likely is it that A would prevent B?<br/>
-  <select id="prevent-weird">
-    <option value="0">Not at all likely</option>
-    <option value="1">Somewhat likely</option>
-    <option value="2">Fairly likely</option>
-    <option value="3">Very likely</option>
-  </select>
+    <div class="row">
+      <div class="input-group">
+        <label for="edge-name">Label:</label>
+        <input id="edge-name"
+               type="text"
+               class="form-control"
+               placeholder="Add a label"
+               ng-model="edge.label">
+      </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+      <div class="input-group">
+        <label for="edge-desc">Description:</label>
+        <textarea
+          id="edge-desc"
+          type="text"
+          class="form-control"
+          placeholder="Add a detailed description for this edge"
+          ng-model="edge.detailed"
+          rows="10"></textarea>
+      </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+      <div class="btn-group" role="group">
+        <button
+          type="button"
+          class="btn btn-default"
+          ng-init="showReverseArrowAnimation=false;"
+          ng-click="reverseArrow(); showReverseArrowAnimation=!showReverseArrowAnimation;">
+          <span
+            class="glyphicon glyphicon-transfer"
+            ng-class="{'gly-spin-180': showReverseArrowAnimation,
+                      'gly-reverse-spin-180': !showReverseArrowAnimation}"
+            aria-hidden="true"></span> Reverse Arrow
+        </button>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <label for="edge-meaning">Edge Meaning: </label>
+      <select class="form-control" id="edge-meaning" ng-model="edge.meaning">
+        <option
+          ng-repeat="option in edgeMeanings"
+          value="{{option.value}}">
+          {{option.name}}
+        </option>
+      </select>
+    </div>
+
+    <br />
+
+    <div class="row" ng-show="edge.meaning==='cause'">
+      <label for="cause-weird">How likely is it that A would cause B? </label>
+      <select id="cause-weird" class="form-control" ng-model="edge.meaning">
+        <option value="0">Not at all likely</option>
+        <option value="1">Somewhat likely</option>
+        <option value="2">Fairly likely</option>
+        <option value="3">Very likely</option>
+      </select>
+
+
+      <select class="form-control" id="edge-meaning" >
+        <option
+          ng-repeat="option in edgeMeanings"
+          value="{{option.value}}">
+          {{option.name}}
+        </option>
+      </select>
+    </div>
+
+    <br />
+
+    <br/>
+    How likely is it that A would prevent B?<br/>
+    <select id="prevent-weird">
+      <option value="0">Not at all likely</option>
+      <option value="1">Somewhat likely</option>
+      <option value="2">Fairly likely</option>
+      <option value="3">Very likely</option>
+    </select>
+  </div>
 </div>

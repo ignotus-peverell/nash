@@ -58,7 +58,7 @@ nash.directive('graphOptionsMenu', [
             restrict: 'E',
             replace: true,
             templateUrl: '/static/partials/graph/graph-options-menu.html',
-            scope:{
+            scope: {
                 graph: '=',
                 editMode: '='
             },
