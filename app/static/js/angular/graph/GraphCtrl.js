@@ -14,6 +14,7 @@ nash.controller('GraphCtrl', [
         var graphId = 2;
         var editModes = ['edit', 'move'];
         $scope.loadingGraph = false;
+        $scope.editMode = 'edit';
 
         $scope.selectedEditMode = 'edit';
 
@@ -33,7 +34,6 @@ nash.controller('GraphCtrl', [
             // TODO: initialize new graph
             $scope.graphDataLoaded = true;
         }
-
 
 
     }

@@ -9,16 +9,31 @@ nash.directive('graphOptionsMenu', [
     function(api) {
 
         var linkFn = function(scope, element, attrs) {
+            // Used as toggle after saving and waiting for the api to
+            // return a response.
+            scope.isSaving = false;
+
+            // Add a node to the graph.
+            scope.addNode = function() {
+                console.log('Adding Node');
+                // TODO: add graph update code.
+                scope.editMode = 'edit';
+            };
+
+            // Save the graph.
             scope.save = function() {
+                scope.isSaving = true;
                 console.log(scope.graph)
                 api.saveGraph([], scope.graph)
                     .then(function successCallback(response) {
+                        scope.isSaving = false;
                         console.log("POST _graph success response: ", response)
                         // Normally you would do something here like,
                         //      scope.graph = response.data.graph
                         // However, the save graph endpoint currently only returns
                         // a status. Might want to change this as a TODO.
                     }, function errorCallback(response) {
+                        scope.isSaving = false;
                         // TODO: add error handling
                         console.log("POST _graph error response: ", response)
                     });
@@ -36,7 +51,7 @@ nash.directive('graphOptionsMenu', [
                 //             .html('<strong>Error!</strong> Your work was not saved. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
                 //     }
 
-            }
+            };
         };
 
         return {
@@ -44,7 +59,8 @@ nash.directive('graphOptionsMenu', [
             replace: true,
             templateUrl: '/static/partials/graph/graph-options-menu.html',
             scope:{
-                graph: '=graph'
+                graph: '=',
+                editMode: '='
             },
             link: linkFn
         };
