@@ -39,8 +39,9 @@ nash.controller('GraphCtrl', [
             },
             selectNode: function(node) {
                 console.log('Select Edge: ', node);
-                state.selected_node = node;
+                state.selected_node = node === state.selected_edge ? null : node;
                 state.selected_edge = null;
+                state.backspace_deletes = state.selected_node !== null ? true : false;
             },
             openContextMenu: function() {
                 console.log('Opening context menu.');

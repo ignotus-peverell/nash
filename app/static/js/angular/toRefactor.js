@@ -172,44 +172,6 @@
 //     redraw();
 // }
 
-// function select_node(node) {
-//     console.log("select_node", node, scope.graphState.selected_node);
-//     scope.graphState.selected_node = node;
-
-//     if (node !== null) {
-//         scope.graphState.selected_edge = null;
-
-//         show_node_infobox();
-
-//         // fill in values
-//         d3.select("#node-label").attr("value", node.label);
-//         $("#detailed-description-node").val(node.detailed);
-
-//         // fill in checkboxes
-//         if (node.truth) {
-//             d3.select("#truth").property("checked", true);
-//         } else {
-//             d3.select("#truth").property("checked", false);
-//         }
-//         if (node.locked) {
-//             d3.select("#locked").property("checked", true);
-//         } else {
-//             d3.select("#locked").property("checked", false);
-//         }
-
-//         // fill in self-cause weirdness
-//         $("#self-cause-weird").val(node.self_cause_weird);
-
-//         // blur inputs and turn on backspace_deletes
-//         document.getElementById("node-label").blur();
-//         document.getElementById("detailed-description-node").blur();
-//         scope.graphState.backspace_deletes = true;
-
-//     }
-
-//     redraw();
-// }
-
 // function select_edge(edge) {
 //     scope.graphState.selected_edge = edge;
 
