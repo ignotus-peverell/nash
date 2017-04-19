@@ -105,10 +105,7 @@ nash.directive('realityGraph', [
                 var trans = d3.event.translate;
                 var scale = d3.event.scale;
 
-                console.log('rescale');
                 if (!scope.graphState.mousedown_node) {
-
-                    console.log(trans, scale)
 
                     vis.attr('transform',
                              'translate(' + trans + ')'
