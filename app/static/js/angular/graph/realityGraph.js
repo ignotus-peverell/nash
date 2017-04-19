@@ -428,7 +428,7 @@ nash.directive('realityGraph', [
                 // For those elements, the force layout sets the
                 // `source` and `target` properties, specifying
                 // `x` and `y` values in each case.
-                edge
+                edges
                     .attr('points', function (d) {
                         var endX = (2 * d.source.x + 3 * d.target.x) / 5.0;
                         var endY = (2 * d.source.y + 3 * d.target.y) / 5.0;
