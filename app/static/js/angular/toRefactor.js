@@ -9,157 +9,6 @@
 // var next_id = 0;
 
 
-// var node_menu = [
-//     {title: function(n) {
-//         return n.label + " (edit)";
-//     },
-//      action: function(elm, d, i) {
-//          $("#node-label").focus();
-//      }
-//     },
-//     {title: function(n) {
-//         return n.detailed + " (edit)";
-//     },
-//      action: function(elm, d, i) {
-//          $("#detailed-description-node").focus();
-//      }
-//     },
-//     {title: 'Delete',
-//      action: function(elm, d, i) {
-//          delete_node(elm);
-//          redraw();
-//      }
-//     },
-//     {title: function(n) {
-//         if (n.truth) {
-//             return 'Make false';
-//         } else {
-//             return 'Make true';
-//         }
-//     },
-//      action: function(elm, d, i) {
-//          d.truth = !d.truth;
-//          redraw();
-//      }
-//     },
-//     {title: 'Very likely to happen for no reason',
-//      action: function(elm, d, i) {
-//          d.self_cause_weird = '0';
-//          redraw();
-//      }
-//     },
-//     {title: 'Fairly likely to happen for no reason',
-//      action: function(elm, d, i) {
-//          d.self_cause_weird = '1';
-//          redraw();
-//      }
-//     },
-//     {title: 'Somewhat likely to happen for no reason',
-//      action: function(elm, d, i) {
-//          d.self_cause_weird = '2';
-//          redraw();
-//      }
-//     },
-//     {title: 'Not at all likely to happen for no reason',
-//      action: function(elm, d, i) {
-//          d.self_cause_weird = '3';
-//          redraw();
-//      }
-//     },
-// ]
-
-// var edge_menu = [
-//     {title: function(e) {
-//         return e.label + " (edit)";
-//     },
-//      action: function(elm, d, i) {
-//          $("#edge-label").focus();
-//      }
-//     },
-//     {title: function(e) {
-//         return e.detailed + " (edit)";
-//     },
-//      action: function(elm, d, i) {
-//          $("#detailed-description-edge").focus();
-//      }
-//     },
-//     {title: 'Delete',
-//      action: function(elm, d, i) {
-//          delete_edge(elm);
-//          redraw();
-//      }
-//     },
-//     {title: 'Reverse arrow',
-//      action: function(elm, d, i) {
-//          var tmp = d.source;
-//          d.source = d.target;
-//          d.target = tmp;
-//          redraw();
-//      }
-//     },
-//     {title: 'Feels like a reference to',
-//      action: function(elm, d, i) {
-//          d.meaning = 'reference'
-//          redraw();
-//      }
-//     },
-//     {title: 'Very likely to cause',
-//      action: function(elm, d, i) {
-//          d.meaning = 'cause'
-//          d.cause_weird = '3';
-//          redraw();
-//      }
-//     },
-//     {title: 'Fairly likely to cause',
-//      action: function(elm, d, i) {
-//          d.meaning = 'cause'
-//          d.cause_weird = '2';
-//          redraw();
-//      }
-//     },
-//     {title: 'Somewhat likely to cause',
-//      action: function(elm, d, i) {
-//          d.meaning = 'cause'
-//          d.cause_weird = '1';
-//          redraw();
-//      }
-//     },
-//     {title: 'Not at all likely to cause',
-//      action: function(elm, d, i) {
-//          d.meaning = 'cause'
-//          d.cause_weird = '0';
-//          redraw();
-//      }
-//     },
-//     {title: 'Very likely to prevent',
-//      action: function(elm, d, i) {
-//          d.meaning = 'prevent'
-//          d.prevent_weird = '3';
-//          redraw();
-//      }
-//     },
-//     {title: 'Fairly likely to prevent',
-//      action: function(elm, d, i) {
-//          d.meaning = 'prevent'
-//          d.prevent_weird = '2';
-//          redraw();
-//      }
-//     },
-//     {title: 'Somewhat likely to prevent',
-//      action: function(elm, d, i) {
-//          d.meaning = 'prevent'
-//          d.prevent_weird = '1';
-//          redraw();
-//      }
-//     },
-//     {title: 'Not at all likely to prevent',
-//      action: function(elm, d, i) {
-//          d.meaning = 'prevent'
-//          d.prevent_weird = '0';
-//          redraw();
-//      }
-//     },
-// ]
 
 // function adopt_view(helper) {
 //     console.log(helper);
@@ -172,28 +21,7 @@
 //     redraw();
 // }
 
-// function select_edge(edge) {
-//     scope.graphState.selected_edge = edge;
 
-//     if (edge !== null) {
-//         show_edge_infobox();
-
-//         scope.graphState.selected_node = null;
-
-//         // fill in values
-//         $("#detailed-description-edge").val(edge.detailed);
-//         $("#cause-weird").val(edge.cause_weird);
-//         $("#prevent-weird").val(edge.prevent_weird);
-//         $("#edge-meaning").val(edge.meaning);
-//     }
-// }
-
-// function change_label(new_label) {
-//     if (scope.graphState.selected_node !== null) {
-//         nodes[scope.graphState.selected_node.index].label = new_label;
-//         redraw();
-//     }
-// }
 
 // function reverse_arrow() {
 //     if (scope.graphState.selected_edge !== null) {
@@ -221,45 +49,11 @@
 //                      prevent_weird: l.prevent_weird,
 //                     });
 //     });
-//     $.ajax({
-//         type: "POST",
-//         contentType: "application/json; charset=utf-8",
-//         url: '/_save_graph',
-//         dataType: 'json',
-//         async: true,
-//         data: JSON.stringify({nodes: nodes,
-//                               edges: edges2,
-//                               save_name: document.getElementById('save-name').value,
-//                               save_id: document.getElementById('save-id').value,
-//                              }),
-//         success: function (data) {
-//             d3.select("#messages")
-//                 .attr("class",
-//                       "alert alert-success alert-dismissible")
-//                 .html('<strong>Saved!</strong> <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
-//         },
-//         error: function (data) {
-//             d3.select("#messages")
-//                 .attr("class", "alert alert-danger alert-dismissible")
-//                 .html('<strong>Error!</strong> Your work was not saved. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
-//         }
-//     });
 // }
 
 
 
 // function init_ui_hooks() {
-//     d3.select("#node-label").on("input", function () {
-//         change_label(this.value);
-//     }).on("focus", function () {
-//         scope.graphState.backspace_deletes = false;
-//     });
-
-//     d3.select("#edge-label").on("input", function () {
-//         change_label(this.value);
-//     }).on("focus", function () {
-//         scope.graphState.backspace_deletes = false;
-//     });
 
 //     d3.select("#self-cause-weird").on("input", function () {
 //         populate_self_cause_weird(this.value);
@@ -295,48 +89,7 @@
 // }
 
 
-// function mousedown() {
-//     if (scope.graphState.mode === "arrow") {
-//         if (!scope.graphState.mousedown_node && !scope.graphState.mousedown_edge) {
-//             // allow panning if nothing is selected
-//             vis.call(d3.behavior.zoom().on("zoom", rescale));
-//             return;
-//         }
-//     } else if (scope.graphState.mode === "move") {
-//         console.log("move mousedown");
-//     }
-// }
 
-// function mousemove() {
-//     if (scope.graphState.mode === "arrow") {
-//         if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
-//             return;
-//         }
-
-//         console.log('mousemove', scope.graphState.context_open);
-
-//         // update drag line
-//         drag_line
-//             .attr("x1", scope.graphState.mousedown_node.x)
-//             .attr("y1", scope.graphState.mousedown_node.y)
-//             .attr("x2", d3.mouse(this)[0])
-//             .attr("y2", d3.mouse(this)[1]);
-
-//     } else if (scope.graphState.mode === "move") {
-//         if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
-//             return;
-//         }
-//         scope.graphState.mousedown_node.x = d3.mouse(this)[0];
-//         scope.graphState.mousedown_node.y = d3.mouse(this)[1];
-
-//         // update drag line
-//         drag_line
-//             .attr("x1", scope.graphState.mousedown_node.x)
-//             .attr("y1", scope.graphState.mousedown_node.y)
-//             .attr("x2", d3.mouse(this)[0])
-//             .attr("y2", d3.mouse(this)[1]);
-//     }
-// }
 
 // function reset_mouse_vars() {
 //     scope.graphState.mousedown_node = null;
@@ -344,37 +97,6 @@
 //     scope.graphState.mousedown_edge = null;
 // }
 
-// function mouseup() {
-//     if (scope.graphState.mode === "arrow") {
-//         if (scope.graphState.mousedown_node && !scope.graphState.context_open) {
-//             // hide drag line
-//             drag_line
-//                 .attr("class", "drag_line_hidden");
-
-//             if (!scope.graphState.mouseup_node) {
-//                 // add node
-//                 var point = d3.mouse(this),
-//                     node = {x: point[0], y: point[1], id: next_id,
-//                             label: "label", detailed: next_id};
-//                 next_id += 1;
-//                 nodes.push(node);
-
-//                 // select new node
-//                 select_node(node);
-
-//                 // add edge to mousedown node
-//                 edges.push({source: scope.graphState.mousedown_node,
-//                             target: node, detailed: ""});
-//             }
-
-//             redraw();
-//         }
-//     } else if (scope.graphState.mode === "move") {
-//         console.log("move mouseup");
-//     }
-//     // clear mouse event vars
-//     reset_mouse_vars();
-// }
 
 // function tick() {
 //     edge.attr("points", function (d) {
@@ -386,39 +108,6 @@
 //         }
 //         return "";
 //     })
-//         .classed("reference-edge", function(d) {
-//             return d.meaning === "reference";
-//         })
-//         .attr("marker-mid", function (d) {
-//             if (d.meaning === "reference") {
-//                 return ""
-//             }
-//             if (d.failed_cause) {
-//                 if (d.cause_weird === "0") {
-//                     return "url(#arrowhead-green)";
-//                 }
-//                 if (d.cause_weird === "1") {
-//                     return "url(#arrowhead-yellow)";
-//                 }
-//                 if (d.cause_weird === "2") {
-//                     return "url(#arrowhead-orange)";
-//                 }
-//                 return "url(#arrowhead-red)";
-//             }
-//             if (d.failed_prevent) {
-//                 if (d.prevent_weird === "0") {
-//                     return "url(#arrowhead-green)";
-//                 }
-//                 if (d.prevent_weird === "1") {
-//                     return "url(#arrowhead-yellow)";
-//                 }
-//                 if (d.prevent_weird === "2") {
-//                     return "url(#arrowhead-orange)";
-//                 }
-//                 return "url(#arrowhead-red)";
-//             }
-//             return "url(#arrowhead-black)";
-//         });
 
 //     node.attr("cx", function (d) { return d.x; })
 //         .attr("cy", function (d) { return d.y; })
@@ -454,21 +143,6 @@
 //             return "#999999";
 //         });
 
-//     labels.attr("x", function (d) {
-//         if (d.label) {
-//             return d.x - 3 * d.label.length;
-//         }
-//         return d.x;
-//     })
-//         .attr("y", function (d) { return d.y + 5; })
-//         .attr("fill", function (d) {
-//             if (d.truth) {
-//                 return "#000000";
-//             }
-//             return "#ffffff";
-//         })
-//         .text(function (d) { return d.label; });
-// }
 
 
 // // redraw graph
@@ -477,21 +151,6 @@
 //     edge = edge.data(edges);
 
 //     edge.enter().insert("polyline", ".node")
-//         .attr("class", "edge")
-//         .attr("marker-mid", function (d) {
-//             return "url(#arrowhead-black)";
-//         })
-//         .on("mousedown",
-//             function (d) {
-//                 scope.graphState.mousedown_edge = d;
-//                 if (scope.graphState.mousedown_edge === scope.graphState.selected_edge) {
-//                     select_edge(null);
-//                 } else {
-//                     select_edge(scope.graphState.mousedown_edge);
-//                 }
-//                 select_node(null);
-//                 redraw();
-//             })
 //         .on("contextmenu", d3.contextMenu(edge_menu, {
 //             onOpen: function() {
 //                 scope.graphState.context_open = true;
@@ -507,10 +166,6 @@
 
 //     edge.exit().remove();
 
-//     edge
-//         .classed("edge_selected", function (d) {
-//             return d === scope.graphState.selected_edge;
-//         });
 
 //     nodes.forEach(function (n) {
 //         if (n.truth) {
@@ -541,90 +196,14 @@
 //     node = node.data(nodes);
 
 //     node.enter().insert("circle")
-//         .attr("class", "node")
-//         .attr("r", 30)
-//         .attr("stroke-width", function (d) {
-//             if (d.locked) {
-//                 return 5;
-//             }
-//             return 2;
-//         })
-//         .attr("stroke", function (d) {
-//             if (d.self_causing) {
-//                 return "#ff0000";
-//             }
-//             return "#000000";
-//         })
-//         .attr("fill", function (d) {
-//             if (d === scope.graphState.selected_node) {
-//                 return "#ffb400";
-//             }
-//             if (d.truth) {
-//                 return "#ffffff";
-//             }
-//             return "#000000";
-//         })
 //         .on("mousedown",
 //             function (d) {
-//                 if (scope.graphState.context_open) {
-//                     return;
-//                 }
-
-//                 scope.graphState.mousedown_node = d;
-
-//                 // disable zoom
-//                 vis.call(d3.behavior.zoom().on("zoom", null));
-
-//                 console.log("mousedown node", scope.graphState.mousedown_node);
-//                 if (scope.graphState.mousedown_node === scope.graphState.selected_node) {
-//                     console.log("mdnode === snode");
-//                     select_node(null);
-//                 } else {
-//                     select_node(scope.graphState.mousedown_node);
-//                 }
-//                 select_edge(null);
-
-//                 // reposition drag line
-//                 drag_line
-//                     .attr("class", "edge")
-//                     .attr("x1", scope.graphState.mousedown_node.x)
-//                     .attr("y1", scope.graphState.mousedown_node.y)
-//                     .attr("x2", scope.graphState.mousedown_node.x)
-//                     .attr("y2", scope.graphState.mousedown_node.y);
-
-//                 redraw();
+////                 redraw();
 //             })
 //         .on("mousedrag",
 //             function (ignore) {
 //                 redraw();
 //             })
-//         .on("mouseup",
-//             function (d) {
-//                 if (scope.graphState.mousedown_node) {
-//                     scope.graphState.mouseup_node = d;
-//                     if (scope.graphState.mouseup_node === scope.graphState.mousedown_node) {
-//                         reset_mouse_vars();
-//                         return;
-//                     }
-
-//                     // add edge
-//                     var edge = {source: scope.graphState.mousedown_node,
-//                                 target: scope.graphState.mouseup_node,
-//                                 detailed: ""};
-//                     edges.push(edge);
-
-//                     // select new edge
-//                     select_edge(edge);
-
-//                     // enable zoom
-//                     vis.call(d3.behavior.zoom().on("zoom", rescale));
-//                     redraw();
-//                 }
-//             })
-//         .transition()
-//         .duration(750)
-//         .ease("elastic")
-//         .attr("r", 40);
 //     node.on("contextmenu", d3.contextMenu(node_menu, {
 //             onOpen: function() {
 //                 scope.graphState.context_open = true;
@@ -715,51 +294,4 @@
 //         }
 //         break;
 //     }
-// }
-
-
-// var renderGraph = function(graph) {
-//     var helpers = graph.helpers;
-//     var default_helper = graph.default_helper;
-//     var nodes2 = graph.nodes;
-//     var edges2 = graph.edges;
-
-//     helpers.forEach(function (h) {
-
-//         d3.select("#helpers").append("img").attr("src", h.photo)
-//             .on("click", function (x) {
-//                 adopt_view(h);
-//             });
-
-//         d3.select("#helpers").append("span").text(h.name)
-//             .on("click", function (x) {
-//                 adopt_view(h);
-//             });
-//     });
-
-//     while (nodes.length > 0) {
-//         nodes.pop();
-//     }
-
-//     nodes2.forEach(function (n) {
-//         nodes.push(n);
-//     });
-
-//     while (edges.length > 0) {
-//         edges.pop();
-//     }
-
-//     edges2.forEach(function (l) {
-//         edges.push({source: nodes[l.source],
-//                     target: nodes[l.target],
-//                     detailed: l.detailed,
-//                     meaning: l.meaning,
-//                     cause_weird: l.cause_weird,
-//                     prevent_weird: l.prevent_weird,
-//                    });
-//     });
-
-//     adopt_view(default_helper);
-
-//     redraw();
 // }

@@ -50,6 +50,13 @@ nash.controller('GraphCtrl', [
             closeContextMenu: function() {
                 console.log('Closing context menu.');
                 state.context_open = false;
+            },
+            addEdge: function(edge, edges, shouldSelect) {
+                console.log('Adding edge');
+                edges.push(edge);
+                if (shouldSelect) {
+                    events.selectEdge(edge);
+                }
             }
         };
 
