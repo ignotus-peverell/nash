@@ -25,6 +25,10 @@ nash.controller('GraphCtrl', [
 
                     $scope.edge = $scope.graph.edges[0];
                     // ^^^ FOR TESTING
+
+                    $scope.node = $scope.graph.nodes[0];
+                    // ^^^ FOR TESTING
+
                     $scope.graphDataLoaded = true;
                 }, function errorCallback(response) {
                     // TODO: add error handling

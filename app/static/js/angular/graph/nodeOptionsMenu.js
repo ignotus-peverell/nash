@@ -10,8 +10,9 @@ nash.directive('nodeOptionsMenu', function() {
         replace: true,
         templateUrl: '/static/partials/graph/node-options-menu.html',
         scope:{
-            graph: '=graph'
+            node: '='
         },
+
         link: function(scope, element, attrs) {
 
         }

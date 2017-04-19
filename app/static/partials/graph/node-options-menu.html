@@ -1,17 +1,62 @@
-<div id="infobox-node">
-  NODE OPTIONS MENU
-  Label<br/>
-  <input type="text" id="node-label"> </input><br/>
-  <input type="checkbox" id="truth" name="truth" onClick="mark_true()" checked>True<br />
-  <input type="checkbox" id="locked" name="locked" onClick="mark_locked()" checked>Locked<br />
-  Detailed description<br/>
-  <textarea id="detailed-description-node" rows="10">
-  </textarea>
-  How likely is it that this would happen for no reason?<br/>
-  <select id="self-cause-weird">
-    <option value="3">Not at all likely</option>
-    <option value="2">Somewhat likely</option>
-    <option value="1">Fairly likely</option>
-    <option value="0">Very likely</option>
-  </select>
+<div id="infobox-node" class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">NODE OPTIONS</h3>
+  </div>
+  <div class="panel-body">
+
+    <div class="row">
+      <div class="input-group">
+        <label for="node-name">Label:</label>
+        <input id="node-name"
+               type="text"
+               class="form-control"
+               placeholder="Add a label"
+               ng-model="node.label">
+      </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+      <div class="input-group">
+        <label for="node-desc">Description:</label>
+        <textarea
+          id="node-desc"
+          type="text"
+          class="form-control"
+          placeholder="Add a detailed description for this node"
+          ng-model="node.detailed"
+          rows="10"></textarea>
+      </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+
+      <div id="lock-button" class="btn-group" role="group">
+        <div class="input-group">
+          <input type="checkbox" name="locked" ng-model="node.locked">
+          <span ng-show="node.locked"> Locked <i class="fa fa-lock" aria-hidden="true"></i></span>
+          <span ng-show="!node.locked"> Locked <i class="fa fa-unlock" aria-hidden="true"></i></span>
+        </div>
+        <div class="input-group">
+          <input type="checkbox" name="truth" ng-model="node.truth"> True
+        </div>
+      </div>
+    </div>
+
+    <br/>
+
+    <div class="row">
+      <label for="self-cause-weird">How likely is it that this would happen for no reason?</label>
+      <select id="self-cause-weird" class="form-control" ng-model="REPLACEME">
+        <!-- TODO: Note the edge options values go in a different order for intensity
+             Make this consistent? . -->
+        <option value="3">Not at all likely</option>
+        <option value="2">Somewhat likely</option>
+        <option value="1">Fairly likely</option>
+        <option value="0">Very likely</option>
+      </select>
+    </div>
 </div>
