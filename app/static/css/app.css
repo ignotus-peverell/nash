@@ -34,3 +34,11 @@ hr { border-color: #cccccc; margin: 0px; }
 .with-margins { margin: 10px; }
 
 .col-centered { float: none; margin: 0 auto; }
+
+#nash {
+    float: right;
+}
+
+#nash img {
+    width: 200px;
+}

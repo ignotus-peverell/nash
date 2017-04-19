@@ -184,6 +184,7 @@ nash.directive('realityGraph', [
                         return '#999999';
                     });
 
+
                 nodeLabels
                     .attr('x', function (d) { return d.x - 5; })
                     .attr('y', function (d) { return d.y + 5; })
@@ -204,8 +205,6 @@ nash.directive('realityGraph', [
                                 endY + ' ' +
                                 d.target.x, d.target.y].join(',');
                     })
-//                    .classed('reference-edge' function(d) { d.meaning === 'reference'})
-//                    .classed('reference-edge' function(d) { d.meaning === 'reference'})
                     .classed('reference-edge', function(d) { d.meaning === 'reference'})
                     .attr('marker-mid', function(d) {
                         if (d.meaning === 'reference') {
@@ -254,22 +253,12 @@ nash.directive('realityGraph', [
                 .attr('x2', 0)
                 .attr('y2', 0);
 
-            // // get layout properties
-            // var nodes = force.nodes(),
-            //     edges = force.links(),
-            //     node = vis.selectAll('.node'),
-            //     edge = vis.selectAll('.edge'),
-            //     labels = vis.selectAll('.text');
-
-
             var edges = vis.selectAll('.edge')
                 .data(scope.graph.edges)
                 .enter()
                 .append('polyline')
                 .attr('class', 'edge');
 
-            console.log('edges', edges);
-            // Now it's the nodes turn. Each node is drawn as a circle.
 
             var nodes = vis.selectAll('.node')
                 .data(scope.graph.nodes)

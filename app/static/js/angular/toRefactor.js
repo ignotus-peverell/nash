@@ -183,21 +183,6 @@
 //     redraw();
 // }
 
-// function show_node_infobox() {
-//     d3.select("#infobox-node").style("display", "block");
-//     d3.select("#infobox-edge").style("display", "none");
-// }
-
-// function show_edge_infobox() {
-//     d3.select("#infobox-node").style("display", "none");
-//     d3.select("#infobox-edge").style("display", "block");
-// }
-
-// function show_no_infobox() {
-//     d3.select("#infobox-node").style("display", "none");
-//     d3.select("#infobox-edge").style("display", "none");
-// }
-
 // function select_node(node) {
 //     console.log("select_node", node, ui_state.selected_node);
 //     ui_state.selected_node = node;

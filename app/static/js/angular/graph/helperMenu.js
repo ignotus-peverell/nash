@@ -10,7 +10,7 @@ nash.directive('helperMenu', function() {
         replace: true,
         templateUrl: '/static/partials/graph/helper-menu.html',
         scope:{
-            graph: '=graph'
+            graph: '='
         },
         link: function(scope, element, attrs) {
 
