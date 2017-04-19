@@ -13,9 +13,17 @@ nash.controller('GraphCtrl', [
 
         console.log('GraphCtrl: Loading graph ', graphId)
 
-        var editModes = ['edit', 'move'];
         $scope.loadingGraph = false;
-        $scope.editMode = 'edit';
+        $scope.graphState = {
+            edit_mode: 'edit', // ['edit', 'move'];
+            selected_node: null,
+            selected_edge: null,
+            mousedown_edge: null,
+            mousedown_node: null,
+            mouseup_node: null,
+            backspace_deletes: true,
+            context_open: false
+        };
 
         if (Number.isInteger(graphId)) {
             api.getGraph(graphId)

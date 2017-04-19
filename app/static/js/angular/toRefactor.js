@@ -19,28 +19,6 @@
 //     context_open: false
 // }
 
-// var bkgd_menu = [
-//     {title: 'Save',
-//      action: function(elm, d, i) {
-//          save();
-//      }
-//     },
-//     {title: 'New node',
-//      action: function(elm, d, i) {
-//          new_node();
-//      }
-//     },
-//     {title: 'Arrow mode',
-//      action: function(elm, d, i) {
-//          mode_arrows();
-//      }
-//     },
-//     {title: 'Move mode',
-//      action: function(elm, d, i) {
-//          mode_move();
-//      }
-//     },
-// ]
 
 // var node_menu = [
 //     {title: function(x) {
@@ -430,20 +408,6 @@
 //     });
 // }
 
-// // rescale g
-// function rescale() {
-//     console.log('rescale');
-//     if (!ui_state.mousedown_node) {
-//         var trans = d3.event.translate,
-//             scale = d3.event.scale;
-
-//         console.log(trans, scale)
-
-//         vis.attr("transform",
-//                  "translate(" + trans + ")"
-//                  + " scale(" + scale + ")");
-//     }
-// }
 
 // function mousedown() {
 //     if (ui_state.mode === "arrow") {
