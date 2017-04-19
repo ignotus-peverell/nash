@@ -18,7 +18,6 @@ nash.directive('realityGraph', [
         },
         link: function(scope, element, attrs) {
             console.log('Reality Graph Directive.');
-            console.log(scope);
 
             var width = 800;
             var height = 700;
@@ -221,8 +220,6 @@ nash.directive('realityGraph', [
                         return;
                     }
 
-                    console.log('mousemove', scope.graphState.context_open);
-
                     // update drag line
                     dragLine
                         .attr('x1', scope.graphState.mousedown_node.x)
@@ -248,7 +245,6 @@ nash.directive('realityGraph', [
 
             var mousedown = function() {
                 if (scope.graphState.edit_mode === 'edit') {
-                    console.log('Mousdown in edit mode');
                     if (!scope.graphState.mousedown_node && !scope.graphState.mousedown_edge) {
                         // allow panning if nothing is selected
                         vis.call(d3.behavior.zoom().on('zoom', rescale));
@@ -317,10 +313,8 @@ nash.directive('realityGraph', [
                 .attr('height', height)
                 .attr('fill', 'white');
 
-            console.log(scope.graph.nodes);
-
             var tick = function() {
-                console.log('FORCE TICK');
+                console.log('tick tock');
                 // When this function executes, the force layout
                 // calculations have concluded. The layout will
                 // have set various properties in our nodes and
@@ -370,8 +364,6 @@ nash.directive('realityGraph', [
 
                             // disable zoom
                             vis.call(d3.behavior.zoom().on('zoom', null));
-
-                            console.log('mousedown node', scope.graphState.mousedown_node);
 
                             if (scope.graphState.mousedown_node === scope.graphState.selected_node) {
                                 scope.graphState.events.selectNode(null);
