@@ -5,24 +5,23 @@
 var nash = angular.module('nash');
 
 nash.directive('realityGraph', [
+    '$timeout',
     'graphComponents',
-    function(graphComponents) {
+    function($timeout, graphComponents) {
     return {
         restrict: 'E',
         replace: true,
         templateUrl: '/static/partials/graph/graph.html',
         scope:{
             graph: '=',
-            graphState: '='
+            graphState: '=',
         },
         link: function(scope, element, attrs) {
+            console.log('Reality Graph Directive.');
+            console.log(scope);
 
             var width = 800;
             var height = 700;
-
-
-            console.log('Reality Graph Directive.');
-            console.log(scope, element);
 
             var bkgd_menu = [
                 {
@@ -40,7 +39,7 @@ nash.directive('realityGraph', [
                 {
                     title: 'Edit mode',
                     action: function(elm, d, i) {
-                        //mode_arrows();
+                        //mode_edits();
                     }
                 },
                 {
@@ -70,7 +69,7 @@ nash.directive('realityGraph', [
                 .attr('stroke-width', 0.1);
 
             // var mousemove function() {
-            //     if (scope.graphState.editMode === 'arrow') {
+            //     if (scope.graphState.edit_mode === 'edit') {
             //         if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
             //             return;
             //         }
@@ -84,7 +83,7 @@ nash.directive('realityGraph', [
             //             .attr('x2', d3.mouse(this)[0])
             //             .attr('y2', d3.mouse(this)[1]);
 
-            //     } else if (scope.graphState.editMode === 'move') {
+            //     } else if (scope.graphState.edit_mode === 'move') {
             //         if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
             //             return;
             //         }
@@ -104,20 +103,18 @@ nash.directive('realityGraph', [
             var rescale = function() {
                 var trans = d3.event.translate;
                 var scale = d3.event.scale;
-
                 if (!scope.graphState.mousedown_node) {
-
                     vis.attr('transform',
                              'translate(' + trans + ')'
                              + ' scale(' + scale + ')');
                 }
-            }
+            };
 
             var vis = rGraph
                 .append('svg:g')
-                // .call(d3.behavior.zoom().on('zoom', rescale))
-                // .on('dblclick.zoom', null)
-                // .append('svg:g');
+                .call(d3.behavior.zoom().on('zoom', rescale))
+                .on('dblclick.zoom', null)
+                .append('svg:g');
                 // .on('mousemove', mousemove)
                 // .on('mousedown', mousedown)
                 // .on('mouseup', mouseup);
@@ -125,12 +122,10 @@ nash.directive('realityGraph', [
 
             vis.on('contextmenu', d3.contextMenu(bkgd_menu, {
                 onOpen: function() {
-                    scope.graphState.context_open = true;
+                    scope.$apply(scope.graphState.events.openContextMenu);
                 },
                 onClose: function() {
-                    setTimeout(function() {
-                        scope.graphState.context_open = false;
-                    }, 500);
+                    $timeout(scope.graphState.events.closeContextMenu, 500);
                     // reset_mouse_vars();
                     // TODO ^^^
                 }
@@ -142,6 +137,7 @@ nash.directive('realityGraph', [
                 .attr('fill', 'white');
 
             console.log(scope.graph.nodes);
+
             var tick = function() {
                 console.log('FORCE TICK');
                 // When this function executes, the force layout
@@ -243,7 +239,8 @@ nash.directive('realityGraph', [
                 .linkDistance(200)
                 .charge(-1000)
                 .on('tick', tick);
-        //     next_id += 1;
+
+            //     next_id += 1;
 
             // line displayed when dragging new nodes
             var drag_line = vis.append('line')
@@ -257,7 +254,12 @@ nash.directive('realityGraph', [
                 .data(scope.graph.edges)
                 .enter()
                 .append('polyline')
-                .attr('class', 'edge');
+                .attr('class', 'edge')
+                .on('mousedown', function(d) {
+                    scope.$apply(function(){
+                        scope.graphState.events.mousedownEdge(d);
+                    });
+                });
 
 
             var nodes = vis.selectAll('.node')

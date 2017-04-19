@@ -13,9 +13,8 @@ nash.controller('GraphCtrl', [
 
         console.log('GraphCtrl: Loading graph ', graphId)
 
-        $scope.loadingGraph = false;
-        $scope.graphState = {
-            edit_mode: 'edit', // ['edit', 'move'];
+        var state = $scope.state = {
+            edit_mode: 'edit', // options = ['edit', 'move']
             selected_node: null,
             selected_edge: null,
             mousedown_edge: null,
@@ -25,13 +24,44 @@ nash.controller('GraphCtrl', [
             context_open: false
         };
 
+        var events = $scope.state.events = {
+            mousedownEdge: function(edge) {
+                console.log('Mousedown Edge: ', edge);
+                console.log($scope)
+                state.mousedown_edge = edge;
+                //$scope.state.selected_edge = edge;
+                events.selectEdge(edge === state.selected_edge ? null : edge);
+            },
+            selectEdge: function(edge) {
+                console.log('Select Edge: ', edge);
+                state.selected_edge = edge;
+                state.selected_node = null;
+            },
+            selectNode: function(node) {
+                console.log('Select Edge: ', node);
+                state.selected_node = node;
+                state.selected_edge = null;
+            },
+            openContextMenu: function() {
+                console.log('Opening context menu.');
+                state.context_open = true;
+            },
+            closeContextMenu: function() {
+                console.log('Closing context menu.');
+                state.context_open = false;
+            }
+        };
+
+        $scope.loadingGraph = false;
+
+
         if (Number.isInteger(graphId)) {
             api.getGraph(graphId)
                 .then(function successCallback(response) {
                     console.log("GET _graph success response: ", response)
                     $scope.graph = response.data.graph;
 
-                    $scope.edge = $scope.graph.edges[0];
+                    $scope.state.events.selectEdge($scope.graph.edges[0]);
                     // ^^^ FOR TESTING
 
                     $scope.node = $scope.graph.nodes[0];

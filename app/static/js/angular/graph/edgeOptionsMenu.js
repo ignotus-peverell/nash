@@ -10,9 +10,12 @@ nash.directive('edgeOptionsMenu', function() {
         replace: true,
         templateUrl: '/static/partials/graph/edge-options-menu.html',
         scope: {
-            edge: '='
+            edge: '=',
         },
         link: function(scope, element, attrs) {
+            scope.$watch('edge', function() {
+                console.log('Edge Options Menu', arguments);
+            });
             scope.edgeMeanings = [
                 {name: 'Causes', value: 'cause'},
                 {name: 'Prevents', value: 'prevent'},

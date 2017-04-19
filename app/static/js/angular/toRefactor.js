@@ -8,28 +8,17 @@
 // var fill = d3.scale.category20();
 // var next_id = 0;
 
-// var ui_state = {
-//     mode: "arrow",
-//     selected_node: null,
-//     selected_edge: null,
-//     mousedown_edge: null,
-//     mousedown_node: null,
-//     mouseup_node: null,
-//     backspace_deletes: true,
-//     context_open: false
-// }
-
 
 // var node_menu = [
-//     {title: function(x) {
-//         return x.label + " (edit)";
+//     {title: function(n) {
+//         return n.label + " (edit)";
 //     },
 //      action: function(elm, d, i) {
 //          $("#node-label").focus();
 //      }
 //     },
-//     {title: function(x) {
-//         return x.detailed + " (edit)";
+//     {title: function(n) {
+//         return n.detailed + " (edit)";
 //     },
 //      action: function(elm, d, i) {
 //          $("#detailed-description-node").focus();
@@ -41,8 +30,8 @@
 //          redraw();
 //      }
 //     },
-//     {title: function(x) {
-//         if (x.truth) {
+//     {title: function(n) {
+//         if (n.truth) {
 //             return 'Make false';
 //         } else {
 //             return 'Make true';
@@ -80,15 +69,15 @@
 // ]
 
 // var edge_menu = [
-//     {title: function(x) {
-//         return x.label + " (edit)";
+//     {title: function(e) {
+//         return e.label + " (edit)";
 //     },
 //      action: function(elm, d, i) {
 //          $("#edge-label").focus();
 //      }
 //     },
-//     {title: function(x) {
-//         return x.detailed + " (edit)";
+//     {title: function(e) {
+//         return e.detailed + " (edit)";
 //     },
 //      action: function(elm, d, i) {
 //          $("#detailed-description-edge").focus();
@@ -184,11 +173,11 @@
 // }
 
 // function select_node(node) {
-//     console.log("select_node", node, ui_state.selected_node);
-//     ui_state.selected_node = node;
+//     console.log("select_node", node, scope.graphState.selected_node);
+//     scope.graphState.selected_node = node;
 
 //     if (node !== null) {
-//         ui_state.selected_edge = null;
+//         scope.graphState.selected_edge = null;
 
 //         show_node_infobox();
 
@@ -214,7 +203,7 @@
 //         // blur inputs and turn on backspace_deletes
 //         document.getElementById("node-label").blur();
 //         document.getElementById("detailed-description-node").blur();
-//         ui_state.backspace_deletes = true;
+//         scope.graphState.backspace_deletes = true;
 
 //     }
 
@@ -222,12 +211,12 @@
 // }
 
 // function select_edge(edge) {
-//     ui_state.selected_edge = edge;
+//     scope.graphState.selected_edge = edge;
 
 //     if (edge !== null) {
 //         show_edge_infobox();
 
-//         ui_state.selected_node = null;
+//         scope.graphState.selected_node = null;
 
 //         // fill in values
 //         $("#detailed-description-edge").val(edge.detailed);
@@ -238,17 +227,17 @@
 // }
 
 // function change_label(new_label) {
-//     if (ui_state.selected_node !== null) {
-//         nodes[ui_state.selected_node.index].label = new_label;
+//     if (scope.graphState.selected_node !== null) {
+//         nodes[scope.graphState.selected_node.index].label = new_label;
 //         redraw();
 //     }
 // }
 
 // function reverse_arrow() {
-//     if (ui_state.selected_edge !== null) {
-//         var tmp = ui_state.selected_edge.target;
-//         ui_state.selected_edge.target = ui_state.selected_edge.source;
-//         ui_state.selected_edge.source = tmp;
+//     if (scope.graphState.selected_edge !== null) {
+//         var tmp = scope.graphState.selected_edge.target;
+//         scope.graphState.selected_edge.target = scope.graphState.selected_edge.source;
+//         scope.graphState.selected_edge.source = tmp;
 //     }
 // }
 
@@ -301,13 +290,13 @@
 //     d3.select("#node-label").on("input", function () {
 //         change_label(this.value);
 //     }).on("focus", function () {
-//         ui_state.backspace_deletes = false;
+//         scope.graphState.backspace_deletes = false;
 //     });
 
 //     d3.select("#edge-label").on("input", function () {
 //         change_label(this.value);
 //     }).on("focus", function () {
-//         ui_state.backspace_deletes = false;
+//         scope.graphState.backspace_deletes = false;
 //     });
 
 //     d3.select("#self-cause-weird").on("input", function () {
@@ -327,80 +316,80 @@
 //     });
 
 //     d3.select("#detailed-description-node").on("input", function () {
-//         if (ui_state.selected_node !== null) {
-//             nodes[ui_state.selected_node.index].detailed = this.value;
+//         if (scope.graphState.selected_node !== null) {
+//             nodes[scope.graphState.selected_node.index].detailed = this.value;
 //         }
 //     }).on("focus", function () {
-//         ui_state.backspace_deletes = false;
+//         scope.graphState.backspace_deletes = false;
 //     });
 
 //     d3.select("#detailed-description-edge").on("input", function () {
-//         if (ui_state.selected_edge !== null) {
-//             ui_state.selected_edge.detailed = this.value;
+//         if (scope.graphState.selected_edge !== null) {
+//             scope.graphState.selected_edge.detailed = this.value;
 //         }
 //     }).on("focus", function () {
-//         ui_state.backspace_deletes = false;
+//         scope.graphState.backspace_deletes = false;
 //     });
 // }
 
 
 // function mousedown() {
-//     if (ui_state.mode === "arrow") {
-//         if (!ui_state.mousedown_node && !ui_state.mousedown_edge) {
+//     if (scope.graphState.mode === "arrow") {
+//         if (!scope.graphState.mousedown_node && !scope.graphState.mousedown_edge) {
 //             // allow panning if nothing is selected
 //             vis.call(d3.behavior.zoom().on("zoom", rescale));
 //             return;
 //         }
-//     } else if (ui_state.mode === "move") {
+//     } else if (scope.graphState.mode === "move") {
 //         console.log("move mousedown");
 //     }
 // }
 
 // function mousemove() {
-//     if (ui_state.mode === "arrow") {
-//         if (!ui_state.mousedown_node || ui_state.context_open) {
+//     if (scope.graphState.mode === "arrow") {
+//         if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
 //             return;
 //         }
 
-//         console.log('mousemove', ui_state.context_open);
+//         console.log('mousemove', scope.graphState.context_open);
 
 //         // update drag line
 //         drag_line
-//             .attr("x1", ui_state.mousedown_node.x)
-//             .attr("y1", ui_state.mousedown_node.y)
+//             .attr("x1", scope.graphState.mousedown_node.x)
+//             .attr("y1", scope.graphState.mousedown_node.y)
 //             .attr("x2", d3.mouse(this)[0])
 //             .attr("y2", d3.mouse(this)[1]);
 
-//     } else if (ui_state.mode === "move") {
-//         if (!ui_state.mousedown_node || ui_state.context_open) {
+//     } else if (scope.graphState.mode === "move") {
+//         if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
 //             return;
 //         }
-//         ui_state.mousedown_node.x = d3.mouse(this)[0];
-//         ui_state.mousedown_node.y = d3.mouse(this)[1];
+//         scope.graphState.mousedown_node.x = d3.mouse(this)[0];
+//         scope.graphState.mousedown_node.y = d3.mouse(this)[1];
 
 //         // update drag line
 //         drag_line
-//             .attr("x1", ui_state.mousedown_node.x)
-//             .attr("y1", ui_state.mousedown_node.y)
+//             .attr("x1", scope.graphState.mousedown_node.x)
+//             .attr("y1", scope.graphState.mousedown_node.y)
 //             .attr("x2", d3.mouse(this)[0])
 //             .attr("y2", d3.mouse(this)[1]);
 //     }
 // }
 
 // function reset_mouse_vars() {
-//     ui_state.mousedown_node = null;
-//     ui_state.mouseup_node = null;
-//     ui_state.mousedown_edge = null;
+//     scope.graphState.mousedown_node = null;
+//     scope.graphState.mouseup_node = null;
+//     scope.graphState.mousedown_edge = null;
 // }
 
 // function mouseup() {
-//     if (ui_state.mode === "arrow") {
-//         if (ui_state.mousedown_node && !ui_state.context_open) {
+//     if (scope.graphState.mode === "arrow") {
+//         if (scope.graphState.mousedown_node && !scope.graphState.context_open) {
 //             // hide drag line
 //             drag_line
 //                 .attr("class", "drag_line_hidden");
 
-//             if (!ui_state.mouseup_node) {
+//             if (!scope.graphState.mouseup_node) {
 //                 // add node
 //                 var point = d3.mouse(this),
 //                     node = {x: point[0], y: point[1], id: next_id,
@@ -412,13 +401,13 @@
 //                 select_node(node);
 
 //                 // add edge to mousedown node
-//                 edges.push({source: ui_state.mousedown_node,
+//                 edges.push({source: scope.graphState.mousedown_node,
 //                             target: node, detailed: ""});
 //             }
 
 //             redraw();
 //         }
-//     } else if (ui_state.mode === "move") {
+//     } else if (scope.graphState.mode === "move") {
 //         console.log("move mouseup");
 //     }
 //     // clear mouse event vars
@@ -493,7 +482,7 @@
 //             return "#000000";
 //         })
 //         .attr("fill", function (d) {
-//             if (d === ui_state.selected_node) {
+//             if (d === scope.graphState.selected_node) {
 //                 return "#ffb400";
 //             }
 
@@ -532,22 +521,22 @@
 //         })
 //         .on("mousedown",
 //             function (d) {
-//                 ui_state.mousedown_edge = d;
-//                 if (ui_state.mousedown_edge === ui_state.selected_edge) {
+//                 scope.graphState.mousedown_edge = d;
+//                 if (scope.graphState.mousedown_edge === scope.graphState.selected_edge) {
 //                     select_edge(null);
 //                 } else {
-//                     select_edge(ui_state.mousedown_edge);
+//                     select_edge(scope.graphState.mousedown_edge);
 //                 }
 //                 select_node(null);
 //                 redraw();
 //             })
 //         .on("contextmenu", d3.contextMenu(edge_menu, {
 //             onOpen: function() {
-//                 ui_state.context_open = true;
+//                 scope.graphState.context_open = true;
 //             },
 //             onClose: function() {
 //                 setTimeout(function() {
-//                     ui_state.context_open = false;
+//                     scope.graphState.context_open = false;
 //                 }, 500);
 //                 reset_mouse_vars();
 //             }
@@ -558,7 +547,7 @@
 
 //     edge
 //         .classed("edge_selected", function (d) {
-//             return d === ui_state.selected_edge;
+//             return d === scope.graphState.selected_edge;
 //         });
 
 //     nodes.forEach(function (n) {
@@ -605,7 +594,7 @@
 //             return "#000000";
 //         })
 //         .attr("fill", function (d) {
-//             if (d === ui_state.selected_node) {
+//             if (d === scope.graphState.selected_node) {
 //                 return "#ffb400";
 //             }
 //             if (d.truth) {
@@ -615,31 +604,31 @@
 //         })
 //         .on("mousedown",
 //             function (d) {
-//                 if (ui_state.context_open) {
+//                 if (scope.graphState.context_open) {
 //                     return;
 //                 }
 
-//                 ui_state.mousedown_node = d;
+//                 scope.graphState.mousedown_node = d;
 
 //                 // disable zoom
 //                 vis.call(d3.behavior.zoom().on("zoom", null));
 
-//                 console.log("mousedown node", ui_state.mousedown_node);
-//                 if (ui_state.mousedown_node === ui_state.selected_node) {
+//                 console.log("mousedown node", scope.graphState.mousedown_node);
+//                 if (scope.graphState.mousedown_node === scope.graphState.selected_node) {
 //                     console.log("mdnode === snode");
 //                     select_node(null);
 //                 } else {
-//                     select_node(ui_state.mousedown_node);
+//                     select_node(scope.graphState.mousedown_node);
 //                 }
 //                 select_edge(null);
 
 //                 // reposition drag line
 //                 drag_line
 //                     .attr("class", "edge")
-//                     .attr("x1", ui_state.mousedown_node.x)
-//                     .attr("y1", ui_state.mousedown_node.y)
-//                     .attr("x2", ui_state.mousedown_node.x)
-//                     .attr("y2", ui_state.mousedown_node.y);
+//                     .attr("x1", scope.graphState.mousedown_node.x)
+//                     .attr("y1", scope.graphState.mousedown_node.y)
+//                     .attr("x2", scope.graphState.mousedown_node.x)
+//                     .attr("y2", scope.graphState.mousedown_node.y);
 
 //                 redraw();
 //             })
@@ -649,16 +638,16 @@
 //             })
 //         .on("mouseup",
 //             function (d) {
-//                 if (ui_state.mousedown_node) {
-//                     ui_state.mouseup_node = d;
-//                     if (ui_state.mouseup_node === ui_state.mousedown_node) {
+//                 if (scope.graphState.mousedown_node) {
+//                     scope.graphState.mouseup_node = d;
+//                     if (scope.graphState.mouseup_node === scope.graphState.mousedown_node) {
 //                         reset_mouse_vars();
 //                         return;
 //                     }
 
 //                     // add edge
-//                     var edge = {source: ui_state.mousedown_node,
-//                                 target: ui_state.mouseup_node,
+//                     var edge = {source: scope.graphState.mousedown_node,
+//                                 target: scope.graphState.mouseup_node,
 //                                 detailed: ""};
 //                     edges.push(edge);
 
@@ -676,11 +665,11 @@
 //         .attr("r", 40);
 //     node.on("contextmenu", d3.contextMenu(node_menu, {
 //             onOpen: function() {
-//                 ui_state.context_open = true;
+//                 scope.graphState.context_open = true;
 //             },
 //             onClose: function() {
 //                 setTimeout(function() {
-//                     ui_state.context_open = false;
+//                     scope.graphState.context_open = false;
 //                 }, 500);
 //                 reset_mouse_vars();
 //             }
@@ -693,7 +682,7 @@
 
 //     node
 //         .classed("node_selected", function (d) {
-//             return d === ui_state.selected_node;
+//             return d === scope.graphState.selected_node;
 //         });
 
 //     labels = labels.data(nodes);
@@ -737,25 +726,25 @@
 // }
 
 // function delete_node(node) {
-//     nodes.splice(nodes.indexOf(ui_state.selected_node), 1);
-//     splice_edges_for_node(ui_state.selected_node);
+//     nodes.splice(nodes.indexOf(scope.graphState.selected_node), 1);
+//     splice_edges_for_node(scope.graphState.selected_node);
 // }
 
 // function delete_edge(edge) {
-//     edges.splice(edges.indexOf(ui_state.selected_edge), 1);
+//     edges.splice(edges.indexOf(scope.graphState.selected_edge), 1);
 // }
 
 // function keydown() {
-//     if (!ui_state.selected_node && !ui_state.selected_edge) {
+//     if (!scope.graphState.selected_node && !scope.graphState.selected_edge) {
 //         return;
 //     }
 //     switch (d3.event.keyCode) {
 //     case 8: // backspace
 //     case 46:
-//         if (ui_state.backspace_deletes) {
-//             if (ui_state.selected_node) {
+//         if (scope.graphState.backspace_deletes) {
+//             if (scope.graphState.selected_node) {
 //                 delete_node(node);
-//             } else if (ui_state.selected_edge) {
+//             } else if (scope.graphState.selected_edge) {
 //                 delete_edge(edge);
 //             }
 //             select_node(null);

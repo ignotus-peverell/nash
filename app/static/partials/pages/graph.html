@@ -7,10 +7,10 @@
       <graph-options-menu graph="graph" edit-mode="graphState.edit_mode"></graph-options-menu>
     </div>
 
-    <div id="infobox-left" ng-show="graphState.edit_mode==='edit'">
+    <div id="infobox-left" ng-show="state.edit_mode==='edit'">
       <div id="infobox-data-entry">
         <node-options-menu node="node"></node-options-menu>
-        <edge-options-menu edge="edge"></edge-options-menu>
+        <edge-options-menu ng-if="state.selected_edge" edge="state.selected_edge"></edge-options-menu>
       </div>
     </div>
 
@@ -19,7 +19,7 @@
   <!-- This is an angular directive. See `/static/partials/graph/reality-graph.html` -->
   <!-- for the template and `/static/js/angular/graph/realityGraph.js` for the -->
   <!-- directive code. -->
-  <reality-graph ng-if="graph" graph="graph" graph-state="graphState"></reality-graph>
+  <reality-graph ng-if="graph" graph="graph" graph-state="state"></reality-graph>
 
   <div id="chart-spacer">&nbsp;</div>
 </div>
