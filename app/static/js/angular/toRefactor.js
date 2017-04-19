@@ -273,56 +273,6 @@
 //     redraw();
 // }
 
-// function mode_arrows() {
-//     ui_state.mode = "arrow";
-// }
-
-// function mode_move() {
-//     ui_state.mode = "move";
-// }
-
-// function mark_cause() {
-//     ui_state.selected_edge.meaning = "cause";
-// }
-
-// function mark_prevent() {
-//     ui_state.selected_edge.meaning = "prevent";
-// }
-
-// function mark_true() {
-//     ui_state.selected_node.truth = d3.select("#truth").property("checked");
-//     redraw();
-// }
-
-// function populate_self_cause_weird(value) {
-//     ui_state.selected_node.self_cause_weird = value;
-//     redraw();
-// }
-
-// function populate_cause_weird(value) {
-//     ui_state.selected_edge.cause_weird = value;
-//     redraw();
-// }
-
-// function populate_prevent_weird(value) {
-//     ui_state.selected_edge.prevent_weird = value;
-//     redraw();
-// }
-
-// function populate_edge_meaning(value) {
-//     ui_state.selected_edge.meaning = value;
-//     redraw();
-// }
-
-// function mark_locked() {
-//     ui_state.selected_node.locked = d3.select("#locked").property("checked");
-//     redraw();
-// }
-
-// function mark_false() {
-//     ui_state.selected_node.truth = false;
-//     redraw();
-// }
 
 // function save() {
 //     var edges2 = [];

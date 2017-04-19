@@ -123,22 +123,23 @@ nash.directive('realityGraph', [
                 // .on('mouseup', mouseup);
             // // ^^^^ TODO: Handle mouseevents
 
-            // vis.on('contextmenu', d3.contextMenu(bkgd_menu, {
-            //     onOpen: function() {
-            //         scope.graphState.context_open = true;
-            //     },
-            //     onClose: function() {
-            //         setTimeout(function() {
-            //             scope.graphState.context_open = false;
-            //         }, 500);
-            //         // reset_mouse_vars();
-            //     }
-            // }));
+            vis.on('contextmenu', d3.contextMenu(bkgd_menu, {
+                onOpen: function() {
+                    scope.graphState.context_open = true;
+                },
+                onClose: function() {
+                    setTimeout(function() {
+                        scope.graphState.context_open = false;
+                    }, 500);
+                    // reset_mouse_vars();
+                    // TODO ^^^
+                }
+            }));
 
-            // vis.append('svg:rect')
-            //     .attr('width', width)
-            //     .attr('height', height)
-            //     .attr('fill', 'white');
+            vis.append('svg:rect')
+                .attr('width', width)
+                .attr('height', height)
+                .attr('fill', 'white');
 
             console.log(scope.graph.nodes);
             var tick = function() {
@@ -157,7 +158,6 @@ nash.directive('realityGraph', [
                 // nodes a non-zero radius so they're visible.
 
                 nodes
-                    .attr('r', width/100)
                     .attr('cx', function(d) { return d.x; })
                     .attr('cy', function(d) { return d.y; })
                     .attr('stroke-width', function (d) { return d.locked ? 5 : 2 })
@@ -247,12 +247,12 @@ nash.directive('realityGraph', [
         //     next_id += 1;
 
             // line displayed when dragging new nodes
-            // var drag_line = vis.append('line')
-            //     .attr('class', 'drag_line')
-            //     .attr('x1', 0)
-            //     .attr('y1', 0)
-            //     .attr('x2', 0)
-            //     .attr('y2', 0);
+            var drag_line = vis.append('line')
+                .attr('class', 'drag_line')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('x2', 0)
+                .attr('y2', 0);
 
             // // get layout properties
             // var nodes = force.nodes(),
@@ -275,7 +275,13 @@ nash.directive('realityGraph', [
                 .data(scope.graph.nodes)
                 .enter()
                 .append('circle')
-                .attr('class', 'node');
+                .attr('r', 30)
+                .attr('class', 'node')
+                .transition()
+                .duration(750)
+                .ease('elastic')
+                .attr('r', 40);
+
 
             var nodeLabels = vis.selectAll('.node-label')
                 .data(scope.graph.nodes)
