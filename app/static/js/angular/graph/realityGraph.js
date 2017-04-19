@@ -191,14 +191,10 @@ nash.directive('realityGraph', [
                     .text(function (d) { return d.label; });
 
 
-                // We also need to update positions of the links.
+                // We also need to update positions of the edges.
                 // For those elements, the force layout sets the
                 // `source` and `target` properties, specifying
                 // `x` and `y` values in each case.
-
-
-
-
                 edges
                     .attr('points', function (d) {
                         var endX = (2 * d.source.x + 3 * d.target.x) / 5.0;
