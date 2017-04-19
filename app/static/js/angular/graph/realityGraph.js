@@ -276,11 +276,11 @@ nash.directive('realityGraph', [
                 .enter()
                 .append('circle')
                 .attr('r', 30)
-                .attr('class', 'node')
-                .transition()
-                .duration(750)
-                .ease('elastic')
-                .attr('r', 40);
+                .attr('class', 'node');
+                // .transition()
+                // .duration(750)
+                // .ease('elastic')
+                // .attr('r', 40);
 
 
             var nodeLabels = vis.selectAll('.node-label')
