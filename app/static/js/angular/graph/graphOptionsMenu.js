@@ -5,11 +5,11 @@
 var nash = angular.module('nash');
 
 nash.directive('graphOptionsMenu', [
-    'api',
-    function(api) {
+    'GraphService',
+    function(GraphService) {
 
         var linkFn = function(scope, element, attrs) {
-            // Used as toggle after saving and waiting for the api to
+            // Used as toggle after saving and waiting for the GraphService to
             // return a response.
             scope.isSaving = false;
 
@@ -24,7 +24,7 @@ nash.directive('graphOptionsMenu', [
             scope.save = function() {
                 scope.isSaving = true;
                 console.log(scope.graph)
-                api.saveGraph([], scope.graph)
+                GraphService.saveGraph([], scope.graph)
                     .then(function successCallback(response) {
                         scope.isSaving = false;
                         console.log("POST _graph success response: ", response)

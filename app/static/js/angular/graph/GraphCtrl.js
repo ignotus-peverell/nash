@@ -7,8 +7,8 @@ var nash = angular.module('nash');
 nash.controller('GraphCtrl', [
     '$scope',
     '$routeParams',
-    'api',
-    function($scope, $routeParams, api) {
+    'GraphService',
+    function($scope, $routeParams, GraphService) {
         var graphId = parseInt($routeParams.graphId);
 
         console.log('GraphCtrl: Loading graph ', graphId)
@@ -57,7 +57,7 @@ nash.controller('GraphCtrl', [
             addEdge: function(source, target, edges) {
                 console.log('Adding edge');
                 console.log(source, target)
-                var edge = {source: source, target: target, id: "rando"};
+                var edge = {source: source.id, target: target.id, id: "rando"};
                 $scope.graph.edges.push(edge);
                  console.log(edges)
                 //events.selectEdge(edge);
@@ -69,11 +69,14 @@ nash.controller('GraphCtrl', [
 
 
         if (Number.isInteger(graphId)) {
-            api.getGraph(graphId)
+            GraphService.getGraph(graphId)
                 .then(function successCallback(response) {
-                    console.log("GET _graph success response: ", response)
-                    $scope.graph = response.data.graph;
-
+                    console.log('GET _graph success response: ', response);
+                    $scope.graph = GraphService.getHelperGraph(
+                        response.data.graph.default_helper.id,
+                        response.data.graph);
+                    console.log('Transformed Graph: ', $scope.graph);
+                    debugger;
                     $scope.state.events.selectEdge($scope.graph.edges[0]);
                     // ^^^ FOR TESTING
 
