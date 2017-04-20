@@ -21,6 +21,11 @@ nash.directive('realityGraph', [
 
             var width = 800;
             var height = 700;
+            var force = d3.layout.force()
+                .size([width, height])
+                .linkDistance(200)
+                .charge(-1000);
+            var dragLine, nodes, edges, nodeLabels;
 
             var edge_menu = [
                 {title: function(d) {
@@ -303,10 +308,8 @@ nash.directive('realityGraph', [
                 .append('svg:g')
                 .on('mousemove', mousemove)
                 .on('mousedown', mousedown)
-                .on('mouseup', mouseup);
-            // // ^^^^ TODO: Handle mouseevents
-
-            vis.on('contextmenu', d3.contextMenu(bkgd_menu, contextMenuHandlers));
+                .on('mouseup', mouseup)
+                .on('contextmenu', d3.contextMenu(bkgd_menu, contextMenuHandlers));
 
             vis.append('svg:rect')
                 .attr('width', width)
@@ -327,7 +330,6 @@ nash.directive('realityGraph', [
                 // To move the node, we set the appropriate SVG
                 // attributes to their new values. Also give the
                 // nodes a non-zero radius so they're visible.
-
                 nodes
                     .attr('cx', function(d) { return d.x; })
                     .attr('cy', function(d) { return d.y; })
@@ -385,17 +387,16 @@ nash.directive('realityGraph', [
                             scope.$apply(function() {
                                 if (scope.graphState.mousedown_node) {
                                     scope.graphState.mouseup_node = d;
-                                    // if (scope.graphState.mouseup_node === scope.graphState.mousedown_node) {
-                                    //     reset_mouse_vars();
-                                    //     return;
-                                    // }
+                                    if (scope.graphState.mouseup_node
+                                        === scope.graphState.mousedown_node) {
+                                        //reset_mouse_vars();
+                                        return;
+                                    }
 
                                     // add edge
-                                    var edge = {source: scope.graphState.mousedown_node,
-                                                target: scope.graphState.mouseup_node,
-                                                detailed: ''};
-
-                                    scope.graphState.events.addEdge(edge, edges, true);
+                                    var sourceNode = scope.graphState.mousedown_node;
+                                    var targetNode = scope.graphState.mouseup_node;
+                                    scope.graphState.operations.addEdge(sourceNode, targetNode, scope.graph.edges);
 
                                     // enable zoom
                                     vis.call(d3.behavior.zoom().on('zoom', rescale));
@@ -408,13 +409,9 @@ nash.directive('realityGraph', [
                     .attr("r", 40);
 
 
-
                 nodeLabels
                     .attr('x', function (d) { return d.label ? d.x - 3 * d.label.length : d.x; })
-                    .attr('y', function (d) { return d.y + 5; })
-                    .attr('fill', function (d) { return d.truth ? '#000000' : '#ffffff' })
-                    .text(function (d) { return d.label; });
-
+                    .attr('y', function (d) { return d.y + 5; });
 
                 // We also need to update positions of the edges.
                 // For those elements, the force layout sets the
@@ -428,6 +425,19 @@ nash.directive('realityGraph', [
                                 d.source.y + ' ' + endX,
                                 endY + ' ' +
                                 d.target.x, d.target.y].join(',');
+                    })
+
+            };
+
+            var enterEdges = function(d) {
+                d
+                    .enter()
+                    .append('polyline')
+                    .attr('class', 'edge')
+                    .on('mousedown', function(d) {
+                        scope.$apply(function(){
+                            scope.graphState.events.mousedownEdge(d);
+                        });
                     })
                     .classed("edge-selected", function (d) {
                         return d === scope.graphState.selected_edge;
@@ -458,68 +468,106 @@ nash.directive('realityGraph', [
                             }
                         }
                         return 'url(#arrowhead-black)';
-                    });
+                    })
+                    .on("contextmenu", d3.contextMenu(edge_menu, contextMenuHandlers));
 
             };
 
-            // init force layout
-            var force = d3.layout.force()
-                .size([width, height])
-                .nodes(scope.graph.nodes)
-                .links(scope.graph.edges)
-                .linkDistance(200)
-                .charge(-1000)
-                .on('tick', tick);
+            var enterNodes = function(d) {
+                d
+                    .enter()
+                    .append('circle')
+                    .attr('cx', function(d) { return d.x; })
+                    .attr('cy', function(d) { return d.y; })
+                    .attr('r', 30)
+                    .attr('class', 'node')
+                    .on('contextmenu', d3.contextMenu(node_menu,  contextMenuHandlers));
+            };
 
-            //     next_id += 1;
+            var enterNodeLabels = function(d) {
+                d
+                    .enter()
+                    .append('text')
+                    .attr('class', 'text')
+                    .attr('font-family', 'sans-serif')
+                    .attr('font-size', '10px')
+                    .attr('fill', function (d) { return d.truth ? '#000000' : '#ffffff' })
+                    .text(function (d) { return d.label; });
+            };
 
-            // line displayed when dragging new nodes
-            var dragLine = vis.append('line')
-                .attr('class', 'drag-line')
-                .attr('x1', 0)
-                .attr('y1', 0)
-                .attr('x2', 0)
-                .attr('y2', 0);
+            var render = function() {
+                // init force layout
+                force
+                    .nodes(scope.graph.nodes)
+                    .links(scope.graph.edges)
+                    .on('tick', tick);
 
-            var edges = vis.selectAll('.edge')
-                .data(scope.graph.edges)
-                .enter()
-                .append('polyline')
-                .attr('class', 'edge')
-                .on('mousedown', function(d) {
-                    scope.$apply(function(){
-                        scope.graphState.events.mousedownEdge(d);
-                    });
-                })
-                .on("contextmenu", d3.contextMenu(edge_menu, contextMenuHandlers));
+                //     next_id += 1;
 
+                // line displayed when dragging new nodes
+                dragLine = vis.append('line')
+                    .attr('class', 'drag-line')
+                    .attr('x1', 0)
+                    .attr('y1', 0)
+                    .attr('x2', 0)
+                    .attr('y2', 0);
 
-            var nodes = vis.selectAll('.node')
-                .data(scope.graph.nodes)
-                .enter()
-                .append('circle')
-                .attr('r', 30)
-                .attr('class', 'node')
-                .on('contextmenu', d3.contextMenu(node_menu,  contextMenuHandlers));
+                var dEdges = vis.selectAll('.edge')
+                    .data(scope.graph.edges);
+                enterEdges(dEdges);
+                edges = vis.selectAll('.edge');
+
+                var dNodes = vis.selectAll('.node')
+                    .data(scope.graph.nodes);
+                enterNodes(dNodes);
+                nodes = vis.selectAll('.node');
+
                 // .transition()
                 // .duration(750)
                 // .ease('elastic')
                 // .attr('r', 40);
 
+                var dNodeLabels = vis.selectAll('.node-label')
+                    .data(scope.graph.nodes, function(d) { return d.label; });
+                enterNodeLabels(dNodeLabels);
+                nodeLabels = vis.selectAll('.node-label');
 
-            var nodeLabels = vis.selectAll('.node-label')
-                .data(scope.graph.nodes)
-                .enter()
-                .append('text')
-                .attr('class', 'text')
-                .attr('font-family', 'sans-serif')
-                .attr('font-size', '10px');
+                force.start();
+            }
 
+            var update = function() {
+                force
+                    .nodes(scope.graph.nodes)
+                    .links(scope.graph.edges);
 
-            force.start();
+                var dEdges = vis.selectAll('.edge')
+                    .data(scope.graph.edges);
+                enterEdges(dEdges);
+                dEdges.exit().remove();
+                edges = vis.selectAll('.edge');
 
+                var dNodes = vis.selectAll('.node')
+                    .data(scope.graph.nodes);
+                enterNodes(dNodes);
+                dNodes.exit().remove();
+                nodes = vis.selectAll('.node');
+                // .transition()
+                // .duration(750)
+                // .ease('elastic')
+                // .attr('r', 40);
+
+                var dNodeLabels = vis.selectAll('.node-label')
+                    .data(scope.graph.nodes, function(d) { return d.label; });
+                enterNodeLabels(dNodeLabels);
+                dNodeLabels.exit().remove();
+                nodeLabels = vis.selectAll('.node-label');
+
+                force.start();
+            };
+
+            render();
             scope.$watch('graph', function() {
-                tick();
+                update();
             }, true);
 
             //     // add keyboard callback

@@ -50,17 +50,22 @@ nash.controller('GraphCtrl', [
             closeContextMenu: function() {
                 console.log('Closing context menu.');
                 state.context_open = false;
-            },
-            addEdge: function(edge, edges, shouldSelect) {
-                console.log('Adding edge');
-                edges.push(edge);
-                if (shouldSelect) {
-                    events.selectEdge(edge);
-                }
             }
         };
 
-        $scope.loadingGraph = false;
+        var operations = $scope.state.operations = {
+            addEdge: function(source, target, edges) {
+                console.log('Adding edge');
+                console.log(source, target)
+                var edge = {source: source, target: target, id: "rando"};
+                $scope.graph.edges.push(edge);
+                 console.log(edges)
+                //events.selectEdge(edge);
+            },
+            addNode: function(graph) {
+                console.log('Adding Node');
+            }
+        };
 
 
         if (Number.isInteger(graphId)) {
