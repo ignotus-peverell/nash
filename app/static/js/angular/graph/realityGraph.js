@@ -60,11 +60,9 @@ nash.directive('realityGraph', [
                 .charge(-1000);
 
             // get layout properties
-            var nodes = [],
-                edges = [],
-                node = vis.selectAll(".node"),
-                edge = vis.selectAll(".edge"),
-                nodeLabel = vis.selectAll(".text");
+            var node = vis.selectAll(".node");
+            var edge = vis.selectAll(".edge");
+            var nodeLabel = vis.selectAll(".text");
 
                 // line displayed when dragging new nodes
             var dragLine = vis.append('line')
@@ -426,8 +424,6 @@ nash.directive('realityGraph', [
 
             var render = function() {
                 console.log('RENDERING....')
-                // init force layout
-//                _.(edges,
                 var nodes = scope.graph.nodes; //force.nodes();
                 var edges = scope.graph.edges //force.links();
 
@@ -436,19 +432,21 @@ nash.directive('realityGraph', [
                     .links(edges)
                     .on('tick', tick);
 
+                // Add edges.
                 edge = vis.selectAll('.edge')
                     .data(edges, function(d) {return d.id; });
                 enterEdges(edge);
                 edge.exit().remove();
                 edge = vis.selectAll('.edge');
 
+                // Add nodes.
                 node = vis.selectAll('.node')
                     .data(nodes, function(d) { return d.id; } );
                 enterNodes(node);
                 node.exit().remove();
                 node = vis.selectAll('.node');
 
-
+                // Add node labels.
                 nodeLabel = vis.selectAll('.node-label')
                     .data(nodes);
                 enterNodeLabels(nodeLabel);
@@ -474,9 +472,19 @@ nash.directive('realityGraph', [
                 // attributes to their new values. Also give the
                 // nodes a non-zero radius so they're visible.
 
-                nodeLabel
-                    .attr('x', function (d) { return d.label ? d.x - 3 * d.label.length : d.x; })
-                    .attr('y', function (d) { return d.y + 5; });
+                edge
+                    .attr('points', function (d) {
+                        var endX = (2 * d.source.x + 3 * d.target.x) / 5.0;
+                        var endY = (2 * d.source.y + 3 * d.target.y) / 5.0;
+                        return [d.source.x,
+                                d.source.y + ' ' + endX,
+                                endY + ' ' +
+                                d.target.x, d.target.y].join(',');
+                    })
+                    .classed("edge-selected", function (d) {
+                        return d === scope.graphState.selected_edge;
+                    });
+
 
                 node
                     .attr('cx', function(d) { return d.x; })
@@ -531,25 +539,9 @@ nash.directive('realityGraph', [
                             });
                         });
 
-
-
-                // We also need to update positions of the edges.
-                // For those elements, the force layout sets the
-                // `source` and `target` properties, specifying
-                // `x` and `y` values in each case.
-                edge
-                    .attr('points', function (d) {
-                        var endX = (2 * d.source.x + 3 * d.target.x) / 5.0;
-                        var endY = (2 * d.source.y + 3 * d.target.y) / 5.0;
-                        return [d.source.x,
-                                d.source.y + ' ' + endX,
-                                endY + ' ' +
-                                d.target.x, d.target.y].join(',');
-                    })
-                    .classed("edge-selected", function (d) {
-                        return d === scope.graphState.selected_edge;
-                    });
-
+                nodeLabel
+                    .attr('x', function (d) { return d.label ? d.x - 3 * d.label.length : d.x; })
+                    .attr('y', function (d) { return d.y + 5; });
 
             };
 
