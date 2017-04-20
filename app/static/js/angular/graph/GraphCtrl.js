@@ -34,7 +34,7 @@ nash.controller('GraphCtrl', [
             },
             selectEdge: function(edge) {
                 console.log('Select Edge: ', edge);
-                state.selected_edge = edge;
+                state.selected_edge = state.selected_edge === edge ? null : edge;
                 state.selected_node = null;
             },
             selectNode: function(node) {
@@ -57,10 +57,10 @@ nash.controller('GraphCtrl', [
             addEdge: function(source, target, edges) {
                 console.log('Adding edge');
                 console.log(source, target)
-                var edge = {source: source.id, target: target.id, id: "rando"};
+                var edge = {source: source, target: target, id: source.id + '-' + target.id};
                 $scope.graph.edges.push(edge);
-                 console.log(edges)
-                //events.selectEdge(edge);
+                console.log(edges)
+                events.selectEdge(edge);
             },
             addNode: function(graph) {
                 console.log('Adding Node');
@@ -76,7 +76,7 @@ nash.controller('GraphCtrl', [
                         response.data.graph.default_helper.id,
                         response.data.graph);
                     console.log('Transformed Graph: ', $scope.graph);
-                    debugger;
+
                     $scope.state.events.selectEdge($scope.graph.edges[0]);
                     // ^^^ FOR TESTING
 

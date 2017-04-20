@@ -22,13 +22,18 @@ nash.service(
                  return _.assign(n, _.find(helper.view_nodes, ['id', n.id]));
              });
 
-             var edges = _.map(graph.edges, function(n) {
-                 return _.assign(
-                     n,
-                     _.find(helper.view_edges, {'source': n.source,
-                                                'target': n.target})
-                 );
-             });
+             var edges = _.map(
+                 graph.edges,
+                 function(n) {
+                     n.id = n.source + '-' + n.target;
+                     return _.assign(
+                         n,
+                         _.find(helper.view_edges, {'source': n.source,
+                                                    'target': n.target})
+                     );
+                 });
+
+
              return {
                  save_id: graph.save_id,
                  save_name: graph.save_name,
