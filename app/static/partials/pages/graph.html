@@ -9,8 +9,12 @@
 
     <div id="infobox-left" ng-show="state.edit_mode==='edit'">
       <div id="infobox-data-entry">
-        <node-options-menu node="node"></node-options-menu>
-        <edge-options-menu ng-if="state.selected_edge" edge="state.selected_edge"></edge-options-menu>
+        <node-options-menu
+          ng-if="state.selected_node"
+          node="state.selected_node"></node-options-menu>
+        <edge-options-menu
+          ng-if="state.selected_edge"
+          edge="state.selected_edge"></edge-options-menu>
       </div>
     </div>
 

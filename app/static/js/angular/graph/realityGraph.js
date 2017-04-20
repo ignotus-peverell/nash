@@ -342,32 +342,6 @@ nash.directive('realityGraph', [
                         });
                     })
                     .classed('reference-edge', function(d) { d.meaning === 'reference'})
-                    .attr('marker-mid', function(d) {
-                        if (d.meaning === 'reference') {
-                            return ''
-                        } else if (d.failed_cause) {
-                            if (d.cause_weird === '0') {
-                                return 'url(#arrowhead-green)';
-                            }
-                            else if (d.cause_weird === '1') {
-                                return 'url(#arrowhead-yellow)';
-                            }
-                            else if (d.cause_weird === '2') {
-                                return 'url(#arrowhead-orange)';
-                            }
-                        } else if (d.failed_prevent) {
-                            if (d.prevent_weird === '0') {
-                                return 'url(#arrowhead-green)';
-                            }
-                            else if (d.prevent_weird === '1') {
-                                return 'url(#arrowhead-yellow)';
-                            }
-                            else if (d.prevent_weird === '2') {
-                                return 'url(#arrowhead-orange)';
-                            }
-                        }
-                        return 'url(#arrowhead-black)';
-                    })
                     .on("contextmenu", d3.contextMenu(edge_menu, contextMenuHandlers));
 
             };
@@ -378,20 +352,6 @@ nash.directive('realityGraph', [
                     .append('circle')
                     .attr('cx', function(d) { return d.x; })
                     .attr('cy', function(d) { return d.y; })
-                    .attr('stroke-width', function (d) { return d.locked ? 5 : 2 })
-                    .attr('stroke', function (d) {
-                        if (d.self_causing) {
-                            if (d.self_cause_weird === '0') {
-                                return '#00ff00';
-                            } else if (d.self_cause_weird === '1') {
-                                return '#ffff00';
-                            } else if (d.self_cause_weird === '2') {
-                                return '#ffb400';
-                            }
-                            return '#ff0000';
-                        }
-                        return '#000000';
-                    })
                     .attr('fill', function (d) {
                         // if (d === ui_state.selected_node) {
                         //     return '#ffb400';
@@ -453,7 +413,6 @@ nash.directive('realityGraph', [
                 nodeLabel.exit().remove();
                 nodeLabel = vis.selectAll('.node-label');
 
-
                 force.start();
             }
 
@@ -483,12 +442,54 @@ nash.directive('realityGraph', [
                     })
                     .classed("edge-selected", function (d) {
                         return d === scope.graphState.selected_edge;
+                    })
+                    .attr('marker-mid', function(d) {
+                        console.log(d);
+                        if (d.meaning === 'reference') {
+                            return ''
+                        } else if (d.meaning === 'cause' && d.source.truth && !d.target.truth) {
+                            if (d.cause_weird === '0') {
+                                return 'url(#arrowhead-green)';
+                            }
+                            else if (d.cause_weird === '1') {
+                                return 'url(#arrowhead-yellow)';
+                            }
+                            else if (d.cause_weird === '2') {
+                                return 'url(#arrowhead-orange)';
+                            }
+                        } else if (d.meaning === 'prevent' && d.source.truth && d.target.truth) {
+                            if (d.prevent_weird === '0') {
+                                return 'url(#arrowhead-green)';
+                            }
+                            else if (d.prevent_weird === '1') {
+                                return 'url(#arrowhead-yellow)';
+                            }
+                            else if (d.prevent_weird === '2') {
+                                return 'url(#arrowhead-orange)';
+                            }
+                        }
+                        return 'url(#arrowhead-black)';
                     });
+
 
 
                 node
                     .attr('cx', function(d) { return d.x; })
                     .attr('cy', function(d) { return d.y; })
+                    .attr('stroke-width', function (d) { return d.locked ? 5 : 2 })
+                    .attr('stroke', function (d) {
+                        if (d.self_causing) {
+                            if (d.self_cause_weird === '0') {
+                                return '#00ff00';
+                            } else if (d.self_cause_weird === '1') {
+                                return '#ffff00';
+                            } else if (d.self_cause_weird === '2') {
+                                return '#ffb400';
+                            }
+                            return '#ff0000';
+                        }
+                        return '#000000';
+                    })
                     .on('mousedown', function(d) {
                         scope.$apply(function() {
                             if (scope.graphState.context_open) {

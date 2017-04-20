@@ -38,7 +38,7 @@ nash.controller('GraphCtrl', [
                 state.selected_node = null;
             },
             selectNode: function(node) {
-                console.log('Select Edge: ', node);
+                console.log('Select Node: ', node);
                 state.selected_node = node === state.selected_edge ? null : node;
                 state.selected_edge = null;
                 state.backspace_deletes = state.selected_node !== null ? true : false;
@@ -75,13 +75,6 @@ nash.controller('GraphCtrl', [
                     $scope.graph = GraphService.getHelperGraph(
                         response.data.graph.default_helper.id,
                         response.data.graph);
-                    console.log('Transformed Graph: ', $scope.graph);
-
-                    $scope.state.events.selectEdge($scope.graph.edges[0]);
-                    // ^^^ FOR TESTING
-
-                    $scope.node = $scope.graph.nodes[0];
-                    // ^^^ FOR TESTING
 
                     $scope.graphDataLoaded = true;
                 }, function errorCallback(response) {
