@@ -44,9 +44,9 @@ nash.service(
              };
          };
 
-         this.addNode = function(helperGraph, x, y) {
-             var nodeCount = helperGraph.nodes.length;
-             var maxId = _.chain(helperGraph.nodes).map('id').max().value();
+         this.addNode = function(graph, x, y) {
+             var nodeCount = graph.nodes.length;
+             var maxId = _.chain(graph.nodes).map('id').max().value();
              var maxId = maxId ? maxId : 0;
              var newNode = {
                  id: maxId + 1,
@@ -59,18 +59,18 @@ nash.service(
                  y: y ? y : 0
              };
 
-             helperGraph.nodes.push(newNode);
+             graph.nodes.push(newNode);
              return newNode;
          };
 
-         this.addEdge = function(helperGraph, sourceNode, targetNode) {
+         this.addEdge = function(graph, sourceNode, targetNode) {
              var newEdge = {
                  id: sourceNode.id + '-' + targetNode.id,
                  source: sourceNode,
                  target: targetNode,
                  detailed: ''
              };
-             helperGraph.edges.push(newEdge);
+             graph.edges.push(newEdge);
              return newEdge;
          };
 
