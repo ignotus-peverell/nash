@@ -34,7 +34,6 @@ nash.service(
                      );
                  });
 
-
              return {
                  save_id: graph.save_id,
                  save_name: graph.save_name,
@@ -48,6 +47,7 @@ nash.service(
          this.addNode = function(helperGraph, x, y) {
              var nodeCount = helperGraph.nodes.length;
              var maxId = _.chain(helperGraph.nodes).map('id').max().value();
+             var maxId = maxId ? maxId : 0;
              var newNode = {
                  id: maxId + 1,
                  index: nodeCount,
@@ -72,6 +72,12 @@ nash.service(
              };
              helperGraph.edges.push(newEdge);
              return newEdge;
+         };
+
+         this.initGraph = function() {
+             var initGraph = {nodes: [], edges: []};
+             this.addNode(initGraph);
+             return initGraph;
          };
 
          this.getGraph = function (id) {

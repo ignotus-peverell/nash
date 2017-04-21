@@ -75,7 +75,7 @@ nash.controller('GraphCtrl', [
                 });
 
         } else {
-            // TODO: initialize new graph
+            $scope.graph = GraphService.initGraph();
         }
 
     }
