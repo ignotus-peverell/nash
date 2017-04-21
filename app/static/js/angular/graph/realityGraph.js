@@ -511,7 +511,6 @@ nash.directive('realityGraph', [
                                     // add edge
                                     var sourceNode = scope.graphState.mousedown_node;
                                     var targetNode = scope.graphState.mouseup_node;
-
                                     var newEdge = GraphService.addEdge(
                                         scope.graph, sourceNode, targetNode);
 
