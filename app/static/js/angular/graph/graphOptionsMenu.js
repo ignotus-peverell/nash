@@ -14,7 +14,6 @@ nash.directive('graphOptionsMenu', [
             scope.isSaving = false;
 
             // Add a node to the graph.
-
             scope.addNode = function() {
                 var newNode = GraphService.addNode(scope.graph);
                 scope.selectNode({node: newNode});

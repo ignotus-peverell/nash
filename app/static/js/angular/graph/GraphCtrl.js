@@ -62,9 +62,11 @@ nash.controller('GraphCtrl', [
             GraphService.getGraph(graphId)
                 .then(function successCallback(response) {
                     console.log('GET _graph success response: ', response);
+                    var graph = response.data.graph;
+                    $scope.originalGraph = graph;
                     $scope.graph = GraphService.createHelperGraph(
-                        response.data.graph.default_helper.id,
-                        response.data.graph);
+                        graph.default_helper.id,
+                        graph);
 
                     $scope.graphDataLoaded = true;
                 }, function errorCallback(response) {

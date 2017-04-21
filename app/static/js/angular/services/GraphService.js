@@ -14,6 +14,7 @@ nash.service(
          };
 
          this.createHelperGraph = function(helperId, graph) {
+             graph = _.cloneDeep(graph);
              var helper = _.find(graph.helpers, function(h) {
                  return h.id === helperId;
              });
