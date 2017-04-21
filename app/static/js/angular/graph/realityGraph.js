@@ -39,6 +39,17 @@ nash.directive('realityGraph', [
                 .attr('stroke-width', 0.1)
                 .attr('stroke-width', 0.1);
 
+            // rescale g
+            var rescale = function() {
+                var trans = d3.event.translate;
+                var scale = d3.event.scale;
+                if (!scope.graphState.mousedown_node) {
+                    vis.attr('transform',
+                             'translate(' + trans + ')'
+                             + ' scale(' + scale + ')');
+                }
+            };
+
             var mousemove = function() {
                 if (scope.graphState.edit_mode === 'edit') {
                     if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
@@ -90,7 +101,7 @@ nash.directive('realityGraph', [
                         if (!scope.graphState.mouseup_node) {
                             // add node
                             var point = d3.mouse(d3Context);
-                            var newNode = GraphService.addEmptyNode(
+                            var newNode = GraphService.addNode(
                                 scope.graph, point[0], point[1]);
                             scope.graphState.events.selectNode(newNode);
                             GraphService.addEdge(
@@ -311,19 +322,6 @@ nash.directive('realityGraph', [
             };
 
 
-
-            // rescale g
-            var rescale = function() {
-                var trans = d3.event.translate;
-                var scale = d3.event.scale;
-                if (!scope.graphState.mousedown_node) {
-                    vis.attr('transform',
-                             'translate(' + trans + ')'
-                             + ' scale(' + scale + ')');
-                }
-            };
-
-
             var enterEdges = function(d) {
                 d
                     .enter()
@@ -532,6 +530,9 @@ nash.directive('realityGraph', [
 
             render(scope.graph);
             scope.$watch('graph', function() {
+                render(scope.graph);
+            }, true);
+            scope.$watch('graphState', function() {
                 render(scope.graph);
             }, true);
 

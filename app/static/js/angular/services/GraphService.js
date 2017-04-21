@@ -44,7 +44,7 @@ nash.service(
              };
          };
 
-         this.addEmptyNode = function(helperGraph, x, y) {
+         this.addNode = function(helperGraph, x, y) {
              var nodeCount = helperGraph.nodes.length;
              var maxId = _.chain(helperGraph.nodes).map('id').max().value();
              var newNode = {
