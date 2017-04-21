@@ -34,7 +34,6 @@ nash.directive('realityGraph', [
             graphComponents.appendMarkerDef(rGraph, 'arrowhead-orange');
             graphComponents.appendMarkerDef(rGraph, 'arrowhead-green');
             graphComponents.appendMarkerDef(rGraph, 'arrowhead-black');
-
             graphComponents.appendMarkerDef(rGraph, 'arrowhead-yellow')
                 .attr('stroke-width', 0.1)
                 .attr('stroke-width', 0.1);
@@ -349,17 +348,6 @@ nash.directive('realityGraph', [
                 d
                     .enter()
                     .append('circle')
-                    .attr('cx', function(d) { return d.x; })
-                    .attr('cy', function(d) { return d.y; })
-                    .attr('fill', function (d) {
-                        // if (d === ui_state.selected_node) {
-                        //     return '#ffb400';
-                        // } else
-                        if (d.truth) {
-                            return '#ffffff';
-                        }
-                        return '#999999';
-                    })
                     .attr('r', 30)
                     .attr('class', 'node')
                     .on('contextmenu', d3.contextMenu(node_menu,  contextMenuHandlers))
@@ -375,8 +363,6 @@ nash.directive('realityGraph', [
                     .enter()
                     .append('text')
                     .attr('class', 'node-label')
-                    .attr('font-family', 'sans-serif')
-                    .attr('font-size', '10px')
                     .text(function (d) { return d.label; });
             };
 
@@ -412,7 +398,7 @@ nash.directive('realityGraph', [
                 force.start();
             }
 
-            function tick() {
+            var tick = function() {
                 console.log('tick tock');
                 // When this function executes, the force layout
                 // calculations have concluded. The layout will
@@ -436,10 +422,10 @@ nash.directive('realityGraph', [
                                 endY + ' ' +
                                 d.target.x, d.target.y].join(',');
                     })
+                    .classed('reference-edge', function(d) { return d.meaning === 'reference'})
                     .classed('edge-selected', function (d) {
                         return d === scope.graphState.selected_edge;
                     })
-                    .classed('reference-edge', function(d) { d.meaning === 'reference'})
                     .attr('marker-mid', function(d) {
                         if (d.meaning === 'reference') {
                             return ''
@@ -472,11 +458,12 @@ nash.directive('realityGraph', [
                 node
                     .attr('cx', function(d) { return d.x; })
                     .attr('cy', function(d) { return d.y; })
+                    .classed('node-true', function (d) { return d.truth; })
+                    .classed('node-locked', function (d) { return d.locked; })
                     .classed('node-selected', function (d) {
                         return d === scope.graphState.selected_node;
                     })
-                    .classed('node-true', function (d) { return d.truth; })
-                    .classed('node-locked', function (d) { return d.locked; })
+
                     .attr('stroke', function (d) {
                         if (d.self_causing) {
                             if (d.self_cause_weird === '0') {

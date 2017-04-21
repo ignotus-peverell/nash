@@ -5,16 +5,22 @@
     stroke-width: 2;
 }
 
-.node-selected {
-    fill: #ffb400;
-}
-
 .node-true {
     fill: #ffffff;
 }
 
+
 .node-locked {
     stroke-width: 5;
+}
+
+.node-selected {
+    fill: #ffb400 !important;
+}
+
+.node-label {
+    font-family: 'sans-serif';
+    font-size: 10px;
 }
 
 .drag-line {
@@ -36,7 +42,7 @@
 }
 
 .edge-selected {
-    stroke: #ff7f0e;
+    stroke: #ffb400 !important;
 }
 
 .reference-edge {
