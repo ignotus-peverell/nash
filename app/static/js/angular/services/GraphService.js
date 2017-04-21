@@ -70,6 +70,14 @@ nash.service(
              return graph;
          };
 
+         this.reverseEdge = function(edge) {
+             var source = edge.source;
+             var target = edge.target;
+             edge.source = target;
+             edge.target = source;
+             return edge;
+         };
+
          this.addEdge = function(graph, sourceNode, targetNode) {
              var newEdge = {
                  id: sourceNode.id + '-' + targetNode.id,

@@ -186,9 +186,7 @@ nash.directive('realityGraph', [
 
 
             var edge_menu = [
-                {title: function(d) {
-                    return d.label + ' (edit)';
-                },
+                {title: function(d) { return d.label + ' (edit)'; },
                  action: function(elm, d, i) {
                      $('#edge-label').focus();
                  }
@@ -205,13 +203,10 @@ nash.directive('realityGraph', [
                      GraphService.deleteEdge(scope.graph, d);
                  }
                 },
+
                 {title: 'Reverse arrow',
-                 action: function(elm, d, i) {
-                     var tmp = d.source;
-                     d.source = d.target;
-                     d.target = tmp;
-                 }
-                },
+                 action: function(elm, d, i) { GraphService.reverseEdge(d); }},
+
                 {title: 'Feels like a reference to',
                  action: function(elm, d, i) {
                      d.meaning = 'reference'
