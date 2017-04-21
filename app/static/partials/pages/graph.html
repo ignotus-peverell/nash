@@ -8,8 +8,8 @@
     <div id="infobox-right">
       <graph-options-menu
         graph="graph"
-        edit-mode="graphState.edit_mode"
-        toggle-selected-node="graphState.actions.toggleSelectedNode(node)"></graph-options-menu>
+        graph-state="graphState"
+        save="save()"></graph-options-menu>
     </div>
 
     <div id="infobox-left" ng-show="graphState.edit_mode==='edit'">

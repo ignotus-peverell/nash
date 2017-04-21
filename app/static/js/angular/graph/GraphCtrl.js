@@ -21,7 +21,8 @@ nash.controller('GraphCtrl', [
             mousedown_node: null,
             mouseup_node: null,
             backspace_deletes: true,
-            context_open: false
+            context_open: false,
+            is_saving: false
         };
 
         var actions = $scope.graphState.actions = {
@@ -76,6 +77,39 @@ nash.controller('GraphCtrl', [
             // Initialize a new empty graph.
             $scope.graph = GraphService.initGraph();
         }
+
+        // Save the graph.
+        $scope.save = function() {
+            $scope.graphState.is_saving = true;
+            GraphService.saveGraph($scope.graph)
+                .then(function successCallback(response) {
+                    $scope.graphState.is_saving = false;
+                    console.log("POST _graph success response: ", response)
+                    // Normally you would assign the graph to the response data, like,
+                    //      $scope.graph = response.data.graph
+                    // However, the `_save_graph` endpoint currently only returns
+                    // a status. Might want to change this as a TODO.
+                }, function errorCallback(response) {
+                    $scope.graphState.is_saving = false;
+                    // TODO: add error handling
+                    console.log("POST _graph error response: ", response)
+                    // TODO: Expose api errors to frontend. <--- Discuss strategy.
+                    //
+                    // Code from previous alert handlers:
+                    //     success: function (data) {
+                    //         d3.select("#messages")
+                    //             .attr("class",
+                    //                   "alert alert-success alert-dismissible")
+                    //             .html('<strong>Saved!</strong> <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
+                    //     },
+                    //     error: function (data) {
+                    //         d3.select("#messages")
+                    //             .attr("class", "alert alert-danger alert-dismissible")
+                    //             .html('<strong>Error!</strong> Your work was not saved. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
+                    //     }
+
+                });
+        };
 
     }
 ]);

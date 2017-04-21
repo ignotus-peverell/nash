@@ -75,7 +75,14 @@ nash.service(
          };
 
          this.initGraph = function() {
-             var initGraph = {nodes: [], edges: []};
+             var initGraph = {
+                 nodes: [],
+                 edges: [],
+                 save_id: -1,
+                 save_name: ''
+             };
+             // TODO: Change backend to not fail hard if a save_id
+             // isn't present.
              this.addNode(initGraph);
              return initGraph;
          };
@@ -84,7 +91,7 @@ nash.service(
              return $http.get(makePath('graph', [id]));
          };
 
-         this.saveGraph = function(id, graph) {
+         this.saveGraph = function(graph) {
              return $http.post(
                  makePath('save_graph', []),
                  graph
