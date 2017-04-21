@@ -1,10 +1,20 @@
 /**** graph interface styles ****/
 .node {
     cursor: crosshair;
+    fill: #999999;
+    stroke-width: 2;
 }
 
-.node_selected {
-    fill: #ff7f0e;
+.node-selected {
+    fill: #ffb400;
+}
+
+.node-true {
+    fill: #ffffff;
+}
+
+.node-locked {
+    stroke-width: 5;
 }
 
 .drag-line {
@@ -26,7 +36,7 @@
 }
 
 .edge-selected {
-    stroke: #ff7f0e !important;
+    stroke: #ff7f0e;
 }
 
 .reference-edge {

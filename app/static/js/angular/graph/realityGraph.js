@@ -60,9 +60,9 @@ nash.directive('realityGraph', [
                 .charge(-1000);
 
             // get layout properties
-            var node = vis.selectAll(".node");
-            var edge = vis.selectAll(".edge");
-            var nodeLabel = vis.selectAll(".text");
+            var node = vis.selectAll('.node');
+            var edge = vis.selectAll('.edge');
+            var nodeLabel = vis.selectAll('.text');
 
                 // line displayed when dragging new nodes
             var dragLine = vis.append('line')
@@ -75,17 +75,17 @@ nash.directive('realityGraph', [
 
             var edge_menu = [
                 {title: function(d) {
-                    return d.label + " (edit)";
+                    return d.label + ' (edit)';
                 },
                  action: function(elm, d, i) {
-                     $("#edge-label").focus();
+                     $('#edge-label').focus();
                  }
                 },
                 {title: function(d) {
-                    return d.detailed + " (edit)";
+                    return d.detailed + ' (edit)';
                 },
                  action: function(elm, d, i) {
-                     $("#detailed-description-edge").focus();
+                     $('#detailed-description-edge').focus();
                  }
                 },
                 {title: 'Delete',
@@ -158,17 +158,17 @@ nash.directive('realityGraph', [
 
             var node_menu = [
                 {title: function(n) {
-                    return n.label + " (edit)";
+                    return n.label + ' (edit)';
                 },
                  action: function(elm, d, i) {
-                     $("#node-label").focus();
+                     $('#node-label').focus();
                  }
                 },
                 {title: function(n) {
-                    return n.detailed + " (edit)";
+                    return n.detailed + ' (edit)';
                 },
                  action: function(elm, d, i) {
-                     $("#detailed-description-node").focus();
+                     $('#detailed-description-node').focus();
                  }
                 },
                 {title: 'Delete',
@@ -341,8 +341,7 @@ nash.directive('realityGraph', [
                             scope.graphState.events.mousedownEdge(d);
                         });
                     })
-                    .classed('reference-edge', function(d) { d.meaning === 'reference'})
-                    .on("contextmenu", d3.contextMenu(edge_menu, contextMenuHandlers));
+                    .on('contextmenu', d3.contextMenu(edge_menu, contextMenuHandlers));
 
             };
 
@@ -366,8 +365,8 @@ nash.directive('realityGraph', [
                     .on('contextmenu', d3.contextMenu(node_menu,  contextMenuHandlers))
                     .transition()
                     .duration(750)
-                    .ease("elastic")
-                    .attr("r", 40);
+                    .ease('elastic')
+                    .attr('r', 40);
 
             };
 
@@ -378,37 +377,34 @@ nash.directive('realityGraph', [
                     .attr('class', 'node-label')
                     .attr('font-family', 'sans-serif')
                     .attr('font-size', '10px')
-                    .attr('fill', function (d) { return d.truth ? '#000000' : '#ffffff' })
                     .text(function (d) { return d.label; });
             };
 
-            var render = function() {
+            var render = function(graph) {
                 console.log('RENDERING....')
-                var nodes = scope.graph.nodes; //force.nodes();
-                var edges = scope.graph.edges //force.links();
 
                 force
-                    .nodes(nodes)
-                    .links(edges)
+                    .nodes(graph.nodes)
+                    .links(graph.edges)
                     .on('tick', tick);
 
                 // Add edges.
                 edge = vis.selectAll('.edge')
-                    .data(edges, function(d) {return d.id; });
+                    .data(graph.edges, function(d) {return d.id; });
                 enterEdges(edge);
                 edge.exit().remove();
                 edge = vis.selectAll('.edge');
 
                 // Add nodes.
                 node = vis.selectAll('.node')
-                    .data(nodes, function(d) { return d.id; } );
+                    .data(graph.nodes, function(d) { return d.id; } );
                 enterNodes(node);
                 node.exit().remove();
                 node = vis.selectAll('.node');
 
                 // Add node labels.
                 nodeLabel = vis.selectAll('.node-label')
-                    .data(nodes);
+                    .data(graph.nodes);
                 enterNodeLabels(nodeLabel);
                 nodeLabel.exit().remove();
                 nodeLabel = vis.selectAll('.node-label');
@@ -440,11 +436,11 @@ nash.directive('realityGraph', [
                                 endY + ' ' +
                                 d.target.x, d.target.y].join(',');
                     })
-                    .classed("edge-selected", function (d) {
+                    .classed('edge-selected', function (d) {
                         return d === scope.graphState.selected_edge;
                     })
+                    .classed('reference-edge', function(d) { d.meaning === 'reference'})
                     .attr('marker-mid', function(d) {
-                        console.log(d);
                         if (d.meaning === 'reference') {
                             return ''
                         } else if (d.meaning === 'cause' && d.source.truth && !d.target.truth) {
@@ -476,7 +472,11 @@ nash.directive('realityGraph', [
                 node
                     .attr('cx', function(d) { return d.x; })
                     .attr('cy', function(d) { return d.y; })
-                    .attr('stroke-width', function (d) { return d.locked ? 5 : 2 })
+                    .classed('node-selected', function (d) {
+                        return d === scope.graphState.selected_node;
+                    })
+                    .classed('node-true', function (d) { return d.truth; })
+                    .classed('node-locked', function (d) { return d.locked; })
                     .attr('stroke', function (d) {
                         if (d.self_causing) {
                             if (d.self_cause_weird === '0') {
@@ -542,43 +542,15 @@ nash.directive('realityGraph', [
 
                 nodeLabel
                     .attr('x', function (d) { return d.label ? d.x - 3 * d.label.length : d.x; })
-                    .attr('y', function (d) { return d.y + 5; });
+                    .attr('y', function (d) { return d.y + 5; })
+                    .attr('fill', function (d) { return d.truth ? '#000000' : '#ffffff' });
 
             };
 
-            // var update = function() {
-            //     force
-            //         .nodes(scope.graph.nodes)
-            //         .links(scope.graph.edges);
 
-            //     var dEdges = vis.selectAll('.edge')
-            //         .data(scope.graph.edges);
-            //     enterEdges(dEdges);
-            //     dEdges.exit().remove();
-            //     edges = vis.selectAll('.edge');
-
-            //     var dNodes = vis.selectAll('.node')
-            //         .data(scope.graph.nodes);
-            //     enterNodes(dNodes);
-            //     dNodes.exit().remove();
-            //     nodes = vis.selectAll('.node');
-            //     // .transition()
-            //     // .duration(750)
-            //     // .ease('elastic')
-            //     // .attr('r', 40);
-
-            //     var dNodeLabels = vis.selectAll('.node-label')
-            //         .data(scope.graph.nodes, function(d) { return d.label; });
-            //     enterNodeLabels(dNodeLabels);
-            //     dNodeLabels.exit().remove();
-            //     nodeLabels = vis.selectAll('.node-label');
-
-            //     force.start();
-            // };
-
-            render();
+            render(scope.graph);
             scope.$watch('graph', function() {
-                render();
+                render(scope.graph);
             }, true);
 
             //     // add keyboard callback
