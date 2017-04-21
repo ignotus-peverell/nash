@@ -11,10 +11,7 @@ nash.directive('nodeOptionsMenu', function() {
         templateUrl: '/static/partials/graph/node-options-menu.html',
         scope:{
             node: '='
-        },
-
-        link: function(scope, element, attrs) {
-
         }
-    }
+    };
+
 });
