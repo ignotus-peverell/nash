@@ -13,7 +13,7 @@ nash.service(
              return ['/_' + endpoint].concat(pathSegments).join('/');
          };
 
-         this.createHelperGraph = function(helperId, graph) {
+         this.createGraphFromApiResponse = function(helperId, graph) {
              graph = _.cloneDeep(graph);
              var helper = _.find(graph.helpers, function(h) {
                  return h.id === helperId;

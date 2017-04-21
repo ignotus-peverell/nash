@@ -63,21 +63,19 @@ nash.controller('GraphCtrl', [
                 .then(function successCallback(response) {
                     console.log('GET _graph success response: ', response);
                     var graph = response.data.graph;
-                    $scope.originalGraph = graph;
-                    $scope.graph = GraphService.createHelperGraph(
+
+                    $scope.apiGraphResponse = graph;
+                    $scope.graph = GraphService.createGraphFromApiResponse(
                         graph.default_helper.id,
                         graph);
 
-                    $scope.graphDataLoaded = true;
                 }, function errorCallback(response) {
                     // TODO: add error handling
                     console.log("GET _graph error response: ", response)
-                    $scope.graphDataLoaded = true;
                 });
 
         } else {
             // TODO: initialize new graph
-            $scope.graphDataLoaded = true;
         }
 
     }

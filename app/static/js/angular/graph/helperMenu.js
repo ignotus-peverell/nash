@@ -12,13 +12,15 @@ nash.directive( 'helperMenu',  [
             replace: true,
             templateUrl: '/static/partials/graph/helper-menu.html',
             scope:{
-                graph: '=',
-                originalGraph: '='
+                apiGraphResponse: '=', // The graph response from the server.
+                graph: '=' // The main graph structure for application.
             },
             link: function(scope, element, attrs) {
+                // Change the graph to be from the perspective of the
+                // selected helper.
                 scope.changeView = function(helper) {
-                    scope.graph = GraphService.createHelperGraph(
-                        helper.id, scope.originalGraph);
+                    scope.graph = GraphService.createGraphFromApiResponse(
+                        helper.id, scope.apiGraphResponse);
                 };
             }
         }
