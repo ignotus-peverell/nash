@@ -144,9 +144,6 @@ nash.directive('realityGraph', [
                             GraphService.addEdge(
                                 scope.graph, scope.graphState.mousedown_node, newNode);
                         }
-                    } else if (scope.graphState.mode === 'move') {
-                        console.log('move mouseup');
-                        // TODO: ^^^^^^^^^^^^^^?????
                     }
                     scope.graphState.actions.clearMouseState();
                 });
