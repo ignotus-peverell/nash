@@ -39,6 +39,31 @@ nash.directive('realityGraph', [
                 .attr('stroke-width', 0.1)
                 .attr('stroke-width', 0.1);
 
+            var keydown = function() {
+                scope.$apply(function() {
+                    var sNode = scope.graphState.selected_node;
+                    var sEdge = scope.graphState.selected_edge;
+
+                    if (!sNode && !sEdge) {
+                        return;
+                    }
+                    switch (d3.event.keyCode) {
+                    case 8: // backspace
+                    case 46:
+                        if (scope.graphState.backspace_deletes) {
+                            if (sNode) {
+                                GraphService.deleteNode(scope.graph, sNode);
+                            } else if (sEdge) {
+                                GraphService.deleteEdge(scope.graph, sEdge);
+                            }
+                            scope.graphState.actions.toggleSelectedNode();
+                            scope.graphState.actions.toggleSelectedEdge();
+                        }
+                        break;
+                    };
+                });
+            };
+
             // rescale g
             var rescale = function() {
                 var trans = d3.event.translate;
@@ -89,6 +114,18 @@ nash.directive('realityGraph', [
                 }
             };
 
+            var mouseout = function() {
+                scope.$apply(function() {
+                    scope.graphState.backspace_deletes = false;
+                });
+            };
+
+            var mouseover = function() {
+                scope.$apply(function() {
+                    scope.graphState.backspace_deletes = true;
+                });
+            };
+
             var mouseup = function() {
                 var d3Context = this;
                 scope.$apply(function() {
@@ -123,6 +160,8 @@ nash.directive('realityGraph', [
                 .on('mousemove', mousemove)
                 .on('mousedown', mousedown)
                 .on('mouseup', mouseup)
+                .on('mouseout', mouseout)
+                .on('mouseover', mouseover)
                 .on('contextmenu', d3.contextMenu(bkgd_menu, contextMenuHandlers));
 
             vis.append('svg:rect')
@@ -166,7 +205,7 @@ nash.directive('realityGraph', [
                 },
                 {title: 'Delete',
                  action: function(elm, d, i) {
-                     delete_edge(elm);
+                     GraphService.deleteEdge(scope.graph, d);
                  }
                 },
                 {title: 'Reverse arrow',
@@ -249,7 +288,7 @@ nash.directive('realityGraph', [
                 },
                 {title: 'Delete',
                  action: function(elm, d, i) {
-                     delete_node(elm);
+                     GraphService.deleteNode(scope.graph, d);
                  }
                 },
                 {title: function(n) {
@@ -356,8 +395,7 @@ nash.directive('realityGraph', [
                 d
                     .enter()
                     .append('text')
-                    .attr('class', 'node-label')
-                    .text(function (d) { return d.label; });
+                    .attr('class', 'node-label');
             };
 
             var render = function(graph) {
@@ -485,7 +523,8 @@ nash.directive('realityGraph', [
                             if (scope.graphState.mousedown_node === scope.graphState.selected_node) {
                                 scope.graphState.actions.toggleSelectedNode();
                             } else {
-                                scope.graphState.actions.toggleSelectedNode(scope.graphState.mousedown_node);
+                                scope.graphState.actions.toggleSelectedNode(
+                                    scope.graphState.mousedown_node);
                             }
 
                             // reposition drag line
@@ -525,32 +564,30 @@ nash.directive('realityGraph', [
                 nodeLabel
                     .attr('x', function (d) { return d.label ? d.x - 3 * d.label.length : d.x; })
                     .attr('y', function (d) { return d.y + 5; })
+                    .text(function (d) { return d.label; })
                     .attr('fill', function (d) { return d.truth ? '#000000' : '#ffffff' });
 
             };
 
 
-            render(scope.graph);
+
             scope.$watch('graph', function() {
                 render(scope.graph);
             }, true);
+
             scope.$watch('graphState', function() {
                 render(scope.graph);
             }, true);
 
             //     // add keyboard callback
-        //     d3.select(window)
-        //         .on('keydown', keydown);
+            d3.select(window)
+                .on('keydown', keydown);
 
             // focus on svg
-            // vis.node().focus();
+            vis.node().focus();
 
         //     init_ui_hooks();
-
-        //     // scope.$watch('graph', function (newVal, oldVal) {
-        //     //     rGraph.datum(newVal).call(rGraph);
-        //     // });
-
+            render(scope.graph);
         }
     }
 }]);

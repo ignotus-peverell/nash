@@ -15,6 +15,7 @@ nash.service(
 
          this.createGraphFromApiResponse = function(helperId, graph) {
              graph = _.cloneDeep(graph);
+
              var helper = _.find(graph.helpers, function(h) {
                  return h.id === helperId;
              });
@@ -26,12 +27,10 @@ nash.service(
              var edges = _.map(
                  graph.edges,
                  function(n) {
+                     n = _.assign(n, _.find(
+                         helper.view_edges, {'source': n.source, 'target': n.target}));
                      n.id = n.source + '-' + n.target;
-                     return _.assign(
-                         n,
-                         _.find(helper.view_edges, {'source': n.source,
-                                                    'target': n.target})
-                     );
+                     return n;
                  });
 
              return {
@@ -63,6 +62,14 @@ nash.service(
              return newNode;
          };
 
+         this.deleteNode = function(graph, node) {
+             graph.nodes = _.filter(
+                 graph.nodes, function(n) { return n.id !== node.id; });
+             graph.edges = _.filter(
+                 graph.edges, function(n) { return n.target.id !== node.id; });
+             return graph;
+         };
+
          this.addEdge = function(graph, sourceNode, targetNode) {
              var newEdge = {
                  id: sourceNode.id + '-' + targetNode.id,
@@ -73,6 +80,13 @@ nash.service(
              graph.edges.push(newEdge);
              return newEdge;
          };
+
+         this.deleteEdge = function(graph, edge) {
+             graph.edges = _.filter(
+                 graph.edges, function(n) { return n.id !== edge.id; });
+             return graph;
+         };
+
 
          this.initGraph = function() {
              var initGraph = {
