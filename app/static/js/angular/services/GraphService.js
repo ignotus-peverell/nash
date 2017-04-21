@@ -13,7 +13,7 @@ nash.service(
              return ['/_' + endpoint].concat(pathSegments).join('/');
          };
 
-         this.getHelperGraph = function(helperId, graph) {
+         this.createHelperGraph = function(helperId, graph) {
              var helper = _.find(graph.helpers, function(h) {
                  return h.id === helperId;
              });
@@ -42,6 +42,35 @@ nash.service(
                  edges: edges,
                  nodes: nodes
              };
+         };
+
+         this.addEmptyNode = function(helperGraph, x, y) {
+             var nodeCount = helperGraph.nodes.length;
+             var maxId = _.chain(helperGraph.nodes).map('id').max().value();
+             var newNode = {
+                 id: maxId + 1,
+                 index: nodeCount,
+                 detailed: '',
+                 label: 'Untitled-' + (maxId+1),
+                 locked: false,
+                 truth: false,
+                 x: x ? x : 0,
+                 y: y ? y : 0
+             };
+
+             helperGraph.nodes.push(newNode);
+             return newNode;
+         };
+
+         this.addEdge = function(helperGraph, sourceNode, targetNode) {
+             var newEdge = {
+                 id: sourceNode.id + '-' + targetNode.id,
+                 source: sourceNode,
+                 target: targetNode,
+                 detailed: ''
+             };
+             helperGraph.edges.push(newEdge);
+             return newEdge;
          };
 
          this.getGraph = function (id) {

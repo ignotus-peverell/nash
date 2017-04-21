@@ -50,29 +50,19 @@ nash.controller('GraphCtrl', [
             closeContextMenu: function() {
                 console.log('Closing context menu.');
                 state.context_open = false;
-            }
-        };
-
-        var operations = $scope.state.operations = {
-            addEdge: function(source, target, edges) {
-                console.log('Adding edge');
-                console.log(source, target)
-                var edge = {source: source, target: target, id: source.id + '-' + target.id};
-                $scope.graph.edges.push(edge);
-                console.log(edges)
-                events.selectEdge(edge);
             },
-            addNode: function(graph) {
-                console.log('Adding Node');
+            clearMouseState: function() {
+                state.mousedown_edge = null;
+                state.mousedown_node = null;
+                state.mouseup_node = null;
             }
         };
-
 
         if (Number.isInteger(graphId)) {
             GraphService.getGraph(graphId)
                 .then(function successCallback(response) {
                     console.log('GET _graph success response: ', response);
-                    $scope.graph = GraphService.getHelperGraph(
+                    $scope.graph = GraphService.createHelperGraph(
                         response.data.graph.default_helper.id,
                         response.data.graph);
 

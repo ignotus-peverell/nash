@@ -6,8 +6,9 @@ var nash = angular.module('nash');
 
 nash.directive('realityGraph', [
     '$timeout',
+    'GraphService',
     'graphComponents',
-    function($timeout, graphComponents) {
+    function($timeout, GraphService, graphComponents) {
     return {
         restrict: 'E',
         replace: true,
@@ -37,6 +38,70 @@ nash.directive('realityGraph', [
             graphComponents.appendMarkerDef(rGraph, 'arrowhead-yellow')
                 .attr('stroke-width', 0.1)
                 .attr('stroke-width', 0.1);
+
+            var mousemove = function() {
+                if (scope.graphState.edit_mode === 'edit') {
+                    if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
+                        return;
+                    }
+
+                    // update drag line
+                    dragLine
+                        .attr('x1', scope.graphState.mousedown_node.x)
+                        .attr('y1', scope.graphState.mousedown_node.y)
+                        .attr('x2', d3.mouse(this)[0])
+                        .attr('y2', d3.mouse(this)[1]);
+
+                } else if (scope.graphState.edit_mode === 'move') {
+                    if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
+                        return;
+                    }
+                    scope.graphState.mousedown_node.x = d3.mouse(this)[0];
+                    scope.graphState.mousedown_node.y = d3.mouse(this)[1];
+
+                    // update drag line
+                    dragLine
+                        .attr('x1', scope.graphState.mousedown_node.x)
+                        .attr('y1', scope.graphState.mousedown_node.y)
+                        .attr('x2', d3.mouse(this)[0])
+                        .attr('y2', d3.mouse(this)[1]);
+                }
+            };
+
+            var mousedown = function() {
+                if (scope.graphState.edit_mode === 'edit') {
+                    if (!scope.graphState.mousedown_node && !scope.graphState.mousedown_edge) {
+                        // allow panning if nothing is selected
+                        vis.call(d3.behavior.zoom().on('zoom', rescale));
+                        return;
+                    }
+                }
+            };
+
+            var mouseup = function() {
+                var d3Context = this;
+                scope.$apply(function() {
+                    if (scope.graphState.edit_mode === 'edit'
+                        && (scope.graphState.mousedown_node && !scope.graphState.context_open)) {
+                        // hide drag line
+                        dragLine
+                            .attr('class', 'drag-line-hidden');
+
+                        if (!scope.graphState.mouseup_node) {
+                            // add node
+                            var point = d3.mouse(d3Context);
+                            var newNode = GraphService.addEmptyNode(
+                                scope.graph, point[0], point[1]);
+                            scope.graphState.events.selectNode(newNode);
+                            GraphService.addEdge(
+                                scope.graph, scope.graphState.mousedown_node, newNode);
+                        }
+                    } else if (scope.graphState.mode === 'move') {
+                        console.log('move mouseup');
+                    }
+                    scope.graphState.events.clearMouseState();
+                });
+            };
 
             var vis = rGraph
                 .append('svg:g')
@@ -241,82 +306,11 @@ nash.directive('realityGraph', [
                 },
                 onClose: function() {
                     $timeout(scope.graphState.events.closeContextMenu, 500);
-                    // reset_mouse_vars();
-                    // TODO ^^^
+                    scope.graphState.events.clearMouseState();
                 }
             };
 
 
-            var mousemove = function() {
-                if (scope.graphState.edit_mode === 'edit') {
-                    if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
-                        return;
-                    }
-
-                    // update drag line
-                    dragLine
-                        .attr('x1', scope.graphState.mousedown_node.x)
-                        .attr('y1', scope.graphState.mousedown_node.y)
-                        .attr('x2', d3.mouse(this)[0])
-                        .attr('y2', d3.mouse(this)[1]);
-
-                } else if (scope.graphState.edit_mode === 'move') {
-                    if (!scope.graphState.mousedown_node || scope.graphState.context_open) {
-                        return;
-                    }
-                    scope.graphState.mousedown_node.x = d3.mouse(this)[0];
-                    scope.graphState.mousedown_node.y = d3.mouse(this)[1];
-
-                    // update drag line
-                    dragLine
-                        .attr('x1', scope.graphState.mousedown_node.x)
-                        .attr('y1', scope.graphState.mousedown_node.y)
-                        .attr('x2', d3.mouse(this)[0])
-                        .attr('y2', d3.mouse(this)[1]);
-                }
-            };
-
-            var mousedown = function() {
-                if (scope.graphState.edit_mode === 'edit') {
-                    if (!scope.graphState.mousedown_node && !scope.graphState.mousedown_edge) {
-                        // allow panning if nothing is selected
-                        vis.call(d3.behavior.zoom().on('zoom', rescale));
-                        return;
-                    }
-                }
-            };
-
-            var mouseup = function() {
-                if (scope.graphState.mode === 'edit') {
-                    if (scope.graphState.mousedown_node && !scope.graphState.context_open) {
-
-                        // hide drag line
-                        dragLine
-                            .attr('class', 'drag-line-hidden');
-
-                        // if (!scope.graphState.mouseup_node) {
-                        //     // add node
-                        //     var point = d3.mouse(this),
-                        //         node = {x: point[0], y: point[1], id: next_id,
-                        //                 label: 'label', detailed: next_id};
-                        //     next_id += 1;
-                        //     nodes.push(node);
-
-                        //     // select new node
-                        //     select_node(node);
-
-                        //     // add edge to mousedown node
-                        //     edges.push({source: scope.graphState.mousedown_node,
-                        //                 target: node, detailed: ''});
-                        // }
-
-                    }
-                } else if (scope.graphState.mode === 'move') {
-                    console.log('move mouseup');
-                }
-                // clear mouse event vars
-                //reset_mouse_vars();
-            };
 
             // rescale g
             var rescale = function() {
@@ -510,16 +504,18 @@ nash.directive('realityGraph', [
                                     scope.graphState.mouseup_node = d;
                                     if (scope.graphState.mouseup_node
                                         === scope.graphState.mousedown_node) {
-                                        //reset_mouse_vars();
+                                        scope.graphState.events.clearMouseState();
                                         return;
                                     }
 
                                     // add edge
                                     var sourceNode = scope.graphState.mousedown_node;
                                     var targetNode = scope.graphState.mouseup_node;
-                                    console.log(sourceNode);
-                                    console.log(targetNode);
-                                    scope.graphState.operations.addEdge(sourceNode, targetNode, scope.graph.edges);
+
+                                    var newEdge = GraphService.addEdge(
+                                        scope.graph, sourceNode, targetNode);
+
+                                    scope.graphState.events.selectEdge(newEdge);
 
                                     // enable zoom
                                     vis.call(d3.behavior.zoom().on('zoom', rescale));
