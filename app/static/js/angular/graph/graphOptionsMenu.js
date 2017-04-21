@@ -16,7 +16,7 @@ nash.directive('graphOptionsMenu', [
             // Add a node to the graph.
             scope.addNode = function() {
                 var newNode = GraphService.addNode(scope.graph);
-                scope.selectNode({node: newNode});
+                scope.toggleSelectedNode({node: newNode});
                 scope.editMode = 'edit';
             };
 
@@ -61,7 +61,7 @@ nash.directive('graphOptionsMenu', [
             scope: {
                 graph: '=',
                 editMode: '=',
-                selectNode: '&'
+                toggleSelectedNode: '&'
             },
             link: linkFn
         };

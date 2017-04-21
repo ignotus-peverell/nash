@@ -8,18 +8,18 @@
     <div id="infobox-right">
       <graph-options-menu
         graph="graph"
-        edit-mode="state.edit_mode"
-        select-node="state.events.selectNode(node)"></graph-options-menu>
+        edit-mode="graphState.edit_mode"
+        toggle-selected-node="graphState.actions.toggleSelectedNode(node)"></graph-options-menu>
     </div>
 
-    <div id="infobox-left" ng-show="state.edit_mode==='edit'">
+    <div id="infobox-left" ng-show="graphState.edit_mode==='edit'">
       <div id="infobox-data-entry">
         <node-options-menu
-          ng-if="state.selected_node"
-          node="state.selected_node"></node-options-menu>
+          ng-if="graphState.selected_node"
+          node="graphState.selected_node"></node-options-menu>
         <edge-options-menu
-          ng-if="state.selected_edge"
-          edge="state.selected_edge"></edge-options-menu>
+          ng-if="graphState.selected_edge"
+          edge="graphState.selected_edge"></edge-options-menu>
       </div>
     </div>
 
@@ -28,7 +28,7 @@
   <!-- This is an angular directive. See `/static/partials/graph/reality-graph.html` -->
   <!-- for the template and `/static/js/angular/graph/realityGraph.js` for the -->
   <!-- directive code. -->
-  <reality-graph ng-if="graph" graph="graph" graph-state="state"></reality-graph>
+  <reality-graph ng-if="graph" graph="graph" graph-state="graphState"></reality-graph>
 
   <div id="chart-spacer">&nbsp;</div>
 </div>

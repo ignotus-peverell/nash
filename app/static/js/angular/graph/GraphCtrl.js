@@ -1,4 +1,4 @@
-/* global angular, d3, $ */
+/* global angular  */
 
 'use strict';
 
@@ -13,7 +13,7 @@ nash.controller('GraphCtrl', [
 
         console.log('GraphCtrl: Loading graph ', graphId)
 
-        var state = $scope.state = {
+        var graphState = $scope.graphState = {
             edit_mode: 'edit', // options = ['edit', 'move']
             selected_node: null,
             selected_edge: null,
@@ -24,37 +24,35 @@ nash.controller('GraphCtrl', [
             context_open: false
         };
 
-        var events = $scope.state.events = {
+        var actions = $scope.graphState.actions = {
             mousedownEdge: function(edge) {
                 console.log('Mousedown Edge: ', edge);
-                console.log($scope)
-                state.mousedown_edge = edge;
-                //$scope.state.selected_edge = edge;
-                events.selectEdge(edge === state.selected_edge ? null : edge);
+                graphState.mousedown_edge = edge;
             },
-            selectEdge: function(edge) {
-                console.log('Select Edge: ', edge);
-                state.selected_edge = state.selected_edge === edge ? null : edge;
-                state.selected_node = null;
+            toggleSelectedEdge: function(edge) {
+                console.log('Toggle Selected Edge: ', edge);
+                graphState.selected_edge = graphState.selected_edge === edge ? null : edge;
+                graphState.selected_node = null;
             },
-            selectNode: function(node) {
-                console.log('Select Node: ', node);
-                state.selected_node = node === state.selected_edge ? null : node;
-                state.selected_edge = null;
-                state.backspace_deletes = state.selected_node !== null ? true : false;
+            toggleSelectedNode: function(node) {
+                console.log('Toggle Selected Node: ', node);
+                graphState.selected_node = node === graphState.selected_edge ? null : node;
+                graphState.selected_edge = null;
+                graphState.backspace_deletes = graphState.selected_node !== null ? true : false;
             },
             openContextMenu: function() {
                 console.log('Opening context menu.');
-                state.context_open = true;
+                graphState.context_open = true;
             },
             closeContextMenu: function() {
                 console.log('Closing context menu.');
-                state.context_open = false;
+                graphState.context_open = false;
             },
             clearMouseState: function() {
-                state.mousedown_edge = null;
-                state.mousedown_node = null;
-                state.mouseup_node = null;
+                console.log('Resetting mouse vars.');
+                graphState.mousedown_edge = null;
+                graphState.mousedown_node = null;
+                graphState.mouseup_node = null;
             }
         };
 

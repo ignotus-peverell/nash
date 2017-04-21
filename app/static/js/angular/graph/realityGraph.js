@@ -103,14 +103,15 @@ nash.directive('realityGraph', [
                             var point = d3.mouse(d3Context);
                             var newNode = GraphService.addNode(
                                 scope.graph, point[0], point[1]);
-                            scope.graphState.events.selectNode(newNode);
+                            scope.graphState.actions.toggleSelectedNode(newNode);
                             GraphService.addEdge(
                                 scope.graph, scope.graphState.mousedown_node, newNode);
                         }
                     } else if (scope.graphState.mode === 'move') {
                         console.log('move mouseup');
+                        // TODO: ^^^^^^^^^^^^^^?????
                     }
-                    scope.graphState.events.clearMouseState();
+                    scope.graphState.actions.clearMouseState();
                 });
             };
 
@@ -313,11 +314,11 @@ nash.directive('realityGraph', [
 
             var contextMenuHandlers = {
                 onOpen: function() {
-                    scope.$apply(scope.graphState.events.openContextMenu);
+                    scope.$apply(scope.graphState.actions.openContextMenu);
                 },
                 onClose: function() {
-                    $timeout(scope.graphState.events.closeContextMenu, 500);
-                    scope.graphState.events.clearMouseState();
+                    $timeout(scope.graphState.actions.closeContextMenu, 500);
+                    scope.graphState.actions.clearMouseState();
                 }
             };
 
@@ -329,7 +330,8 @@ nash.directive('realityGraph', [
                     .attr('class', 'edge')
                     .on('mousedown', function(d) {
                         scope.$apply(function(){
-                            scope.graphState.events.mousedownEdge(d);
+                            scope.graphState.actions.mousedownEdge(d);
+                            scope.graphState.actions.toggleSelectedEdge(d);
                         });
                     })
                     .on('contextmenu', d3.contextMenu(edge_menu, contextMenuHandlers));
@@ -481,9 +483,9 @@ nash.directive('realityGraph', [
                             vis.call(d3.behavior.zoom().on('zoom', null));
 
                             if (scope.graphState.mousedown_node === scope.graphState.selected_node) {
-                                scope.graphState.events.selectNode(null);
+                                scope.graphState.actions.toggleSelectedNode();
                             } else {
-                                scope.graphState.events.selectNode(scope.graphState.mousedown_node);
+                                scope.graphState.actions.toggleSelectedNode(scope.graphState.mousedown_node);
                             }
 
                             // reposition drag line
@@ -502,7 +504,7 @@ nash.directive('realityGraph', [
                                     scope.graphState.mouseup_node = d;
                                     if (scope.graphState.mouseup_node
                                         === scope.graphState.mousedown_node) {
-                                        scope.graphState.events.clearMouseState();
+                                        scope.graphState.actions.clearMouseState();
                                         return;
                                     }
 
@@ -512,7 +514,7 @@ nash.directive('realityGraph', [
                                     var newEdge = GraphService.addEdge(
                                         scope.graph, sourceNode, targetNode);
 
-                                    scope.graphState.events.selectEdge(newEdge);
+                                    scope.graphState.actions.toggleSelectedEdge(newEdge);
 
                                     // enable zoom
                                     vis.call(d3.behavior.zoom().on('zoom', rescale));

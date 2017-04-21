@@ -1,4 +1,4 @@
-/* global angular, d3, $ */
+/* global angular  */
 
 'use strict';
 
