@@ -16,6 +16,7 @@ nash.directive('realityGraph', [
         scope:{
             graph: '=',
             graphState: '=',
+            saveGraph: '&'
         },
         link: function(scope, element, attrs) {
             console.log('Reality Graph Directive.');
@@ -149,199 +150,60 @@ nash.directive('realityGraph', [
                 });
             };
 
-            var vis = rGraph
-                .append('svg:g')
-                .call(d3.behavior.zoom().on('zoom', rescale))
-                .on('dblclick.zoom', null)
-                .append('svg:g')
-                .on('mousemove', mousemove)
-                .on('mousedown', mousedown)
-                .on('mouseup', mouseup)
-                .on('mouseout', mouseout)
-                .on('mouseover', mouseover)
-                .on('contextmenu', d3.contextMenu(bkgd_menu, contextMenuHandlers));
 
-            vis.append('svg:rect')
-                .attr('width', width)
-                .attr('height', height)
-                .attr('fill', 'white');
-
-            var force = d3.layout.force()
-                .size([width, height])
-                .linkDistance(200)
-                .charge(-1000);
-
-            // get layout properties
-            var node = vis.selectAll('.node');
-            var edge = vis.selectAll('.edge');
-            var nodeLabel = vis.selectAll('.text');
-
-                // line displayed when dragging new nodes
-            var dragLine = vis.append('line')
-                .attr('class', 'drag-line')
-                .attr('x1', 0)
-                .attr('y1', 0)
-                .attr('x2', 0)
-                .attr('y2', 0);
+            var edge_menu = [{
+                title: 'Delete',
+                action: function(elm, d, i) {
+                    GraphService.deleteEdge(scope.graph, d);
+                }
+            }, {
+                title: 'Reverse arrow',
+                action: function(elm, d, i) { GraphService.reverseEdge(d); }
+            }];
 
 
-            var edge_menu = [
-                {title: function(d) { return d.label + ' (edit)'; },
-                 action: function(elm, d, i) {
-                     $('#edge-label').focus();
-                 }
+            var node_menu = [{
+                title: function(n) {
+                    return n.truth ? 'Make False' : 'Make True';
                 },
-                {title: function(d) {
-                    return d.detailed + ' (edit)';
+                action: function(elm, d, i) {
+                    d.truth = !d.truth;
+                }
+            }, {
+                title: function(n) {
+                    return n.locked ? 'Unlock' : 'Lock';
                 },
-                 action: function(elm, d, i) {
-                     $('#detailed-description-edge').focus();
-                 }
-                },
-                {title: 'Delete',
-                 action: function(elm, d, i) {
-                     GraphService.deleteEdge(scope.graph, d);
-                 }
-                },
+                action: function(elm, d, i) {
+                    d.locked = !d.locked;
+                }
+            }, {
+                title: 'Delete',
+                action: function(elm, d, i) {
+                    GraphService.deleteNode(scope.graph, d);
+                }
+            }];
 
-                {title: 'Reverse arrow',
-                 action: function(elm, d, i) { GraphService.reverseEdge(d); }},
-
-                {title: 'Feels like a reference to',
-                 action: function(elm, d, i) {
-                     d.meaning = 'reference'
-                 }
-                },
-                {title: 'Very likely to cause',
-                 action: function(elm, d, i) {
-                     d.meaning = 'cause'
-                     d.cause_weird = '3';
-                 }
-                },
-                {title: 'Fairly likely to cause',
-                 action: function(elm, d, i) {
-                     d.meaning = 'cause'
-                     d.cause_weird = '2';
-                 }
-                },
-                {title: 'Somewhat likely to cause',
-                 action: function(elm, d, i) {
-                     d.meaning = 'cause'
-                     d.cause_weird = '1';
-                 }
-                },
-                {title: 'Not at all likely to cause',
-                 action: function(elm, d, i) {
-                     d.meaning = 'cause'
-                     d.cause_weird = '0';
-                 }
-                },
-                {title: 'Very likely to prevent',
-                 action: function(elm, d, i) {
-                     d.meaning = 'prevent'
-                     d.prevent_weird = '3';
-                 }
-                },
-                {title: 'Fairly likely to prevent',
-                 action: function(elm, d, i) {
-                     d.meaning = 'prevent'
-                     d.prevent_weird = '2';
-                 }
-                },
-                {title: 'Somewhat likely to prevent',
-                 action: function(elm, d, i) {
-                     d.meaning = 'prevent'
-                     d.prevent_weird = '1';
-                 }
-                },
-                {title: 'Not at all likely to prevent',
-                 action: function(elm, d, i) {
-                     d.meaning = 'prevent'
-                     d.prevent_weird = '0';
-                 }
-                },
-            ];
-
-
-            var node_menu = [
-                {title: function(n) {
-                    return n.label + ' (edit)';
-                },
-                 action: function(elm, d, i) {
-                     $('#node-label').focus();
-                 }
-                },
-                {title: function(n) {
-                    return n.detailed + ' (edit)';
-                },
-                 action: function(elm, d, i) {
-                     $('#detailed-description-node').focus();
-                 }
-                },
-                {title: 'Delete',
-                 action: function(elm, d, i) {
-                     GraphService.deleteNode(scope.graph, d);
-                 }
-                },
-                {title: function(n) {
-                    if (n.truth) {
-                        return 'Make false';
-                    } else {
-                        return 'Make true';
-                    }
-                },
-                 action: function(elm, d, i) {
-                     d.truth = !d.truth;
-                 }
-                },
-                {title: 'Very likely to happen for no reason',
-                 action: function(elm, d, i) {
-                     d.self_cause_weird = '0';
-                 }
-                },
-                {title: 'Fairly likely to happen for no reason',
-                 action: function(elm, d, i) {
-                     d.self_cause_weird = '1';
-                 }
-                },
-                {title: 'Somewhat likely to happen for no reason',
-                 action: function(elm, d, i) {
-                     d.self_cause_weird = '2';
-                 }
-                },
-                {title: 'Not at all likely to happen for no reason',
-                 action: function(elm, d, i) {
-                     d.self_cause_weird = '3';
-                 }
-                },
-            ]
-
-            var bkgd_menu = [
-                {
-                    title: 'Save',
-                    action: function(elm, d, i) {
-                        //save();
-                    }
-                },
-                {
-                    title: 'New node',
-                    action: function(elm, d, i) {
-                        //new_node();
-                    }
-                },
-                {
-                    title: 'Edit mode',
-                    action: function(elm, d, i) {
-                        //mode_edits();
-                    }
-                },
-                {
-                    title: 'Move mode',
-                    action: function(elm, d, i) {
-                        //mode_move();
-                    }
-                },
-            ]
+            var bkgd_menu = [{
+                title: 'Save',
+                action: function(elm, d, i) {
+                    scope.saveGraph();
+                }
+            }, {
+                title: 'New node',
+                action: function(elm, d, i) {
+                    GraphService.addNode(scope.graph);
+                }
+            }, {
+                title: 'Edit mode',
+                action: function(elm, d, i) {
+                    scope.graphState.edit_mode = 'edit';
+                }
+            }, {
+                title: 'Move mode',
+                action: function(elm, d, i) {
+                    scope.graphState.edit_mode = 'move';
+                }
+            }];
 
             var contextMenuHandlers = {
                 onOpen: function() {
@@ -400,14 +262,14 @@ nash.directive('realityGraph', [
 
                 // Add edges.
                 edge = vis.selectAll('.edge')
-                    .data(graph.edges, function(d) {return d.id; });
+                    .data(graph.edges);
                 enterEdges(edge);
                 edge.exit().remove();
                 edge = vis.selectAll('.edge');
 
                 // Add nodes.
                 node = vis.selectAll('.node')
-                    .data(graph.nodes, function(d) { return d.id; } );
+                    .data(graph.nodes);
                 enterNodes(node);
                 node.exit().remove();
                 node = vis.selectAll('.node');
@@ -560,6 +422,41 @@ nash.directive('realityGraph', [
                     .attr('fill', function (d) { return d.truth ? '#000000' : '#ffffff' });
 
             };
+
+            var vis = rGraph
+                .append('svg:g')
+                .call(d3.behavior.zoom().on('zoom', rescale))
+                .on('dblclick.zoom', null)
+                .append('svg:g')
+                .on('mousemove', mousemove)
+                .on('mousedown', mousedown)
+                .on('mouseup', mouseup)
+                .on('mouseout', mouseout)
+                .on('mouseover', mouseover)
+                .on('contextmenu', d3.contextMenu(bkgd_menu, contextMenuHandlers));
+
+            vis.append('svg:rect')
+                .attr('width', width)
+                .attr('height', height)
+                .attr('fill', 'white');
+
+            var force = d3.layout.force()
+                .size([width, height])
+                .linkDistance(200)
+                .charge(-1000);
+
+            // get layout properties
+            var node = vis.selectAll('.node');
+            var edge = vis.selectAll('.edge');
+            var nodeLabel = vis.selectAll('.text');
+
+            // line displayed when dragging new nodes
+            var dragLine = vis.append('line')
+                .attr('class', 'drag-line')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('x2', 0)
+                .attr('y2', 0);
 
 
 
