@@ -49,6 +49,17 @@ nash.service(
              };
          };
 
+         this.isSelfCausingNode = function(graph, node) {
+             var edges = this.getTerminatingEdgesForNode(graph, node);
+             var trueSources = _.filter(edges, function(d) { return d.source.truth; });
+             return trueSources.length > 0 ? false : node.truth;
+
+         };
+
+         this.getTerminatingEdgesForNode = function(graph, node) {
+             return _.filter(graph.edges, function(d) { return d.target === node});
+         };
+
          this.addNode = function(graph, x, y) {
              var nodeCount = graph.nodes.length;
              var maxId = _.chain(graph.nodes).map('id').max().value();

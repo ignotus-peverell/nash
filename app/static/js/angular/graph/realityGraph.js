@@ -335,9 +335,8 @@ nash.directive('realityGraph', [
                     .classed('node-selected', function (d) {
                         return d === scope.graphState.selected_node;
                     })
-
                     .attr('stroke', function (d) {
-                        if (d.self_causing) {
+                        if (GraphService.isSelfCausingNode(scope.graph, d)) {
                             if (d.self_cause_weird === '0') {
                                 return '#00ff00';
                             } else if (d.self_cause_weird === '1') {
