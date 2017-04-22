@@ -29,9 +29,5 @@ nash.service(
                 .attr("fill", markerColors[color])
                 .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
         };
-
-        this.emptyNode = function() {
-            return {x:0, y:0, label: "Untitled"}
-        };
      }]
 );
