@@ -306,6 +306,8 @@ nash.directive('realityGraph', [
                             }
                             else if (d.cause_weird === '2') {
                                 return 'url(#arrowhead-orange)';
+                            } else {
+                                return 'url(#arrowhead-red)';
                             }
                         } else if (d.meaning === 'prevent' && d.source.truth && d.target.truth) {
                             if (d.prevent_weird === '0') {
@@ -316,6 +318,8 @@ nash.directive('realityGraph', [
                             }
                             else if (d.prevent_weird === '2') {
                                 return 'url(#arrowhead-orange)';
+                            } else {
+                                return 'url(#arrowhead-red)';
                             }
                         }
                         return 'url(#arrowhead-black)';
