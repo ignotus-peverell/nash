@@ -200,7 +200,7 @@ nash.directive('realityGraph', [
             var enterEdges = function(d) {
                 d
                     .enter()
-                    .insert('polyline', 'polyline')
+                    .insert('polyline', '.drag-line-hidden')
                     .attr('class', 'edge')
                     .on('mousedown', function(d) {
                         scope.$apply(function(){
