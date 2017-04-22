@@ -68,7 +68,7 @@ nash.controller('GraphCtrl', [
                         graph);
                 }, function errorCallback(response) {
                     // TODO: add error handling
-                    console.log("GET _graph error response: ", response)
+                    console.log('GET _graph error response: ', response)
                 });
 
         } else {
@@ -78,34 +78,30 @@ nash.controller('GraphCtrl', [
 
         // Save the graph.
         $scope.save = function() {
-            $scope.graphState.is_saving = true;
+            graphState.is_saving = true;
             GraphService.saveGraph($scope.graph)
                 .then(function successCallback(response) {
-                    $scope.graphState.is_saving = false;
-                    console.log("POST _graph success response: ", response)
+                    graphState.is_saving = false;
+                    console.log('POST _graph success response: ', response)
                     // Normally you would assign the graph to the response data, like,
                     //      $scope.graph = response.data.graph
                     // However, the `_save_graph` endpoint currently only returns
                     // a status. Might want to change this as a TODO.
-                }, function errorCallback(response) {
-                    $scope.graphState.is_saving = false;
-                    // TODO: add error handling
-                    console.log("POST _graph error response: ", response)
-                    // TODO: Expose api errors to frontend. <--- Discuss strategy.
-                    //
-                    // Code from previous alert handlers:
-                    //     success: function (data) {
-                    //         d3.select("#messages")
-                    //             .attr("class",
-                    //                   "alert alert-success alert-dismissible")
-                    //             .html('<strong>Saved!</strong> <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
-                    //     },
-                    //     error: function (data) {
-                    //         d3.select("#messages")
-                    //             .attr("class", "alert alert-danger alert-dismissible")
-                    //             .html('<strong>Error!</strong> Your work was not saved. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
-                    //     }
 
+                    // Alerts to be refactored once the rest of the site has been
+                    // converted to angular. (JQuery in angular is code smell.)
+                    $('#messages')
+                        .addClass('alert alert-success alert-dismissible')
+                        .html('<strong>Saved!</strong> <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
+
+                }, function errorCallback(response) {
+                    graphState.is_saving = false;
+                    console.log('POST _graph error response: ', response)
+                    // Alerts to be refactored once the rest of the site has been
+                    // converted to angular. (JQuery in angular is code smell.)
+                    $('#messages')
+                        .addClass('alert alert-danger alert-dismissible')
+                        .html('<strong>Error!</strong> Your work was not saved. <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>');
                 });
         };
 
