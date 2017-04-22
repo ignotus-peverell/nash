@@ -280,6 +280,7 @@ nash.directive('realityGraph', [
                 // attributes to their new values. Also give the
                 // nodes a non-zero radius so they're visible.
 
+
                 edge
                     .attr('points', function (d) {
                         var endX = (2 * d.source.x + 3 * d.target.x) / 5.0;

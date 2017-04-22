@@ -1,6 +1,29 @@
 /**** graph interface styles ****/
-.node {
+
+.graph {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+ /* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.graph:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
+
+.graph.edit-mode .node {
     cursor: crosshair;
+}
+
+.graph.edit-mode .edge, .graph.edit-mode .node-label {
+    cursor: default;
+}
+
+.node {
+
     fill: #999999;
     stroke-width: 2;
 }
@@ -38,7 +61,6 @@
 .edge {
     stroke: #999;
     stroke-width: 5;
-    cursor: crosshair;
 }
 
 .edge-selected {
