@@ -30,6 +30,12 @@ nash.service(
                      n = _.assign(n, _.find(
                          helper.view_edges, {'source': n.source, 'target': n.target}));
                      n.id = n.source + '-' + n.target;
+
+                     // Now replace the source & target indices with the actual source
+                     // and target indices based on index matching.
+                     n.source = _.find(nodes, function(d) { return d.index === n.source})
+                     n.target = _.find(nodes, function(d) { return d.index === n.target})
+
                      return n;
                  });
 
@@ -80,7 +86,7 @@ nash.service(
 
          this.addEdge = function(graph, sourceNode, targetNode) {
              var newEdge = {
-                 id: sourceNode.id + '-' + targetNode.id,
+                 id: sourceNode.index + '-' + targetNode.index,
                  source: sourceNode,
                  target: targetNode,
                  detailed: ''
@@ -100,8 +106,8 @@ nash.service(
              var initGraph = {
                  nodes: [],
                  edges: [],
-                 save_id: -1,
-                 save_name: ''
+                 save_id: -1, // API complains if this field isn't present.
+                 save_name: ''  // API complains if this field isn't present.
              };
              // TODO: Change backend to not fail hard if a save_id
              // isn't present.
@@ -114,6 +120,12 @@ nash.service(
          };
 
          this.saveGraph = function(graph) {
+             graph = _.cloneDeep(graph);
+             graph.edges = _.map(graph.edges, function(n) {
+                 n.source = n.source.index;
+                 n.target = n.target.index;
+                 return n;
+             });
              return $http.post(
                  makePath('save_graph', []),
                  graph

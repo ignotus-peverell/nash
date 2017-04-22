@@ -62,12 +62,10 @@ nash.controller('GraphCtrl', [
                 .then(function successCallback(response) {
                     console.log('GET _graph success response: ', response);
                     var graph = response.data.graph;
-
                     $scope.apiGraphResponse = graph;
                     $scope.graph = GraphService.createGraphFromApiResponse(
                         graph.default_helper.id,
                         graph);
-
                 }, function errorCallback(response) {
                     // TODO: add error handling
                     console.log("GET _graph error response: ", response)
