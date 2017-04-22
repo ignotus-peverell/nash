@@ -26,25 +26,6 @@ nash.directive('realityGraph', [
             var sGraphState = scope.graphState;
             var sSaveGraph = scope.saveGraph;
 
-            var width = 800;
-            var height = 700;
-            var graphEl = element[0];
-
-            var rGraph = d3.select(graphEl)
-                .append('svg:svg')
-                .attr('width', width)
-                .attr('height', height)
-                .style('border', '1px solid black')
-                .attr('pointer-events', 'all');
-
-            graphComponents.appendMarkerDef(rGraph, 'arrowhead-red');
-            graphComponents.appendMarkerDef(rGraph, 'arrowhead-orange');
-            graphComponents.appendMarkerDef(rGraph, 'arrowhead-green');
-            graphComponents.appendMarkerDef(rGraph, 'arrowhead-black');
-            graphComponents.appendMarkerDef(rGraph, 'arrowhead-yellow')
-                .attr('stroke-width', 0.1)
-                .attr('stroke-width', 0.1);
-
             var keydown = function() {
                 scope.$apply(function() {
                     var sNode = sGraphState.selected_node;
@@ -224,7 +205,7 @@ nash.directive('realityGraph', [
             var enterEdges = function(d) {
                 d
                     .enter()
-                    .append('polyline')
+                    .insert('polyline', 'polyline')
                     .attr('class', 'edge')
                     .on('mousedown', function(d) {
                         scope.$apply(function(){
@@ -427,6 +408,27 @@ nash.directive('realityGraph', [
                     .attr('fill', function (d) { return d.truth ? '#000000' : '#ffffff' });
 
             };
+
+            // Define the graph and svg components.
+            var width = 800;
+            var height = 700;
+            var graphEl = element[0];
+
+            var rGraph = d3.select(graphEl)
+                .append('svg:svg')
+                .attr('width', width)
+                .attr('height', height)
+                .style('border', '1px solid black')
+                .attr('pointer-events', 'all');
+
+            graphComponents.appendMarkerDef(rGraph, 'arrowhead-red');
+            graphComponents.appendMarkerDef(rGraph, 'arrowhead-orange');
+            graphComponents.appendMarkerDef(rGraph, 'arrowhead-green');
+            graphComponents.appendMarkerDef(rGraph, 'arrowhead-black');
+            graphComponents.appendMarkerDef(rGraph, 'arrowhead-yellow')
+                .attr('stroke-width', 0.1)
+                .attr('stroke-width', 0.1);
+
 
             var vis = rGraph
                 .append('svg:g')
