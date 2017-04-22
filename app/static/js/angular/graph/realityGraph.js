@@ -479,7 +479,6 @@ nash.directive('realityGraph', [
             // focus on svg
             vis.node().focus();
 
-        //     init_ui_hooks();
             render(scope.graph);
         }
     }
