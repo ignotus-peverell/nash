@@ -1,0 +1,11 @@
+<div id="helpers">
+  <div class="panel-heading">
+    <h3 class="panel-title">Friends</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row helper" ng-repeat="helper in graph.helpers" ng-click="changeView(helper)">
+      <img ng-src="{{helper.photo}}"> <br />
+      <span ng-bind="helper.name"></span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<!-- This encapsulating container div should probably go in the top-level layout page once everything has been converted -->
+<div>
+  <helper-menu
+    graph="graph"
+    api-graph-response="apiGraphResponse"></helper-menu>
+  <div id="infoboxes">
+
+    <div id="infobox-right">
+      <graph-options-menu
+        graph="graph"
+        graph-state="graphState"
+        save="save()"></graph-options-menu>
+    </div>
+
+    <div id="infobox-left" ng-show="graphState.edit_mode==='edit'">
+      <div id="infobox-data-entry">
+        <node-options-menu
+          ng-if="graphState.selected_node"
+          node="graphState.selected_node"></node-options-menu>
+        <edge-options-menu
+          ng-if="graphState.selected_edge"
+          edge="graphState.selected_edge"></edge-options-menu>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- This is an angular directive. See `/static/partials/graph/reality-graph.html` -->
+  <!-- for the template and `/static/js/angular/graph/realityGraph.js` for the -->
+  <!-- directive code. -->
+  <reality-graph
+    ng-if="graph"
+    graph="graph"
+    graph-state="graphState"
+    save-graph="save()"></reality-graph>
+
+  <div id="chart-spacer">&nbsp;</div>
+</div>

@@ -109,7 +109,7 @@ def get_graph_data(graph):
     assert default_helper is not None
 
     return nodes, edges, helpers, default_helper
-    
+
 @app.route('/graph/<id>')
 @login_required  # Limits access to authenticated users
 def graph_page(id):
@@ -118,13 +118,7 @@ def graph_page(id):
     if current_user not in graph.owners and current_user not in graph.helpers:
         return redirect(url_for('graph_list_page'))
 
-    nodes, edges, helpers, default_helper = get_graph_data(graph)
-
-    return render_template('pages/graph_page.html', save_id=id,
-                           graph_name=graph.name,
-                           nodes=json.dumps(nodes), edges=json.dumps(edges),
-                           helpers=json.dumps(helpers),
-                           default_helper=json.dumps(default_helper))
+    return render_template('pages/graph_page.html')
 
 @app.route('/_graph/<id>')
 @login_required  # Limits access to authenticated users
@@ -135,11 +129,13 @@ def graph_json(id):
         return redirect(url_for('graph_list_page'))
 
     nodes, edges, helpers, default_helper = get_graph_data(graph)
-    graph_data = dict(nodes=nodes,
+    graph_data = dict(save_id=id,
+                      save_name=graph.name,
+                      nodes=nodes,
                       edges=edges,
                       helpers=helpers,
                       default_helper=default_helper)
-    
+
     return jsonify(graph=graph_data)
 
 
@@ -165,13 +161,10 @@ def graph_history(id):
 
     return render_template('pages/graph_history_page.html', graph=graph)
 
-@app.route('/newgraph')
+@app.route('/graph/new')
 @login_required  # Limits access to authenticated users
 def graph_create_page():
-    print 'newgraph'
-    return render_template('pages/graph_page.html',
-                           nodes=json.dumps([]),
-                           edges=json.dumps([]))
+    return render_template('pages/graph_page.html')
 
 @app.route('/_save_graph', methods=['POST'])
 @login_required  # Limits access to authenticated users
