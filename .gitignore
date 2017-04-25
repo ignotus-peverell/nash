@@ -60,6 +60,10 @@ local_settings.py
 instance/
 .webassets-cache
 
+# Node/JS stuff
+node_modules/
+ui_test_coverage
+
 # Scrapy stuff:
 .scrapy
 

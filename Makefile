@@ -1,4 +1,5 @@
 env:
+	npm install
 	virtualenv nashenv --no-site-packages
 	. nashenv/bin/activate
 	nashenv/bin/pip install -r requirements.txt
@@ -7,6 +8,7 @@ env:
 	cp app/static/images/default_users/* instance/photos/
 
 clean:
+	rm -rf node_modules
 	rm -rf nashenv
 	rm -rf activate
 	rm -rf instance

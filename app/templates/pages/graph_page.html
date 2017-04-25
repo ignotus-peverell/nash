@@ -2,22 +2,20 @@
 
 {% block content %}
 
-{% raw %}
 _<!-- Angular dependencies that can be moved to top-level index file once site has been fully converted. -->
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
-<script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+<script src="{{ url_for('lib.static', filename='angular/angular.min.js') }}"></script>
+<script src="{{ url_for('lib.static', filename='angular-route/angular-route.min.js') }}"></script>
 
-<script src="/static/js/angular/nash.js"></script>
-<script src="/static/js/angular/services/GraphService.js"></script>
-<script src="/static/js/angular/graph/GraphCtrl.js"></script>
-<script src="/static/js/angular/graph/realityGraph.js"></script>
-<script src="/static/js/angular/graph/graphOptionsMenu.js"></script>
-<script src="/static/js/angular/graph/helperMenu.js"></script>
-<script src="/static/js/angular/graph/nodeOptionsMenu.js"></script>
-<script src="/static/js/angular/graph/edgeOptionsMenu.js"></script>
+<script src="{{ url_for('static', filename='js/etc/d3-context-menu.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nash.js') }}"></script>
+<script src="{{ url_for('static', filename='js/services/GraphService.js') }}"></script>
+<script src="{{ url_for('static', filename='js/graph/GraphCtrl.js') }}"></script>
+<script src="{{ url_for('static', filename='js/graph/realityGraph.js') }}"></script>
+<script src="{{ url_for('static', filename='js/graph/graphOptionsMenu.js') }}"></script>
+<script src="{{ url_for('static', filename='js/graph/helperMenu.js') }}"></script>
+<script src="{{ url_for('static', filename='js/graph/nodeOptionsMenu.js') }}"></script>
+<script src="{{ url_for('static', filename='js/graph/edgeOptionsMenu.js') }}"></script>
 
 <div class="container-fluid" ng-view></div>
-{% endraw %}
 
 {% endblock %}

@@ -13,6 +13,7 @@ nash.service(
     'GraphService',
     ['$http',
      function ($http) {
+
          var makePath = function(endpoint, pathSegments) {
              return ['/_' + endpoint].concat(pathSegments).join('/');
          };

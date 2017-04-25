@@ -3,7 +3,7 @@
 # Authors: Ling Thio <ling.thio@gmail.com>
 
 from datetime import datetime
-from flask import Flask
+from flask import Blueprint, Flask
 from flask_mail import Mail
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
@@ -58,6 +58,10 @@ def init_app(app, extra_config_settings={}):
     # Setup an error-logger to send emails to app.config.ADMINS
     init_email_error_handler(app)
 
+    # Add static path for js dependencies.
+    node_modules = Blueprint('lib', __name__, static_url_path='/static/js/lib', static_folder='../node_modules')
+    app.register_blueprint(node_modules)
+
     # Setup Flask-User to handle user account related forms
     from app.models import User, MyRegisterForm
     from app.views import user_profile_page
@@ -106,8 +110,3 @@ def init_email_error_handler(app):
     app.logger.addHandler(mail_handler)
 
     # Log errors using: app.logger.error('Some error message')
-
-
-
-
-
