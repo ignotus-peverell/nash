@@ -11,7 +11,7 @@
 
       {{ form.hidden_tag() }}
       {{ render_field(form.email, tabindex=240) }}
-      <!-- TODO: With AJAX method, the front-end UI might need loader or other visual indicator. --> 
+      <!-- TODO: With AJAX method, the front-end UI might need loader or other visual indicator. -->
       <input type="submit" value="Send Invite" onClick="invite_friend()"><br/>
 
     </div>
@@ -42,6 +42,6 @@
   {% endfor %}
 
 
-<script src="/static/js/nash.js?version=invite_friend_0.5"></script>
+<script src="/static/js/etc/nash.js?version=invite_friend_0.5"></script>
 
 {% endblock %}

@@ -1,0 +1,44 @@
+{
+  "name": "nash",
+  "version": "0.1.0",
+  "description": "Nash Reality Testing",
+  "main": "index.js",
+  "directories": {
+    "test": "ui-tests"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ignotus-peverell/nash.git"
+  },
+  "keywords": [
+    "reality-testing",
+    "d3",
+    "angular",
+    "flask"
+  ],
+  "author": "Eric Purdy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ignotus-peverell/nash/issues"
+  },
+  "homepage": "https://github.com/ignotus-peverell/nash#readme",
+  "devDependencies": {
+    "angular-mocks": "^1.6.4",
+    "jasmine-core": "^2.6.0",
+    "karma": "^1.6.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-coverage": "^1.1.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-ng-html2js-preprocessor": "^1.0.0"
+  },
+  "dependencies": {
+    "angular": "^1.6.4",
+    "angular-route": "^1.6.4",
+    "d3": "^3.5.17",
+    "jquery": "^3.2.1",
+    "lodash": "^4.17.4"
+  }
+}

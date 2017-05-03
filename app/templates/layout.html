@@ -9,13 +9,16 @@
 
         <title>Nash Reality Testing</title>
 
+        <!-- Since the graph page is the only part of the site that's refactored -->
+        <!-- angular atm, we restrict the app to paths on "graph" with this tag here. -->
         <base href="/graph/" />
 
-        <link rel="shortcut icon" href="{{ url_for('static', filename='images/nfavicon.png')
-                                        }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/nfavicon.png') }}">
 
-        <!-- JQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <!-- Npm managed dependencies -->
+        <script src="{{ url_for('lib.static', filename='jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ url_for('lib.static', filename='d3/d3.min.js') }}"></script>
+        <script src="{{ url_for('lib.static', filename='lodash/lodash.min.js') }}"></script>
 
         <!-- Bootstrap CSS and JS -->
         <!-- Latest compiled and minified CSS -->
@@ -30,11 +33,6 @@
             <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
             <![endif]-->
 
-
-        <!-- JS -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script><!--	<script src="http://d3js.org/d3.v2.min.js"></script>-->
-
-        <script src="{{ url_for('static', filename='js/d3-context-menu.js') }}"></script>
         <script src="https://use.fontawesome.com/79077c2a9d.js"></script>
 
         <!-- Application specific CSS-->
